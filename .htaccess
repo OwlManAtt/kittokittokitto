@@ -1,0 +1,15 @@
+# This controls what config options to use.
+SetEnv RELEASE_MODE DEV
+
+RewriteEngine On
+RewriteBase /kittokittokitto
+
+# These are the real folders.
+RewriteRule ^resources/(.*)$ resources/$1 [L]
+RewriteRule ^docs/(.*)$ docs/$1 [L]
+
+# Specific, prettier URLs.
+RewriteRule ^profile/([0-9]+) index.php?page_slug=profile&user_id=$1 [NC,L]
+
+# Gotta catch 'em all!
+RewriteRule ^([A-Z0-9-]+)(/(.*))?$ index.php?page_slug=$1 [QSA,NC,L]
