@@ -61,6 +61,9 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
 		$User->setLastIpAddr($_SERVER['REMOTE_ADDR']);
 		$User->setLastActivity($User->sysdate());
 		$User->save();
+        
+        // Load the active pet (if any!)
+        $Pet = $User->grabActivePet();
 	}
 	else
 	{
@@ -68,8 +71,9 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
 		$access_level = 'public';
 	}
 	
-	// Give this to Smarty.
+    // Give these to Smarty.
 	$renderer->assign('user',$User);
+	$renderer->assign('active_pet',$Pet);
 } // end if cookies are set
 
 $renderer->assign('logged_in',$logged_in);

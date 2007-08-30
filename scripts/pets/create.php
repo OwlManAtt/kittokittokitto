@@ -190,8 +190,14 @@ switch($_REQUEST['state'])
             $pet->setCreatedAt($pet->sysdate());
             $pet->save();
 
+            // If the user has no other pets, make this the active one.
+            if(sizeof($User->grabPets()) == 0)
+            {
+                $pet->makeActive();
+            }
+
             // Session mog
-            $_SESSION['new_pet_id'] = $pet->getUserPetId();
+            $_SESSION['hilight_pet_id'] = $pet->getUserPetId();
             
             // Redirect
             redirect('pets');

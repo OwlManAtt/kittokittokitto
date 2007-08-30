@@ -26,6 +26,15 @@ class User extends ActiveTable
             'foreign_key' => 'user_id',
             'foreign_primary_key' => 'user_pet_id',
         ),
+        'active_pet' => array(
+            'class' => 'Pet',
+            'local_table' => 'user',
+            'local_key' => 'active_user_pet_id',
+            'foreign_table' => 'user_pet',
+            'foreign_key' => 'user_pet_id',
+            'foreign_primary_key' => 'user_pet_id',
+            'one' => true,
+        ),
     );
 
     /**

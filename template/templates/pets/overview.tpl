@@ -6,6 +6,14 @@
         <img src='{$pets[pet].image}' border='0' alt='{$pets[pet].name}' />
         
         <p id='pet_{$pets[pet].id}'{if $pets[pet].fade == 1} class='fade'{/if}><strong>{$pets[pet].name}</strong></p>
+
+        {if $pets[pet].active == 0}
+        <form action='{$display_settings.public_dir}/pets' method='post'>
+            <input type='hidden' name='state' value='active' />
+            <input type='hidden' name='pet_id' value='{$pets[pet].id}' />
+            <input type='submit' value='Make Active' />
+        </form>
+        {/if}
     </div>
 </div>
 {sectionelse}

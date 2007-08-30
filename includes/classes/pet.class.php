@@ -36,6 +36,7 @@ class Pet extends ActiveTable
             'class' => 'User',
             'local_key' => 'user_id',
             'foreign_key' => 'user_id',
+            'one' => true,
         ),
     );
 
@@ -50,6 +51,28 @@ class Pet extends ActiveTable
         
         return "{$APP_CONFIG['public_dir']}/resource/images/pets/{$this->getRelativeImageDir()}/{$this->getColorImg()}";
     } // end getImageUrl
+
+    /**
+     * Make this its owner's active pet.
+     * 
+     * @return bool 
+     **/
+    public function makeActive()
+    {
+        $user = $this->grabUser();
+
+        // Should never happen...
+        if($user == null)
+        {
+            return false;
+        }
+
+        $user->setActiveUserPetId($this->getUserPetId());
+        $user->save();
+        
+        return true;
+    } // end public function makeActive
+    
 } // end Pet
 
 ?>
