@@ -25,7 +25,7 @@ class Pet extends ActiveTable
             'join_type' => 'inner',
         ),
         array(
-            'local_key' => 'pet_specie_id', 
+            'local_key' => 'pet_specie_color_id', 
             'foreign_table' => 'pet_specie_color',
             'foreign_key' => 'pet_specie_color_id',
             'join_type' => 'inner',
@@ -49,7 +49,7 @@ class Pet extends ActiveTable
     {
         global $APP_CONFIG;
         
-        return "{$APP_CONFIG['public_dir']}/resource/images/pets/{$this->getRelativeImageDir()}/{$this->getColorImg()}";
+        return "{$APP_CONFIG['public_dir']}/resources/pets/{$this->getRelativeImageDir()}/{$this->getColorImg()}";
     } // end getImageUrl
 
     /**
@@ -72,7 +72,45 @@ class Pet extends ActiveTable
         
         return true;
     } // end public function makeActive
-    
+
+    /**
+     * Add the appropriate amount to the pet's hunger level. 
+     * 
+     * @param integer $amount 
+     * @return bool 
+     **/
+    public function consume($amount)
+    {
+        $hunger = $this->getHunger() + $amount;
+        if($hunger > $this->getMaxHunger())
+        {
+            $hunger = $this->getMaxHunger();
+        }
+        
+        $this->setHunger($hunger);
+
+        return $this->save();
+    } // end consume
+
+    /**
+     * Add the appropriate amount to the pet's happiness level. 
+     * 
+     * @param integer $amount 
+     * @return bool 
+     **/
+    public function play($amount)
+    {
+        $happy = $this->getHappiness() + $amount;
+        if($happy > $this->getMaxHappiness())
+        {
+            $happy = $this->getMaxHappiness();
+        }
+        
+        $this->setHappiness($happy);
+
+        return $this->save();
+    } // end consume
+
 } // end Pet
 
 ?>

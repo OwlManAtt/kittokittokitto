@@ -35,6 +35,11 @@ class User extends ActiveTable
             'foreign_primary_key' => 'user_pet_id',
             'one' => true,
         ),
+        'inventory' => array(
+            'class' => 'Item',
+            'local_key' => 'user_id',
+            'foreign_key' => 'user_id',
+        ),
     );
 
     /**
@@ -135,6 +140,35 @@ class User extends ActiveTable
 		
 		return $has;
 	} // end hasPermission
+
+    /**
+     * Overrides the standard grabInventory and performs the factory call.
+     * 
+     * This is (by far) the least-effective method in this application. 
+     * It loads up all of the Item objects in the efficient manner that
+     * ActiveTable does such things, then completely throws that benefit 
+     * to the wind by re-creating the Items one-by-one from scratch.
+     *
+     * I may be able to do something with ActiveTable#setUp() to make
+     * it more efficient, but I really do not think it is worth my time.
+     * This is a template app, so since I'll never seriously run it, I'll
+     * let this little issue of scalability be your problem! Neener-neener!
+     *
+     * @return array A list of *_Item instances. 
+     **/
+    public function grabInventory()
+    {
+        $PROPER_INVENTORY = array();
+        $inventory = $this->grab('inventory');
+        
+        foreach($inventory as $item)
+        {
+            $PROPER_INVENTORY[] = Item::factory($item->getUserItemId(),$this->db);
+        } // end inventory loop
+        
+        return $PROPER_INVENTORY;
+    } // end grabInventory
+    
 } // end User 
 
 ?>

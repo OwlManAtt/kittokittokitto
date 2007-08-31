@@ -186,7 +186,7 @@ switch($_REQUEST['state'])
             $pet->setPetSpecieColorId($color->getPetSpecieColorId());
             $pet->setPetName($pet_name);
             $pet->setHunger($specie->getMaxHunger());
-            $pet->setHappiness($specie->getMaxHappiness);
+            $pet->setHappiness($specie->getMaxHappiness());
             $pet->setCreatedAt($pet->sysdate());
             $pet->save();
 

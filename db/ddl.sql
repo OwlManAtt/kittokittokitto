@@ -16,6 +16,39 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `item_class`
+--
+
+DROP TABLE IF EXISTS `item_class`;
+CREATE TABLE `item_class` (
+  `item_class_id` int(11) NOT NULL auto_increment,
+  `php_class` varchar(30) NOT NULL,
+  `class_descr` varchar(30) NOT NULL,
+  `relative_image_dir` varchar(50) NOT NULL,
+  `verb` varchar(30) NOT NULL,
+  PRIMARY KEY  (`item_class_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `item_type`
+--
+
+DROP TABLE IF EXISTS `item_type`;
+CREATE TABLE `item_type` (
+  `item_type_id` int(11) NOT NULL auto_increment,
+  `item_name` varchar(50) NOT NULL,
+  `item_descr` text NOT NULL,
+  `item_class_id` int(11) NOT NULL,
+  `happiness_bonus` tinyint(3) unsigned NOT NULL,
+  `hunger_bonus` tinyint(3) unsigned NOT NULL,
+  `pet_specie_color_id` int(11) NOT NULL,
+  `item_image` varchar(50) NOT NULL,
+  PRIMARY KEY  (`item_type_id`),
+  KEY `item_class_id` (`item_class_id`),
+  KEY `pet_specie_color_id` (`pet_specie_color_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `jump_page`
 --
 
@@ -94,8 +127,24 @@ CREATE TABLE `user` (
   `gender` enum('male','female') NOT NULL,
   `profile` text NOT NULL,
   `datetime_created` datetime default NULL,
+  `active_user_pet_id` int(11) NOT NULL,
   PRIMARY KEY  (`user_id`),
-  UNIQUE KEY `user_name` (`user_name`)
+  UNIQUE KEY `user_name` (`user_name`),
+  KEY `active_user_pet_id` (`active_user_pet_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `user_item`
+--
+
+DROP TABLE IF EXISTS `user_item`;
+CREATE TABLE `user_item` (
+  `user_item_id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL,
+  `item_type_id` int(11) NOT NULL,
+  PRIMARY KEY  (`user_item_id`),
+  KEY `user_id` (`user_id`),
+  KEY `item_type_id` (`item_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

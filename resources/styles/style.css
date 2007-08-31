@@ -165,3 +165,12 @@ h3 {
     height: auto !important;
     height: 200px;
 }
+
+.item-box {
+    width: 150px;
+    float: left;
+    margin: 1.5em;
+    min-height: 100px;
+    height: auto !important;
+    height: 100px;
+}
