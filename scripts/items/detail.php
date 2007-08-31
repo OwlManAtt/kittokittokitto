@@ -107,11 +107,18 @@ switch($_REQUEST['state'])
                     {
                         $PET_LIST[$pet->getUserPetId()] = $pet->getPetName();
                     } // end pets loop
-                   
-                    $renderer->assign('use_verb',$item->getVerb()); 
-                    $renderer->assign('pets',$PET_LIST);
-                    $renderer->assign('item',$ITEM);
-                    $renderer->display('items/use_form.tpl');
+                  
+                    if(sizeof($PET_LIST) == 0)
+                    {
+                        draw_errors('You do not have a pet to use this item on.');
+                    }
+                    else
+                    {
+                        $renderer->assign('use_verb',$item->getVerb()); 
+                        $renderer->assign('pets',$PET_LIST);
+                        $renderer->assign('item',$ITEM);
+                        $renderer->display('items/use_form.tpl');
+                    }
 
                     break;
                 } // end use
