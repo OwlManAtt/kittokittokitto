@@ -76,6 +76,7 @@ require_once('aphp/aphp.php');
 // These are our libs.
 require('includes/meta/macros.lib.php');
 require('includes/meta/jump_page.class.php');
+require('includes/meta/pagination.php');
 require('includes/classes/classes.config.php');
 require('includes/cronjobs/cronjobs.config.php');
 

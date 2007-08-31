@@ -17,6 +17,7 @@ require('includes/config.inc.php');
 
 // Non-critical third-party libraries (Rendering-related, pretty much)
 require_once('Smarty/Smarty.class.php');
+require_once('Smarty/SmartyPaginate.class.php');
 
 // Deploy the renderer.
 $renderer = new Smarty();

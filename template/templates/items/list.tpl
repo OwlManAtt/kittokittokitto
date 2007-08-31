@@ -10,3 +10,6 @@
 {sectionelse}
 <p><em>You have no items in your inventory.</em></p>
 {/section}
+
+<br clear='all' />
+<div class='pages'>{$pagination}</div>

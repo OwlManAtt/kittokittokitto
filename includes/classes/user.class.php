@@ -154,12 +154,34 @@ class User extends ActiveTable
      * This is a template app, so since I'll never seriously run it, I'll
      * let this little issue of scalability be your problem! Neener-neener!
      *
+     * Hopefully, paginating any pages showing the whole inventory will
+     * mitigate the problem. But, this is still SLOW (~150 items = 5s, 
+     * p3 833mhz w/ 128mb RAM & no APC).
+     *
+     * == Notes on the parms...
+     * These are optional. Specify neither or both. They will put LIMITs
+     * on the recordset, so this can be whittled down to just a slice of 
+     * the user's whole inventory. Very good for pagination.
+     *
+     * @param integer $start The beginning of a slice in the recordset.
+     * @param integer $end The end of a slice in the recordset.
      * @return array A list of *_Item instances. 
      **/
-    public function grabInventory()
+    public function grabInventory($start=null,$end=null)
     {
+        if(($start === null && $end === null) == false && 
+            ($start !== null && $end !== null) == false
+        )
+        {
+            throw ArgumentError('Must specify either no arguments or both arguments.');
+        } // end problem w/ args.
+        
+        // Translate into start,# to fetch.
+        $total = $end - $start;
+        $order_by = "LIMIT $start,$total";
+        
         $PROPER_INVENTORY = array();
-        $inventory = $this->grab('inventory');
+        $inventory = $this->grab('inventory',$order_by);
         
         foreach($inventory as $item)
         {
@@ -168,6 +190,30 @@ class User extends ActiveTable
         
         return $PROPER_INVENTORY;
     } // end grabInventory
+
+    public function grabInventorySize()
+    {
+        // Some aliases to try and keep the query from looking like total
+        // shit.
+        $l_key = $this->RELATED['inventory']['local_key'];
+        $f_table = $this->RELATED['inventory']['foreign_table'];
+        $f_fk = $this->RELATED['inventory']['foreign_key'];
+        
+        $result = $this->db->getOne("
+            SELECT 
+                count(*) 
+            FROM $f_table 
+            INNER JOIN {$this->table_name} ON {$f_table}.{$f_fk} = {$this->table_name}.{$l_key}
+            WHERE {$this->table_name}.user_id = ?
+        ",array($this->getUserId()));
+
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,101);
+        }
+        
+        return $result;
+    } // end grabInventorySize
 
     /**
      * Add some money to the user. 

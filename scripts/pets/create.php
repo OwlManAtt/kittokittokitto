@@ -131,7 +131,7 @@ switch($_REQUEST['state'])
         {
             $ERRORS[] = 'There is a maxlength=25 attribute on that input tag for a reason.';
         }
-		elseif(preg_match('/^[A-Z0-9_!@#\$%\^&\*\(\);:,\.]*$/i',$pet_name) == false)
+		elseif(preg_match('/^[A-Z0-9_!@#\$%\^&\*\(\);:,\.-]*$/i',$pet_name) == false)
         {
             $ERRORS[] = 'Invalid characters in pet name. No spaces allowed!';
         }
