@@ -111,4 +111,28 @@ function pprint_r($var,$return=false)
 	
 	print $content;
 } // end pprint_r
+
+/**
+ * Formats the site's currency into a nice string.
+ *
+ * This will add commas to the number and append the
+ * appropriate form of the site's currency name. 
+ * 
+ * @author Nick 'Owl' Evans <owlmanatt@gmail.com>
+ * @param integer $number 5000 
+ * @return string '5,000 golds'
+ **/
+function format_currency($number)
+{
+    global $APP_CONFIG;
+    
+    $word = $APP_CONFIG['currency_name_plural'];
+    if($number == 1)
+    {
+        $word = $APP_CONFIG['currenct_name_singular'];
+    }
+    
+    return number_format($number).' '.strtolower($word);
+} // end format_currency
+
 ?>

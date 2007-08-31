@@ -33,7 +33,7 @@ switch($_SERVER['RELEASE_MODE'])
 			'cookie_prefix' => 'kkk_',
             'site_name' => 'KittoKittoKitto',
             'currency_name_singular' => 'Gold',
-            'currency_name_plural' => 'Golds', // lol jewgolds
+            'currency_name_plural' => 'Golds',
             'starting_funds' => 500,
             'max_pets' => 2,
 		);
@@ -71,13 +71,13 @@ switch($_SERVER['RELEASE_MODE'])
 
 // These are mission-critical libraries. Nothing else will function correctly without these.
 require_once('DB.php');
-// require_once('exception.lib.php');
 require_once('aphp/aphp.php');
 
 // These are our libs.
 require('includes/meta/macros.lib.php');
 require('includes/meta/jump_page.class.php');
 require('includes/classes/classes.config.php');
+require('includes/cronjobs/cronjobs.config.php');
 
 $DB_OPTIONS = array(
 	'debug' => 2,

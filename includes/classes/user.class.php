@@ -168,6 +168,39 @@ class User extends ActiveTable
         
         return $PROPER_INVENTORY;
     } // end grabInventory
+
+    /**
+     * Add some money to the user. 
+     * 
+     * @param integer $amount The amount to add.
+     * @return bool 
+     **/
+    public function addCurrency($amount) 
+    {
+        // Force-cast to an int, just to be safe.
+        $amount = (integer)$amount;
+        $this->setCurrency(($this->getCurrency() + $amount));
+
+        return $this->save();
+    } // end addCurrency
+
+    /**
+     * Remove some money from the user.
+     *
+     * The user.currency field is an unsigned int, sothe database
+     * should prevent the amount from going negative. As such, the
+     * code will not worry about it.
+     * 
+     * @param integer $amount The amount to remove.
+     * @return bool
+     **/
+    public function subtractCurrency($amount)
+    {
+        // Force-cast to an int, just to be safe.
+        $amount = (integer)$amount;
+        
+        return $this->addCurrency("-$amount");
+    } // end subtractCurrency
     
 } // end User 
 

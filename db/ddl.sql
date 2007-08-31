@@ -16,6 +16,20 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `cron_tab`
+--
+
+DROP TABLE IF EXISTS `cron_tab`;
+CREATE TABLE `cron_tab` (
+  `cron_tab_id` int(11) NOT NULL auto_increment,
+  `cron_class` varchar(50) NOT NULL,
+  `cron_frequency_seconds` int(10) unsigned NOT NULL,
+  `unixtime_next_run` bigint(11) unsigned NOT NULL,
+  `enabled` enum('Y','N') NOT NULL default 'Y',
+  PRIMARY KEY  (`cron_tab_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `item_class`
 --
 
@@ -107,6 +121,55 @@ CREATE TABLE `pet_specie_pet_specie_color` (
   PRIMARY KEY  (`pet_specie_pet_specie_color_id`),
   UNIQUE KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Links a color to a specie. Without entry, specie cannot beco';
+
+--
+-- Table structure for table `shop`
+--
+
+DROP TABLE IF EXISTS `shop`;
+CREATE TABLE `shop` (
+  `shop_id` int(11) NOT NULL auto_increment,
+  `shop_name` varchar(30) NOT NULL,
+  `shop_image` varchar(50) NOT NULL,
+  `welcome_text` text NOT NULL,
+  PRIMARY KEY  (`shop_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `shop_inventory`
+--
+
+DROP TABLE IF EXISTS `shop_inventory`;
+CREATE TABLE `shop_inventory` (
+  `shop_inventory_id` int(11) NOT NULL auto_increment,
+  `item_type_id` int(11) NOT NULL,
+  `shop_id` int(11) NOT NULL,
+  `quantity` int(11) unsigned NOT NULL,
+  `price` int(11) unsigned NOT NULL,
+  PRIMARY KEY  (`shop_inventory_id`),
+  KEY `item_type_id` (`item_type_id`),
+  KEY `shop_id` (`shop_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `shop_restock`
+--
+
+DROP TABLE IF EXISTS `shop_restock`;
+CREATE TABLE `shop_restock` (
+  `shop_restock_id` int(11) NOT NULL auto_increment,
+  `shop_id` int(11) NOT NULL,
+  `item_type_id` int(11) NOT NULL,
+  `restock_frequency_seconds` int(11) unsigned NOT NULL,
+  `unixtime_next_restock` int(11) unsigned NOT NULL,
+  `min_price` bigint(11) NOT NULL,
+  `max_price` bigint(11) NOT NULL,
+  `min_quantity` smallint(3) NOT NULL,
+  `max_quantity` smallint(3) NOT NULL,
+  `store_quantity_cap` smallint(3) unsigned NOT NULL,
+  PRIMARY KEY  (`shop_restock_id`),
+  KEY `shop_id` (`shop_id`,`item_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `user`

@@ -13,7 +13,7 @@
  * @author Nick 'Owl' Evans <owlmanatt@gmail> 
  * @license GNU GPL v2 {@link http://www.gnu.org/licenses/gpl-2.0.txt}
  **/
-class Item extends ActiveTable
+class Item extends ItemType 
 {
     protected $table_name = 'user_item';
     protected $primary_key = 'user_item_id';
@@ -75,18 +75,6 @@ class Item extends ActiveTable
 
         return $this->save();
     } // end giveItem
-
-    /**
-     * Return the full URL to the item's image.
-     * 
-     * @return string URL 
-     **/
-    public function getImageUrl()
-    {
-        global $APP_CONFIG;
-        
-        return "{$APP_CONFIG['public_dir']}/resources/items/{$this->getRelativeImageDir()}/{$this->getItemImage()}";
-    } // end getImageUrl
 
 } // end Item
 

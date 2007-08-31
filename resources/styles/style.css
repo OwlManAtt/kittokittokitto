@@ -174,3 +174,14 @@ h3 {
     height: auto !important;
     height: 100px;
 }
+
+.item-box-detail {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    width: 80%;
+    text-align: left;
+}
+
+.item-box p {
+    margin: 0;
+}

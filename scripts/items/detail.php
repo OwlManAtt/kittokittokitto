@@ -33,6 +33,7 @@ switch($_REQUEST['state'])
                 'id' => $item->getUserItemId(),
                 'name' => $item->getItemName(),
                 'description' => $item->getItemDescr(),
+                'image' => $item->getImageUrl(),
                 'actions' => array(
                     '' => 'Select one...',
                     'use' => 'Use',

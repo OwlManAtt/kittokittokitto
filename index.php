@@ -1,10 +1,4 @@
 <?php
-if($_GET["xml"]=="yes")
-{
-header('Content-Type: application/xhtml');
-}
-
-
 session_start();
 ob_start();
 require('includes/main.inc.php'); // <-- Provides $User, $logged_in, $access_level, etc.
@@ -17,9 +11,31 @@ if($_REQUEST['page_slug'] == null)
 $slug = stripinput($_REQUEST['page_slug']);
 
 $jump_page = new JumpPage($db);
-$jump_page = $jump_page->findByPageSlug($slug);
-$jump_page = $jump_page[0];
+$jump_page = $jump_page->findOneByPageSlug($slug);
 // Done loading page info.
+
+/*
+* =========================
+* ==== Ghettocron v3.0 ====
+* =========================
+* (Red, if you're still out there, I hope 
+* you irlol'd hard when you see this. GCv3 is
+* dedicated to you.)
+*
+* Ghettocron is the name of crontab emulation
+* from (I *think!*) the original OPG sourcecode 
+* (I could be mistaken).
+*
+* Entries in the cron_tab table will be run if
+* it is their due time. Obviously, ghettocron is
+* less accurate then proper cron, but I am designing
+* for the largest possible market, and everyone may
+* not have/know how to use cron.
+*/
+foreach(Cronjob::listPendingJobs($db) as $job)
+{
+    $job->run();
+} // end cronjob loop
 
 // Display page.
 if(is_a($jump_page,'JumpPage') == false)
@@ -44,7 +60,7 @@ else
 
 	if($jump_page->hasAccess($access_level) == false)
 	{
-		if($access_level == 'b&')
+		if($access_level == 'banned')
 		{
 			// 403 B&'d
 			// TODO
