@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `pet_specie` DISABLE KEYS */;
 LOCK TABLES `pet_specie` WRITE;
-INSERT INTO `pet_specie` (`pet_specie_id`, `specie_name`, `specie_descr`, `relative_image_dir`, `max_hunger`, `max_happiness`, `available`) VALUES (1,'Harbl','The Harbl is a cute and cuddly sac-like creature.','harbl',10,10,'Y'),(2,'Desu','The desu is the best pet ever~desu. It has one red eye and one green eye~desu. However, they are always hungry~desu.','desu',25,10,'Y'),(3,'Kitto','Somehow, somewhere, someday...','kitto',12,10,'Y'),(4,'Ferret','A boring, regular ferret. They\'re easy.','ferrets',6,3,'Y');
+INSERT INTO `pet_specie` (`pet_specie_id`, `specie_name`, `specie_descr`, `relative_image_dir`, `max_hunger`, `max_happiness`, `available`) VALUES (1,'Kitto','Somehow, someone, somewhere!','kitto',10,10,'Y'),(2,'Zutto','Forever, forever, forever!','zutto',10,10,'Y');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `pet_specie` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

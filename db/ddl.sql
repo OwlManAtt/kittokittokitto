@@ -211,6 +211,21 @@ CREATE TABLE `user_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Table structure for table `user_notification`
+--
+
+DROP TABLE IF EXISTS `user_notification`;
+CREATE TABLE `user_notification` (
+  `user_notification_id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL,
+  `notification_text` text NOT NULL,
+  `notification_url` text NOT NULL,
+  `notification_datetime` datetime NOT NULL,
+  PRIMARY KEY  (`user_notification_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `user_pet`
 --
 

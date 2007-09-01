@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `pet_specie_color` DISABLE KEYS */;
 LOCK TABLES `pet_specie_color` WRITE;
-INSERT INTO `pet_specie_color` (`pet_specie_color_id`, `color_name`, `color_img`, `base_color`) VALUES (1,'Red','red.png','Y'),(2,'Blue','blue.png','Y'),(3,'Green','yellow.png','Y'),(4,'Yellow','yellow.png','Y'),(5,'Rainbow','aids.png','N');
+INSERT INTO `pet_specie_color` (`pet_specie_color_id`, `color_name`, `color_img`, `base_color`) VALUES (1,'Red','red.png','Y'),(2,'Blue','blue.png','Y'),(3,'Rozen','rozen.png','N');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `pet_specie_color` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
