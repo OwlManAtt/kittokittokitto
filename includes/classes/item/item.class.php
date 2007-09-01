@@ -65,13 +65,22 @@ class Item extends ItemType
     /**
      * Transfer ownership of an item to a different user.
      * 
-     * @param int $new_user_id 
+     * @param User $new_user
      * @return bool
      **/
-    public function giveItem($new_user_id)
+    public function giveItem(User $new_user)
     {
-        // TODO - add event.
-        $this->setUserId($new_user_id);
+        $old_user = new User($this->db);
+        $old_user = $old_user->findOneByUserId($this->getUserId());
+
+        $old_username = 'An old man';
+        if($old_user != null)
+        {
+            $old_username = $old_user->getUserName();
+        }
+        
+        $this->setUserId($new_user->getUserId());
+        $new_user->notify("{$old_username} has given you <strong>{$this->getItemName()}</strong>.",'items');
 
         return $this->save();
     } // end giveItem

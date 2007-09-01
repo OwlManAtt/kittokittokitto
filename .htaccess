@@ -11,6 +11,7 @@ RewriteRule ^docs/(.*)$ docs/$1 [L]
 # Specific, prettier URLs.
 RewriteRule ^profile/([0-9]+) index.php?page_slug=profile&user_id=$1 [NC,L]
 RewriteRule ^shop/([0-9]+) index.php?page_slug=shop&shop_id=$1 [NC,L]
+RewriteRule ^notice/([0-9]+) index.php?page_slug=notice&state=jump&notification_id=$1 [NC,L]
 
 # Pagination for /items/ - /items is still handled by the catch-all.
 RewriteRule ^items/([0-9]+) index.php?page_slug=items&page=$1 [NC,L]

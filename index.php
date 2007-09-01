@@ -51,11 +51,28 @@ else
 		'slug' => $jump_page->getPageSlug(),
 	);
 	$renderer->assign('self',$SELF);
-	
 	$renderer->assign('fat','fade-EEAA88');
 	
 	$renderer->assign('page_title',$jump_page->getPageTitle());
 	$renderer->assign('page_html_title',$jump_page->getPageHtmlTitle());
+    
+    if(is_object($User) == true)
+    {
+        $notice = $User->grabNotifications('ORDER BY notification_datetime DESC','LIMIT 1');
+        $notice = $notice[0];
+
+        if($notice != null)
+        {
+            $NOTICE = array(
+                'id' => $notice->getUserNotificationId(),
+                'url' => $notice->getNotificationUrl(),
+                'text' => $notice->getNotificationText(),
+            );
+            
+            $renderer->assign('site_notice',$NOTICE);
+        } // end notice exists
+    } // end user exists
+    
 	$renderer->display("layout/{$jump_page->getLayoutType()}/header.tpl");
 
 	if($jump_page->hasAccess($access_level) == false)

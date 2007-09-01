@@ -248,6 +248,10 @@ switch($_REQUEST['state'])
         {
             $ERRORS[] = 'Invalid user specified.';
         }
+        elseif($User->getUserName() == $other_user->getUserName())
+        {
+            $ERRORS[] = 'You cannot give an item to yourself.';
+        }
 
         if(sizeof($ERRORS) > 0)
         {
@@ -255,7 +259,7 @@ switch($_REQUEST['state'])
         } 
         else
         {
-            $item->giveItem($other_user->getUserId());
+            $item->giveItem($other_user);
             $_SESSION['item_notice'] = "You have given <strong>{$item->getItemName()}</strong> to {$other_user->getUserName()}.";
             
             redirect('items');

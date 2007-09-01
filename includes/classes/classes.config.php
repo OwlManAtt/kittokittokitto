@@ -1,13 +1,17 @@
 <?php
-// Assorted stuff.
-require('user.class.php');
-require('cronjob.class.php');
+/**
+ *  
+ **/
+
+// User stuff.
+require('user/user.class.php');
+require('user/notification.class.php');
 
 // Pet stuff.
-require('pet_specie.class.php');
-require('pet_specie_color.class.php');
-require('pet_specie_pet_specie_color.class.php');
-require('pet.class.php');
+require('pet/pet_specie.class.php');
+require('pet/pet_specie_color.class.php');
+require('pet/pet_specie_pet_specie_color.class.php');
+require('pet/pet.class.php');
 
 // Item stuff.
 require('item/item_type.class.php');
@@ -21,4 +25,6 @@ require('shop/shop.class.php');
 require('shop/shop_inventory.class.php');
 require('shop/shop_restock.class.php');
 
+// Ghettocron.
+require('cronjob.class.php');
 ?>

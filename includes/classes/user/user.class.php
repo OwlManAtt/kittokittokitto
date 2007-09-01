@@ -40,6 +40,11 @@ class User extends ActiveTable
             'local_key' => 'user_id',
             'foreign_key' => 'user_id',
         ),
+        'notifications' => array(
+            'class' => 'Notification',
+            'local_key' => 'user_id',
+            'foreign_key' => 'user_id',
+        ),
     );
 
     /**
@@ -105,7 +110,8 @@ class User extends ActiveTable
     /**
      * Format and localize a timestamp for displaying to this user.
      * 
-     * @param mixed $datetime 
+     * @param string|int $datetime A UNIX timestamp. A non-int will be
+     *                      converted with strototime().
      * @return string The localized date/time.
      * @todo replace it with something that isn't bullocks.
      **/
@@ -178,10 +184,10 @@ class User extends ActiveTable
         
         // Translate into start,# to fetch.
         $total = $end - $start;
-        $order_by = "LIMIT $start,$total";
+        $limit = "LIMIT $start,$total";
         
         $PROPER_INVENTORY = array();
-        $inventory = $this->grab('inventory',$order_by);
+        $inventory = $this->grab('inventory',$limit);
         
         foreach($inventory as $item)
         {
@@ -247,6 +253,31 @@ class User extends ActiveTable
         
         return $this->addCurrency("-$amount");
     } // end subtractCurrency
+
+    /**
+     * Slap a notice onto a user.
+     * 
+     * @param string $message The message.
+     * @param string $url URL fragment (slug/args/) to link to.
+     * @return bool
+     **/
+    public function notify($message,$url)
+    {
+        $notice = new Notification($this->db);
+        $notice->setUserId($this->getUserId());
+        $notice->setNotificationDatetime($notice->sysdate());
+        $notice->setNotificationText($message);
+        $notice->setNotificationUrl($url);
+        
+        return $notice->save();
+    } // end notify
+
+    public function clearNotifications()
+    {
+        $this->db->query('DELETE FROM user_notification WHERE user_id = ?',array($this->getUserId()));
+
+        return true;
+    } // end clearNotifications
     
 } // end User 
 

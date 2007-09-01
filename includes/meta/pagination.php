@@ -11,7 +11,7 @@
  *
  * @license GPL v3 <http://www.gnu.org/licenses/gpl-3.0.txt>
  * @link <http://www.virtualpetlist.com/forum/showthread.php?t=1733>
- * @author Caroline Lukens <frostbitekitten@comcast.net>
+ * @author Caroline Lukens <feuerfalke@gmail.com>
  * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
  * @param string $page_slug The page's slug and any other URL segments.
  * @param mixed $object_count Total number of items being peginated.

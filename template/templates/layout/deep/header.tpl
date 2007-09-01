@@ -26,6 +26,7 @@
             </div>
 
             <div id='right-column'>
+                {if $site_notice != ''}{include file='layout/event.tpl' notice=$site_notice}{/if}
                 <h2 class="page-title">{$page_html_title}</h2>
 
                 <!-- Page beging here. -->
