@@ -32,6 +32,7 @@ function pagination($page_slug,$object_count,$objects_per_page,$current_page,$in
     
     // Find out how many pages there are.
     $page_count = ceil($object_count / $objects_per_page) + ($initial_page - 1);
+    if($page_count == 0) { $page_count = 1; }
     
     // Aliases to make shit readable.
     $n = $page_count;
