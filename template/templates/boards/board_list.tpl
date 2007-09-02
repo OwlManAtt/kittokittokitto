@@ -1,3 +1,5 @@
+<div id='breadcrumb-trail'>Boards</div>
+
 <table class='dataTable' width='70%'>
     <tr>
         <td class='dataTableSubhead' align='center'>Board</td>
