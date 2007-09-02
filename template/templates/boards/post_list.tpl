@@ -1,10 +1,15 @@
-<div id='breadcrumb-trail'>{kkkurl link_text='Boards' slug='boards'} &raquo; {kkkurl link_text=$board.name slug='threads' args=$board.id} &raquo; {$thread.name}</div>
+<div id='breadcrumb-trail'>{kkkurl link_text='Boards' slug='boards'} &raquo; {kkkurl link_text=$board.name slug='threads' args=$board.id} &raquo; {if $thread.sticky == 1}Sticky: {/if}{$thread.name}{if $thread.can_edit == 1} <span style='color: gray;'>({kkkurl link_text='Change Topic' slug='edit-thread' args=`$thread.id`/`$page`})</span>{/if}</div>
+
+{if $board_notice != ''}<p id='forum_notice' class='{$fat}'>{$board_notice}</p>{/if}
 
 {section name=index loop=$posts}
-{include file='boards/_post.tpl' post=$posts[index]}
+{include file='boards/_post.tpl' post=$posts[index] locked=$thread.locked}
 {sectionelse}
-<p>There are no posts in this thread. That's quite odd...</p>
+<p>There are no posts on this page!</p> 
 {/section}
+
+<br clear='all' />
+<div class='pages'>{$pagination}</div>
 
 {if $thread.locked == 'N'}<div align='center'>
     <a name='post'>&nbsp;</a>
@@ -28,6 +33,3 @@
         </form>
     </div>
 </div>{/if}
-
-<br clear='all' />
-<div class='pages'>{$pagination}</div>

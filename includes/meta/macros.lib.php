@@ -165,6 +165,7 @@ function clean_xhtml($raw_xhtml)
     }
     
     $config->set('AutoFormat','AutoParagraph',true);
+    $config->set('AutoFormat','Linkify',true);
     
     $purifier = new HTMLPurifier($config);
     return $purifier->purify($raw_xhtml);

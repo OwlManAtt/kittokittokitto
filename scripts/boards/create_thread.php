@@ -79,7 +79,7 @@ else
                     'user_id' => $User->getUserId(),
                     'thread_created_datetime' => $thread->sysdate(),
                     'thread_last_posted_datetime' => $thread->sysdate(),
-                    'stickied' => 1, // 1 = not stuck; see doc for BoardThread#getThreadStickied() for details.
+                    'stickied' => 0,
                     'locked' => 'N',
                 ));
 

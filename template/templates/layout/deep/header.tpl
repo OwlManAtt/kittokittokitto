@@ -9,7 +9,8 @@
             @import url( {$display_settings.public_dir}/resources/styles/style.css );
         </style>
         <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/fat.js'></script>
-        <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/quote.js'></script>
+        <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/forum.js'></script>
+        {if $include_tinymce == 1}{include file='layout/tinymce.tpl' theme=$tinymce_theme}{/if}
     </head>
     <body>
         <div id='header'>

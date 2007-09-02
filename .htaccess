@@ -20,6 +20,8 @@ RewriteRule ^items/([0-9]+) index.php?page_slug=items&page=$1 [NC,L]
 # on that URL (/thread/1/2/).
 RewriteRule ^threads/([0-9]+)(/([0-9]+))? index.php?page_slug=threads&board_id=$1&page=$3 [NC,L]
 RewriteRule ^thread/([0-9]+)(/([0-9]+))? index.php?page_slug=thread&thread_id=$1&page=$3 [NC,L]
+RewriteRule ^edit-post/([0-9]+)(/([0-9]+))? index.php?page_slug=edit-post&post_id=$1&page=$3 [NC,L]
+RewriteRule ^edit-thread/([0-9]+)(/([0-9]+))? index.php?page_slug=edit-thread&thread_id=$1&page=$3 [NC,L]
 
 # Gotta catch 'em all! Don't put any rules below this one.
 RewriteRule ^([A-Z0-9-]+)(/(.*))?$ index.php?page_slug=$1 [QSA,NC,L]

@@ -55,6 +55,27 @@ class BoardThread extends ActiveTable
     } // end getStickied
 
     /**
+     * Similarly to getStickied, this abstracts the weirdness. 
+     * 
+     * @param bool $value 
+     * @return bool
+     **/
+    public function setStickied($value)
+    {
+        $real = null;
+        if($value == true)
+        {
+            $real = 0;
+        }   
+        else
+        {
+            $real = 1;
+        }
+
+        return $this->set($real,'stickied');
+    } // end setStickied
+
+    /**
      * Return the total number of posts under this thread.
      *
      * Useful for pagination. Also, that query should work across
@@ -99,12 +120,31 @@ class BoardThread extends ActiveTable
         } // end problem w/ args.
         
         // Translate into start,# to fetch.
-        $total = $end - $start;
-        $limit = "LIMIT $start,$total";
+        if($start !== null)
+        {
+            $total = $end - $start;
+            $limit = "LIMIT $start,$total";
+        }
         $posts = $this->grab('posts','ORDER BY board_thread_post.posted_datetime ASC',$limit);
 
         return $posts;
     } // end grabPosts
+
+    /**
+     * Delete a thread and its associated posts.
+     * 
+     * @return bool 
+     **/
+    public function destroy()
+    {
+        $posts = $this->grabPosts();
+        foreach($posts as $post)
+        {
+            $post->destroy();  
+        } 
+
+        return parent::destroy();
+    } // end destroy
 } // end BoardThread
 
 ?>

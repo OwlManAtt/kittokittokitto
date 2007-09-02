@@ -32,6 +32,8 @@ else
         'id' => $thread->getBoardThreadId(),
         'name' => $thread->getThreadName(),
         'locked' => $thread->getLocked(),
+        'sticky' => $thread->getStickied(),
+        'can_edit' => (($User->hasPermission('edit_post') == true)) ? true : false,
     );
     
     // Load the board info.
@@ -64,12 +66,54 @@ else
             'avatar_name' => $post->getAvatarName(),
             'user_post_count' => $post->getPostCount(),
             'page' => $page_id,
+            'can_edit' => (($User->hasPermission('edit_post') == true)) ? true : false,
         );
     } // end thread loop
 
+    $ADMIN_ACTIONS = array('' => 'Moderation...');
+
+    if($User->hasPermission('delete_post') == true)
+    {
+        $ADMIN_ACTIONS['delete_post'] = 'Delete Post';
+        $ADMIN_ACTIONS['delete_thread'] = 'Delete Thread';
+    }
+
+    if($User->hasPermission('manage_thread') == true)
+    {
+        if($thread->getLocked() == 'N')
+        {
+            $ADMIN_ACTIONS['lock'] = 'Lock Thread'; 
+        }
+        else
+        {
+            $ADMIN_ACTIONS['lock'] = 'Unock Thread'; 
+        }
+         
+        if($thread->getStickied() == 0)
+        {
+            $ADMIN_ACTIONS['stick'] = 'Stick Thread';
+        }
+        else
+        {
+            $ADMIN_ACTIONS['stick'] = 'Unstick Thread';
+        }
+    } // end thread management
+    
+    if(sizeof($ADMIN_ACTIONS) > 1)
+    {
+        $renderer->assign('actions',$ADMIN_ACTIONS);
+    }
+
+    if($_SESSION['board_notice'] != null)
+    {
+        $renderer->assign('board_notice',$_SESSION['board_notice']);
+        unset($_SESSION['board_notice']);
+    }
+    
     $renderer->assign('board',$BOARD_DATA);    
     $renderer->assign('thread',$THREAD_DATA);    
     $renderer->assign('posts',$POST_LIST);
+    $renderer->assign('page',$page_id);
     $renderer->assign('pagination',$pagination);
     $renderer->display('boards/post_list.tpl');
 } // end board exists

@@ -57,6 +57,23 @@ class BoardPost extends ActiveTable
     } // end create
 
     /**
+     * Delete a post and remove one from the user's postcount.
+     * 
+     * Since this is called in a loop from BoardThead#destroy(),
+     * I wrote the update SQL so it only has to do one query 
+     * instead of four.
+     *
+     * @ihatemysql
+     * @return bool 
+     **/
+    public function destroy()
+    {
+        $result = $this->db->query('UPDATE user SET post_count = post_count - 1 WHERE user_id = ?',array($this->getUserId())); 
+        
+        return parent::destroy();
+    } // end destroy
+
+    /**
      * If the poster has selected an avatar, return the URL to the image.
      * 
      * @return null|string  

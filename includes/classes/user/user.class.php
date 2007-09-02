@@ -11,7 +11,7 @@
  * @subpackage Core 
  * @copyright 2007 Nicholas Evans
  * @author Nick 'Owl' Evans <owlmanatt@gmail> 
- * @license GNU GPL v2 {@link http://www.gnu.org/licenses/gpl-2.0.txt}
+ * @license GNU GPL v3 {@link http://www.gnu.org/licenses/gpl-3.0.txt}
  **/
 class User extends ActiveTable
 {
@@ -151,6 +151,9 @@ class User extends ActiveTable
                 break;
             } // end ignore_board_lock
             
+            case 'delete_post': 
+            case 'edit_post': 
+            case 'manage_thread': 
 			case 'forum_mod':
 			{
 				if(in_array($this->getAccessLevel(),array('mod','admin')) == true)

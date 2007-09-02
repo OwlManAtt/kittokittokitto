@@ -56,6 +56,12 @@ else
 	$renderer->assign('page_title',$jump_page->getPageTitle());
 	$renderer->assign('page_html_title',$jump_page->getPageHtmlTitle());
     
+    if($jump_page->getIncludeTinymce() == 'Y')
+    {
+        $renderer->assign('include_tinymce',true);
+        $renderer->assign('tinymce_theme','advanced');
+    } // end include tinyMCE
+    
     if(is_object($User) == true)
     {
         $notice = $User->grabNotifications('ORDER BY notification_datetime DESC','LIMIT 1');
