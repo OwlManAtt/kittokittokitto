@@ -16,6 +16,69 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `avatar`
+--
+
+DROP TABLE IF EXISTS `avatar`;
+CREATE TABLE `avatar` (
+  `avatar_id` int(11) NOT NULL auto_increment,
+  `avatar_name` varchar(50) NOT NULL,
+  `avatar_image` varchar(50) NOT NULL,
+  `active` enum('Y','N') NOT NULL default 'Y',
+  PRIMARY KEY  (`avatar_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `board`
+--
+
+DROP TABLE IF EXISTS `board`;
+CREATE TABLE `board` (
+  `board_id` smallint(3) NOT NULL auto_increment,
+  `board_name` varchar(100) NOT NULL,
+  `board_descr` varchar(255) NOT NULL,
+  `board_locked` enum('N','Y') NOT NULL default 'N',
+  `news_source` enum('N','Y') NOT NULL default 'N',
+  `order_by` tinyint(2) NOT NULL,
+  PRIMARY KEY  (`board_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `board_thread`
+--
+
+DROP TABLE IF EXISTS `board_thread`;
+CREATE TABLE `board_thread` (
+  `board_thread_id` int(10) unsigned NOT NULL auto_increment,
+  `board_id` smallint(3) NOT NULL,
+  `thread_name` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `thread_created_datetime` datetime NOT NULL,
+  `thread_last_posted_datetime` datetime NOT NULL,
+  `stickied` tinyint(1) NOT NULL default '0',
+  `locked` enum('N','Y') NOT NULL default 'N',
+  PRIMARY KEY  (`board_thread_id`),
+  KEY `board_id` (`board_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `board_thread_post`
+--
+
+DROP TABLE IF EXISTS `board_thread_post`;
+CREATE TABLE `board_thread_post` (
+  `board_thread_post_id` int(10) unsigned NOT NULL auto_increment,
+  `board_thread_id` int(10) unsigned NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `posted_datetime` datetime NOT NULL,
+  `post_text` text NOT NULL,
+  PRIMARY KEY  (`board_thread_post_id`),
+  KEY `board_thread_id` (`board_thread_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `cron_tab`
 --
 
@@ -189,11 +252,17 @@ CREATE TABLE `user` (
   `age` smallint(3) unsigned NOT NULL,
   `gender` enum('male','female') NOT NULL,
   `profile` text NOT NULL,
+  `signature` text NOT NULL,
+  `avatar_id` int(11) NOT NULL,
+  `user_title` varchar(50) NOT NULL default 'User',
   `datetime_created` datetime default NULL,
+  `post_count` int(10) unsigned NOT NULL,
+  `datetime_last_post` datetime NOT NULL,
   `active_user_pet_id` int(11) NOT NULL,
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `user_name` (`user_name`),
-  KEY `active_user_pet_id` (`active_user_pet_id`)
+  KEY `active_user_pet_id` (`active_user_pet_id`),
+  KEY `avatar_id` (`avatar_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
