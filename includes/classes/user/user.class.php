@@ -17,6 +17,14 @@ class User extends ActiveTable
 {
 	protected $table_name = 'user';
     protected $primary_key = 'user_id';
+    protected $LOOKUPS = array(
+        array(
+            'local_key' => 'avatar_id',
+            'foreign_table' => 'avatar',
+            'foreign_key' => 'avatar_id',
+            'join_type' => 'left',
+        ),
+    );
     protected $RELATED = array(
         'pets' => array(
             'class' => 'Pet',
@@ -133,6 +141,16 @@ class User extends ActiveTable
 		
 		switch($permission)
 		{
+            case 'ignore_board_lock':
+            {
+				if($this->getAccessLevel() == 'admin')
+                {
+                    $has = true;
+                }
+            
+                break;
+            } // end ignore_board_lock
+            
 			case 'forum_mod':
 			{
 				if(in_array($this->getAccessLevel(),array('mod','admin')) == true)
@@ -187,7 +205,7 @@ class User extends ActiveTable
         $limit = "LIMIT $start,$total";
         
         $PROPER_INVENTORY = array();
-        $inventory = $this->grab('inventory',$limit);
+        $inventory = $this->grab('inventory','ORDER BY user_item_id',$limit);
         
         foreach($inventory as $item)
         {

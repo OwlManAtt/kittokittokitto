@@ -3,6 +3,15 @@ body {
 	color: #474E44;
 }
 
+a {
+    color: #3C657B;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
 #header {
     padding: 0px;   
     margin-top: 0.3em;
@@ -12,8 +21,8 @@ body {
     border-bottom: 1px solid #bab1b1;
     background: #CCCFBC;
     text-align:right;
-    padding-right:2em;
-    padding-left:-.5em;
+    padding-right: 2em;
+    padding-left: .5em;
 }
 
 #header h1 {
@@ -85,19 +94,20 @@ h3 {
     margin-left: auto;
     display: block;
     margin-right: auto;
-    font-size: 0.9em;
+    font-size: 1em;
     margin-top: 5px;
 }
 
 #footer a {
     color: #fff;
     font-weight: bold;
+    text-decoration: underline;
 }
 
 #footer p
 {
 	margin: 0 0 0 2px;
-	font-size: xx-small;
+	font-size: x-small;
 	text-align: center;
 }
 
@@ -170,9 +180,9 @@ h3 {
     width: 150px;
     float: left;
     margin: 1.5em;
-    min-height: 100px;
+    min-height: 150px;
     height: auto !important;
-    height: 100px;
+    height: 150px;
 }
 
 .item-box-detail {
@@ -202,4 +212,75 @@ h3 {
     padding: 0; 
     background-color: transparent;
     color: #87A284;
+}
+
+#breadcrumb-trail {
+    font-size: small;
+    margin-left: 20px;
+    margin-bottom: 1em;
+    width: 80%;
+}
+
+#new-post {
+    float: right;
+}
+
+.board-post {
+    width: 97%;
+    margin-bottom: 1em;
+    padding: .5em;
+    background-color: #DADFB5;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+}
+
+.post-userinfo {
+    width: 14%;
+    float: left;
+    height: 100%;
+    background-color: #EBEFD1;
+    margin-right: 10px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -opera-border-radius: 15px;
+}
+
+.post-userinfo ul {
+    list-style: none;
+    margin: 0;
+    padding: .5em;
+}
+
+.post-userinfo ul .username
+{
+    font-weight: bold;
+    font-size: large;
+}
+
+.post-content {
+    width: 80%;
+    float: left;
+}
+
+.post-content-header {
+    color: gray;
+    margin: 0 0 .5em 0;
+    padding: 0;
+    font-size: small;
+    border-bottom: 1px solid gray;
+}
+
+.post-signature {
+    margin-top: .5em;
+    border-top: 1px solid gray;
+}
+
+.quick-reply {
+    width: 80%;
+    padding: 1em;
+    background-color: #EBEFD1;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -opera-border-radius: 15px;
 }

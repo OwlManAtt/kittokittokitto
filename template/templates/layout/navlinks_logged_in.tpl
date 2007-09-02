@@ -4,6 +4,6 @@
     <li>{kkkurl link_text='Items' slug='items'}</li>
     <li>{kkkurl link_text='Shops' slug='shops'}</li>
     <li>{kkkurl link_text='Games' slug='games'}</li>
+    <li>{kkkurl link_text='Boards' slug='boards'}</li>
     <li>{kkkurl link_text='Messages' slug='messages'}</li>
-    <li>{kkkurl link_text='Forum' slug='forum'}</li>
 </ul>

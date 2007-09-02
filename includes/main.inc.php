@@ -19,6 +19,9 @@ require('includes/config.inc.php');
 require_once('Smarty/Smarty.class.php');
 require_once('Smarty/SmartyPaginate.class.php');
 
+// HTMLPurified is require_once()'d, but not in main - see the clean_xhtml
+// macro for details on why..
+
 // Deploy the renderer.
 $renderer = new Smarty();
 

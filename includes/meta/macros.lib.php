@@ -81,7 +81,7 @@ function draw_errors($ERRORS)
  **/
 function stripinput($text) 
 {
-	if (QUOTES_GPC) $text = stripslashes($text);
+    if(get_magic_quotes_gpc() == 1) { stripslashes($text); }
 	$search = array("\"", "'", "\\", '\"', "\'", "<", ">", "&nbsp;");
 	$replace = array("&quot;", "&#39;", "&#92;", "&quot;", "&#39;", "&lt;", "&gt;", " ");
 	$text = str_replace($search, $replace, $text);
@@ -134,5 +134,66 @@ function format_currency($number)
     
     return number_format($number).' '.strtolower($word);
 } // end format_currency
+
+/**
+ * Macro to include HTMLPurifier and use it.
+ *
+ * This does require_once because HTMLPurifier is *large*
+ * (like, 100+ files), so it's not really a good use of
+ * system resources to parse all of that PHP when it's only
+ * going to be used in ten scripts, tops. 
+ * 
+ * @param string $raw_xhtml Potentially evil HTML.
+ * @return string Very nice, happy HTML.
+ **/
+function clean_xhtml($raw_xhtml)
+{
+    global $APP_CONFIG;
+
+    if(get_magic_quotes_gpc() == 1) { $raw_xhtml = stripslashes($raw_xhtml); }
+    
+    require_once('HTMLPurifier/HTMLPurifier.auto.php');
+    
+    $config = HTMLPurifier_Config::createDefault();
+    if($APP_CONFIG['htmlpurifier_cachedir'] == null)
+    {
+        $config->set('Core','DefinitionCache',null);
+    }
+    else
+    {
+        $config->set('Cache','SerializerPath',$APP_CONFIG['htmlpurifier_cachedir']);
+    }
+    
+    $config->set('AutoFormat','AutoParagraph',true);
+    
+    $purifier = new HTMLPurifier($config);
+    return $purifier->purify($raw_xhtml);
+} // end clean_xhtml
+
+function secondsToMinutes($seconds)
+{
+    if($seconds < 60)
+    {
+        $text = "$seconds second";
+        if($seconds > 1)
+        {
+            $text .= 's';
+        }
+    } // end seconds
+    else
+    {
+        $minutes = round(($seconds / 60),1);
+        if($minutes <= 1)
+        {
+            $text = 'minute';
+        }
+        else
+        {
+            $text = "$minutes minutes";
+        }
+    } // end minutes
+    
+    return $text;
+} // end seconds
 
 ?>

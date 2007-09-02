@@ -25,6 +25,11 @@ require('shop/shop.class.php');
 require('shop/shop_inventory.class.php');
 require('shop/shop_restock.class.php');
 
+// Board stuff.
+require('board/board.class.php');
+require('board/board_thread.class.php');
+require('board/board_post.class.php');
+
 // Ghettocron.
 require('cronjob.class.php');
 ?>

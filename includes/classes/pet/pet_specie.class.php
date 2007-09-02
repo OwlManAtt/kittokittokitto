@@ -18,3 +18,5 @@ class PetSpecie extends ActiveTable
     protected $table_name = 'pet_specie';
     protected $primary_key = 'pet_specie_id';
 } // end PetSpecie
+
+?>

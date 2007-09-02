@@ -15,7 +15,7 @@ $max_items_per_page = 15;
 
 // Handle the page ID for slicing and dicing the inventory up.
 $page_id = stripinput($_REQUEST['page']);
-if($page_id == null)
+if($page_id == null || $page_id <= 0)
 {
     $page_id = 1;
 }

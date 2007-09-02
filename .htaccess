@@ -16,5 +16,10 @@ RewriteRule ^notice/([0-9]+) index.php?page_slug=notice&state=jump&notification_
 # Pagination for /items/ - /items is still handled by the catch-all.
 RewriteRule ^items/([0-9]+) index.php?page_slug=items&page=$1 [NC,L]
 
-# Gotta catch 'em all!
+# The boards need to support both a 'nice' URL (/thread/1) AND a page number
+# on that URL (/thread/1/2/).
+RewriteRule ^threads/([0-9]+)(/([0-9]+))? index.php?page_slug=threads&board_id=$1&page=$3 [NC,L]
+RewriteRule ^thread/([0-9]+)(/([0-9]+))? index.php?page_slug=thread&thread_id=$1&page=$3 [NC,L]
+
+# Gotta catch 'em all! Don't put any rules below this one.
 RewriteRule ^([A-Z0-9-]+)(/(.*))?$ index.php?page_slug=$1 [QSA,NC,L]

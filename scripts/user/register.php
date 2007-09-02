@@ -113,6 +113,7 @@ switch($_REQUEST['state'])
             $new_user->setGender($USER['gender']);
             $new_user->setProfile($USER['profile']);
             $new_user->setCurrency($APP_CONFIG['starting_funds']);
+            $new_user->setUserTitle('User');
             $new_user->setDatetimeCreated($new_user->sysdate());
 			$new_user->save();
 			

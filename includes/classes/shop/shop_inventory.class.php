@@ -45,6 +45,18 @@ class ShopInventory extends ActiveTable
         return true;
     } // end sell
 
+   /**
+     * Return the full URL to the item's image.
+     * 
+     * @return string URL 
+     **/
+    public function getImageUrl()
+    {
+        global $APP_CONFIG;
+        
+        return "{$APP_CONFIG['public_dir']}/resources/items/{$this->getRelativeImageDir()}/{$this->getItemImage()}";
+    } // end getImageUrl
+
 } // end ShopInventory
 
 ?>

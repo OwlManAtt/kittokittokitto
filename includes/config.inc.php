@@ -36,6 +36,12 @@ switch($_SERVER['RELEASE_MODE'])
             'currency_name_plural' => 'Golds',
             'starting_funds' => 500,
             'max_pets' => 2,
+            'post_interval' => 30,
+
+            // The HTMLPurifier cache must be writable by the webserver's user.
+            // Set this to null to disable the cache (but you *want* the cache
+            // for performance reasons!). Oh, and no trailing slash.
+            'htmlpurifier_cachedir' => '/var/www/kittokittokitto/cache',
 		);
 		
 		break;

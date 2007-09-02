@@ -9,6 +9,7 @@
             @import url( {$display_settings.public_dir}/resources/styles/style.css );
         </style>
         <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/fat.js'></script>
+        <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/quote.js'></script>
     </head>
     <body>
         <div id='header'>

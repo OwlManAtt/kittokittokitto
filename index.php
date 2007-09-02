@@ -102,4 +102,5 @@ else
 	$renderer->display("layout/{$jump_page->getLayoutType()}/footer.tpl");
 } // end else-page found
 
+$db->disconnect();
 ?>
