@@ -36,8 +36,15 @@
 		<td class='inputTableRowAlt inputTableSubhead'>Age</td>
 		<td class='inputTableRowAlt'>{$profile.age|number_format}</td>
 	</tr>
+    <tr>
+		<td align='center' class='inputTableRow' colspan='2'>
+            <form action='{$display_settings.public_dir}/write-new-message/{$profile.id}/' method='get'>
+                <input type='submit' value='Send Message' />
+            </form>
+        </td>
+    </tr>
     {if $profile.special_status != ''}<tr>
-		<td align='center' class='inputTableRow' colspan='2' style='font-size: x-large;'>{$profile.special_status}</td>
+		<td align='center' class='inputTableRowAlt' colspan='2' style='font-size: x-large;'>{$profile.special_status}</td>
     </tr>{/if}
 </table>
 

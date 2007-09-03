@@ -363,3 +363,8 @@ h3 {
     -webkit-border-radius: 15px;
     -opera-border-radius: 15px;
 }
+
+.inline-form {
+    display: inline;
+    padding-left: 1em;
+}

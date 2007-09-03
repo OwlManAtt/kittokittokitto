@@ -50,7 +50,7 @@ else
             break;
         } // end admin
 
-        case 'admin':
+        case 'banned':
         {
             $PROFILE['special_status'] = 'This user has been banned.';
 

@@ -50,9 +50,9 @@ else
             {
                 $ERRORS[] = 'You must specify a title.';
             }
-            elseif(strlen($title) > 255)
+            elseif(strlen($title) > 60)
             {
-                $ERRORS[] = 'There is a maxlength=255 on that field for a reason.';
+                $ERRORS[] = 'There is a maxlength=60 on that field for a reason.';
             }
 
             if($text == null)

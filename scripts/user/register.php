@@ -48,7 +48,7 @@ switch($_REQUEST['state'])
 		{
 			$ERRORS[] = 'You cannot create an account with a blank username.';
 		}
-		elseif(preg_match('/^[A-Z0-9_!@#\$%\^&\*\(\);:,\.-]*$/i',$USER['user_name']) == false)
+		elseif(preg_match('/^[A-Z0-9_!@#\$%\^&\*\(\)\.-]*$/i',$USER['user_name']) == false)
 		{
 			$ERRORS[] = 'Invalid characters in your username. Try A-Z0-9_!@#$%^&*().,;:.';
 		}

@@ -204,4 +204,22 @@ function secondsToMinutes($seconds)
     return $text;
 } // end seconds
 
+/**
+ * Truncate a string to avoid screen stretching. 
+ * 
+ * @param sting $word The text to truncate.
+ * @param int $length The maxlength allowed before truncation.
+ * @param string $end Characters to append indicating truncation.
+ * @return string
+ **/
+function truncate($word,$length=50,$end='. . .')
+{
+    if(strlen($word) > $length)
+    {
+        return substr($word,0,$length).$end;
+    }
+
+    return $word;
+} // end truncate
+
 ?>

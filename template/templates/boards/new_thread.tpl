@@ -12,7 +12,7 @@
                         <label for='post[title]'>Title</title>
                     </td>
                     <td colspan='2'>
-                        <input type='text' name='post[title]' id='post[title]' maxlength='255' size='61' />
+                        <input type='text' name='post[title]' id='post[title]' maxlength='60' size='61' />
                     </td>
                 </tr>
                 <tr>

@@ -73,7 +73,36 @@ function tickAll(class)
     for(i=0;i < elements.length;i++)
     {
         box = elements[i];
-        alert(box.id); 
+        
+        if(box.checked == true) { box.checked = false; }
+        else { box.checked = true; }
     } // end loop
-
+    
+    return true;
 } // end tickAll
+
+function addToField(container_id)
+{
+    maxTo = 5;
+    button = document.getElementById('add_to');
+    container = document.getElementById(container_id);
+    if(container == null) return false;
+    
+    fields = getElementsByClass('to_field',container);
+    if(fields.length >= maxTo) 
+    {
+        button.style.display = 'none'; 
+        return false;
+    }
+
+    copy = fields[0].cloneNode(false);
+    copy.value = ''; 
+
+    if((fields.length + 1) == maxTo) button.style.display = 'none'; 
+
+    br = document.createElement('BR');
+    container.appendChild(br);
+    container.appendChild(copy);
+
+    return true;
+} // end addToField

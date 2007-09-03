@@ -9,6 +9,7 @@ require('getter.class.php');
 // User stuff.
 require('user/user.class.php');
 require('user/notification.class.php');
+require('user/message.class.php');
 
 // Pet stuff.
 require('pet/pet_specie.class.php');

@@ -96,6 +96,16 @@ switch($_SERVER['RELEASE_MODE'])
             'hunger_interval' => (3600 * 6), // 6 hours
             
             /**
+             * The total number of people that may be specified in a single
+             * message's 'To' field.
+             *
+             * WARNING: If you want to change this, you must also update the
+             * variable 'maxTo' in resources/script/yasashii.js to match, lest
+             * your compose page be inconsistant with reality!
+             **/
+            'max_mail_recipients' => 5,
+            
+            /**
              * The HTMLPurifier cache must be writable by the webserver's user.
              * Set this to null to disable the cache (but you *want* the cache
              * for performance reasons!). Oh, and no trailing slash.

@@ -53,6 +53,11 @@ class User extends ActiveTable
             'local_key' => 'user_id',
             'foreign_key' => 'user_id',
         ),
+        'messages' => array(
+            'class' => 'Message',
+            'local_key' => 'user_id',
+            'foreign_key' => 'recipient_user_id',
+        ),
     );
 
     /**
@@ -299,7 +304,40 @@ class User extends ActiveTable
 
         return true;
     } // end clearNotifications
+
+    public function grabMessagesSize()
+    {
+        $result = $this->db->getOne("
+            SELECT 
+                count(*) 
+            FROM user_message
+            WHERE recipient_user_id = ?
+        ",array($this->getUserId()));
+
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+        
+        return $result;
+    } // end grabMessagesSize
     
+    public function grabMessages($start=null,$end=null)
+    {
+        if(($start === null && $end === null) == false && 
+            ($start !== null && $end !== null) == false
+        )
+        {
+            throw ArgumentError('Must specify either no arguments or both arguments.');
+        } // end problem w/ args.
+        
+        // Translate into start,# to fetch.
+        $total = $end - $start;
+        $limit = "LIMIT $start,$total";
+        
+        return $this->grab('messages','ORDER BY user_message.sent_at DESC',$limit);
+    } // end grabMessages
+
 } // end User 
 
 ?>

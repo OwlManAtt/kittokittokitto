@@ -19,6 +19,14 @@ RewriteRule ^notice/([0-9]+) index.php?page_slug=notice&state=jump&notification_
 RewriteRule ^items/([0-9]+) index.php?page_slug=items&page=$1 [NC,L]
 RewriteRule ^news/([0-9]+) index.php?page_slug=news&page=$1 [NC,L]
 
+# Messages - first pagination. Then we have two URLs mapped to our write-new
+# slug - /write-new-message/ and /write-message-reply/. -new accepts a user ID,
+# and -reply takes a message ID. Slick.
+RewriteRule ^messages/([0-9]+) index.php?page_slug=messages&page=$1 [NC,L]
+RewriteRule ^write-new-message(/([0-9]+))? index.php?page_slug=write-message&to_user_id=$2 [NC,L]
+RewriteRule ^write-message-reply(/([0-9]+))?(/(all))? index.php?page_slug=write-message&reply_to_id=$2&reply_to_all=$4 [NC,L]
+RewriteRule ^message/([0-9]+) index.php?page_slug=message&message_id=$1 [NC,L]
+
 # The boards need to support both a 'nice' URL (/thread/1) AND a page number
 # on that URL (/thread/1/2/).
 RewriteRule ^threads/([0-9]+)(/([0-9]+))? index.php?page_slug=threads&board_id=$1&page=$3 [NC,L]

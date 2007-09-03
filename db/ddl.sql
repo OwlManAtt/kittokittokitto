@@ -51,7 +51,7 @@ DROP TABLE IF EXISTS `board_thread`;
 CREATE TABLE `board_thread` (
   `board_thread_id` int(10) unsigned NOT NULL auto_increment,
   `board_id` smallint(3) NOT NULL,
-  `thread_name` varchar(255) NOT NULL,
+  `thread_name` varchar(60) NOT NULL,
   `user_id` int(11) NOT NULL,
   `thread_created_datetime` datetime NOT NULL,
   `thread_last_posted_datetime` datetime NOT NULL,
@@ -279,6 +279,25 @@ CREATE TABLE `user_item` (
   PRIMARY KEY  (`user_item_id`),
   KEY `user_id` (`user_id`),
   KEY `item_type_id` (`item_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `user_message`
+--
+
+DROP TABLE IF EXISTS `user_message`;
+CREATE TABLE `user_message` (
+  `user_message_id` int(11) unsigned NOT NULL auto_increment,
+  `sender_user_id` int(11) NOT NULL,
+  `recipient_user_id` int(11) NOT NULL,
+  `recipient_list` text NOT NULL,
+  `message_title` varchar(255) NOT NULL,
+  `message_body` text NOT NULL,
+  `sent_at` datetime NOT NULL,
+  `message_read` enum('N','Y') NOT NULL default 'N',
+  PRIMARY KEY  (`user_message_id`),
+  KEY `sender_user_id` (`sender_user_id`),
+  KEY `recipient_user_id` (`recipient_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
