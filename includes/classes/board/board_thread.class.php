@@ -19,6 +19,12 @@ class BoardThread extends ActiveTable
     protected $primary_key = 'board_thread_id';
     protected $LOOKUPS = array(
         array(
+            'local_key' => 'board_id',
+            'foreign_table' => 'board',
+            'foreign_key' => 'board_id',
+            'join_type' => 'inner',
+        ),
+        array(
             'local_key' => 'user_id',
             'foreign_table' => 'user',
             'foreign_key' => 'user_id',

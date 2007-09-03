@@ -15,8 +15,9 @@ RewriteRule ^edit-pet/([0-9]+) index.php?page_slug=edit-pet&pet_id=$1 [NC,L]
 RewriteRule ^shop/([0-9]+) index.php?page_slug=shop&shop_id=$1 [NC,L]
 RewriteRule ^notice/([0-9]+) index.php?page_slug=notice&state=jump&notification_id=$1 [NC,L]
 
-# Pagination for /items/ - /items is still handled by the catch-all.
+# Pagination for /items/ - /items is still handled by the catch-all, etc.
 RewriteRule ^items/([0-9]+) index.php?page_slug=items&page=$1 [NC,L]
+RewriteRule ^news/([0-9]+) index.php?page_slug=news&page=$1 [NC,L]
 
 # The boards need to support both a 'nice' URL (/thread/1) AND a page number
 # on that URL (/thread/1/2/).

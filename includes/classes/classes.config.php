@@ -3,6 +3,9 @@
  *  
  **/
 
+// Abstract classes.
+require('getter.class.php');
+
 // User stuff.
 require('user/user.class.php');
 require('user/notification.class.php');
@@ -29,7 +32,9 @@ require('shop/shop_restock.class.php');
 require('board/board.class.php');
 require('board/board_thread.class.php');
 require('board/board_post.class.php');
+require('news.class.php');
 
 // Ghettocron.
 require('cronjob.class.php');
+
 ?>

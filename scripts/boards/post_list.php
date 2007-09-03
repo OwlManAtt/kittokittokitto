@@ -61,7 +61,7 @@ else
             'user_id' => $post->getUserId(), 
             'username' => $post->getUserName(),
             'user_title' => $post->getUserTitle(),
-            'signature' => $post->getUserSignature(),
+            'signature' => $post->getSignature(),
             'avatar_url' => $post->getAvatarUrl(),
             'avatar_name' => $post->getAvatarName(),
             'user_post_count' => $post->getPostCount(),
