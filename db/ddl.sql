@@ -138,6 +138,7 @@ CREATE TABLE `jump_page` (
   `page_slug` varchar(25) NOT NULL default '',
   `access_level` enum('admin','mod','user','public') NOT NULL default 'user',
   `php_script` varchar(100) NOT NULL default '',
+  `include_tinymce` enum('N','Y') NOT NULL default 'N',
   `active` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`jump_page_id`),
   UNIQUE KEY `page_slug` (`page_slug`)
@@ -248,7 +249,7 @@ CREATE TABLE `user` (
   `last_ip_addr` varchar(16) default NULL,
   `last_activity` datetime default NULL,
   `access_level` enum('banned','user','mod','admin') NOT NULL default 'user',
-  `email` varchar(255) NOT NULL default '',
+  `email` text NOT NULL,
   `age` smallint(3) unsigned NOT NULL,
   `gender` enum('male','female') NOT NULL,
   `profile` text NOT NULL,
@@ -257,6 +258,7 @@ CREATE TABLE `user` (
   `user_title` varchar(50) NOT NULL default 'User',
   `datetime_created` datetime default NULL,
   `post_count` int(10) unsigned NOT NULL,
+  `textarea_preference` enum('tinymce','plain') NOT NULL default 'tinymce',
   `datetime_last_post` datetime NOT NULL,
   `active_user_pet_id` int(11) NOT NULL,
   PRIMARY KEY  (`user_id`),
@@ -308,6 +310,8 @@ CREATE TABLE `user_pet` (
   `hunger` tinyint(3) unsigned NOT NULL,
   `happiness` tinyint(3) unsigned NOT NULL,
   `created_at` datetime NOT NULL,
+  `unixtime_next_decrement` int(10) unsigned NOT NULL,
+  `profile` text NOT NULL,
   PRIMARY KEY  (`user_pet_id`),
   KEY `user_id` (`user_id`),
   KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
