@@ -5,17 +5,18 @@
         <input type='hidden' name='state' value='give_process' />
         <input type='hidden' name='give[item_id]' value='{$item_id}' />
     
-        <table width='20%' class='dataTable'>
+        <table width='20%' class='inputTable'>
             <tr>
-                <td class='dataTableSubhead'>
+                <td class='inputTableRow inputTableSubhead'>
                     <label for='give[username]'>Username</label>
                 </td>
-                <td class='dataTableRow'>
+                <td class='inputTableRow'>
                     <input type='text' name='give[username]' id='give[username]' maxlength='25' />
                 </td>
             </tr>
             <tr>
-                <td colspan='2' class='dataTableRow' align='right'>
+                <td class='inputTableRowAlt'>&nbsp;</td>
+                <td class='inputTableRowAlt' align='right'>
                     <input type='submit' value='Give' />
                 </td>
             </tr>

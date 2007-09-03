@@ -1,4 +1,4 @@
-{if $event_notice != ''}<div id='event_notice' class='{$fat}'>{$event_notice}</div>{/if}
+{if $event_notice != ''}<div id='event_notice' class='{$fat} notice-box'>{$event_notice}</div>{/if}
 
 <p>Below are all notices awaiting your review.</p>
 

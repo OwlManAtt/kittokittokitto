@@ -10,10 +10,10 @@
 
 {section name=index loop=$items}
 {assign var='item' value=$items[index]}
-<div class='item-box' style='text-align: center;'>
+<div class='item-box' align='center'>
     <p><img src='{$item.image}' alt='{$item.name}' border='0' /></p>
-
-    <div class='item-box-detail'>
+    
+    <div class='item-box-detail' style='text-align: center;'> 
         <p style='font-weight: bold;'>{$item.name}</p>
         <p><strong>Price</strong>: {$item.price|number_format}</p>
         <p><strong>Supply</strong>: {$item.quantity|number_format}</p>
@@ -23,17 +23,17 @@
         <input type='hidden' name='state' value='buy' />
         <input type='hidden' name='stock_id' value='{$item.id}' />
     
-        <table class='dataTable' width='95%'>
+        <table class='inputTable' width='95%' style='font-size: small;'>
             <tr>
-                <td class='dataTableSubhead'>
+                <td class='inputTableRow inputTableSubhead'>
                     <label for='item_{$item.id}'>Quantity</label>
                 </td>
-                <td class='dataTableRow'>
+                <td class='inputTableRow'>
                     <input type='text' size='4' name='item[quantity]' id='item_{$item.id}' value='1' />
                 </td>
             </tr>
             <tr>
-                <td colspan='2' align='center' class='dataTableRow'>
+                <td colspan='2' align='center' class='inputTableRowAlt'>
                     <input type='submit' value='Buy' />
                 </td>
             </tr>

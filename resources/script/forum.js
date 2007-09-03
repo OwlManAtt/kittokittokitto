@@ -1,4 +1,4 @@
-function quote(post_div_id,textarea_id) 
+function quotePlain(post_div_id,textarea_id) 
 {
     div = document.getElementById(post_div_id);
     textarea = document.getElementById(textarea_id);
@@ -10,6 +10,14 @@ function quote(post_div_id,textarea_id)
 
     return true;
 } // end quote
+
+function quoteTinyMce(post_div_id)
+{
+    div = document.getElementById(post_div_id);
+
+    window.location.hash = "post";
+    tinyMCE.execCommand('mceInsertContent',false,"<blockquote>" + div.innerHTML + "</blockquote>\n\n");
+}
 
 function doForumAdminConfirms(action)
 {

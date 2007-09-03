@@ -91,7 +91,7 @@ switch($_REQUEST['state'])
         {
             $ERRORS[] = 'E-mail address was blank.';
         }
-        elseif(preg_match('/^[a-z0-9_+.]{1,64}@[a-z0-9-.]*\.[a-z]{1,5}$/i',$USER['email']) == false) // Doesn't adhere to RFC.
+        elseif(preg_match('/^[a-z0-9_+.]{1,64}@([a-z0-9-.]*){1,}\.[a-z]{1,5}$/i',$USER['email']) == false) // Doesn't adhere to RFC.
         {
             $ERRORS[] = 'Invalid e-mail address specified.';
         }
@@ -114,6 +114,7 @@ switch($_REQUEST['state'])
             $new_user->setProfile($USER['profile']);
             $new_user->setCurrency($APP_CONFIG['starting_funds']);
             $new_user->setUserTitle('User');
+            $new_user->setTextareaPreference('tinymce');
             $new_user->setDatetimeCreated($new_user->sysdate());
 			$new_user->save();
 			

@@ -13,7 +13,7 @@
                         <label for='thread[title]'>Title</title>
                     </td>
                     <td>
-                        <input type='text' name='thread[title]' id='thread[title]' maxlength='255' size='81' value='{$thread.name}' />
+                        <input type='text' name='thread[title]' id='thread[title]' maxlength='255' size='61' value='{$thread.name}' />
                     </td>
                 </tr>
                 <tr>

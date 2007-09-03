@@ -1,4 +1,4 @@
-{if $notice != ''}<div id='item-notice' class='fade notice-box'>{$notice}</div>{/if}
+{if $notice != ''}<div id='item-notice' class='{$fat} notice-box'>{$notice}</div>{/if}
 {section name=item_index loop=$inventory}
 {assign var='item' value=$inventory[item_index]}
 <div class='item-box'>

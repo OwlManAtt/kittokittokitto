@@ -10,6 +10,8 @@ RewriteRule ^docs/(.*)$ docs/$1 [L]
 
 # Specific, prettier URLs.
 RewriteRule ^profile/([0-9]+) index.php?page_slug=profile&user_id=$1 [NC,L]
+RewriteRule ^pet/([0-9]+) index.php?page_slug=pet&pet_id=$1 [NC,L]
+RewriteRule ^edit-pet/([0-9]+) index.php?page_slug=edit-pet&pet_id=$1 [NC,L]
 RewriteRule ^shop/([0-9]+) index.php?page_slug=shop&shop_id=$1 [NC,L]
 RewriteRule ^notice/([0-9]+) index.php?page_slug=notice&state=jump&notification_id=$1 [NC,L]
 

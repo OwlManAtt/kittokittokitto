@@ -1,6 +1,6 @@
 <div id='breadcrumb-trail'>{kkkurl link_text='Boards' slug='boards'} &raquo; {$board.name}</div>
 
-{if $board_notice != ''}<p align='center' id='board_notice' class='{$fat}'>{$board_notice}</p>{/if}
+{if $board_notice != ''}<p align='center' id='board_notice' class='{$fat} notice-box'>{$board_notice}</p>{/if}
 
 <table class='dataTable' width='85%'>
     <tr>

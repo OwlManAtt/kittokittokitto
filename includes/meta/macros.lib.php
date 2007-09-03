@@ -166,6 +166,13 @@ function clean_xhtml($raw_xhtml)
     
     $config->set('AutoFormat','AutoParagraph',true);
     $config->set('AutoFormat','Linkify',true);
+
+    // This will fail silently if Tidy is not installed and
+    // configured correctly. It's a very nice thing to have, though,
+    // since people who turn off the rich text editor will look at
+    // very ugly HTML without many newlines or tabs.
+    $config->set('Output','TidyFormat',true);
+
     
     $purifier = new HTMLPurifier($config);
     return $purifier->purify($raw_xhtml);

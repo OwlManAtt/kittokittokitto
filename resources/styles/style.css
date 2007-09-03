@@ -132,7 +132,7 @@ h3 {
 
 .dataTableSubhead {
 	background: #CCCFBC;
-	color: #800000;
+    color: #5B7B57;
 	font-weight: 800;
 }
 
@@ -142,6 +142,40 @@ h3 {
 
 .dataTableRowAlt {
 	background: #DADFB5;
+}
+
+/* Input Table Colors */
+.inputTable
+{
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.inputTable tr td {
+    padding: .5em;
+}
+
+.inputTableHead
+{
+    color: #5B7B57;
+    background-color: #CCCFBC;
+    text-align: center;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.inputTableRow {
+    background-color: #EBEFD1;
+}
+
+.inputTableRowAlt {
+    background-color: #DADFB5;
+}
+
+.inputTableSubhead
+{
+    vertical-align: top; 
+    font-weight: bold;
 }
 
 .notice_box {
@@ -236,7 +270,7 @@ h3 {
 }
 
 .post-userinfo {
-    width: 14%;
+    width: 18%;
     float: left;
     height: 100%;
     background-color: #EBEFD1;
@@ -283,4 +317,8 @@ h3 {
     -moz-border-radius: 15px;
     -webkit-border-radius: 15px;
     -opera-border-radius: 15px;
+}
+
+#user-profile-area {
+    margin-bottom: 3em;
 }

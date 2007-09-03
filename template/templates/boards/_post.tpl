@@ -12,7 +12,7 @@
         </p>
         {/if}
 
-        {if $locked == 'N'}<p align='center'><a onClick="quote('post-{$post.id}-message','post_text')">[Quote]</a></p>{/if}
+        {if $locked == 'N'}<p align='center'><a {if $user->getTextareaPreference() == 'tinymce'}onClick="quoteTinyMce('post-{$post.id}-message');" {else}onClick="quotePlain('post-{$post.id}-message','post_text')"{/if}>[Quote]</a></p>{/if}
 
         {if $actions != ''}<div align='center' style='padding-bottom: 1em;'>
             <form action='{$display_settings.public_dir}/forum-admin' method='post'>

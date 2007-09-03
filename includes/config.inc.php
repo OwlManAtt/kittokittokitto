@@ -20,6 +20,9 @@ switch($_SERVER['RELEASE_MODE'])
 	case 'DEV':
 	{
 		$APP_CONFIG = array(
+            /**
+             * The datasource name for your database.
+             **/
 			'db_dsn' => array(
 				'phptype' => 'mysql', // This can also be run on Oracle (oci).
 				'username' => 'kkk',
@@ -27,20 +30,76 @@ switch($_SERVER['RELEASE_MODE'])
 				'hostspec' => 'localhost',
 				'database' => 'kkk',
 			),
+            
+            /**
+             * The absolute path (on the filesystem) to your app. On UNIX,
+             * this should look like /something/something/something.
+             *
+             * If you don't know what this should be, put a file calling
+             * phpinfo() into the folder you want KKK to live in and visit
+             * it in your browser. Look for the 'SCRIPT_FILENAME' field.
+             * The base path is everything *except* for the filename.
+             **/
 			'base_path' => '/var/www/kittokittokitto',
+            
+            /**
+             * The path to the root of your Smarty template directory.
+             * The templates/, templates_c/, cache/, and configs/ folders
+             * live in here.
+             **/
 			'template_path' => '/var/www/kittokittokitto/template',
+            
+            /*
+             * The full URL (no trailing slash) to your site.
+             * ie, 'http://demo.kittokittokitto.yasashiisyndicate.org'
+             **/
 			'public_dir' => 'http://bell.owl.ys/kittokittokitto',
+            
+            /**
+             * If you have many sites at this domain, a cookie prefix
+             * is good to ensure there's no overlap between your various
+             * apps' cookies.
+             **/
 			'cookie_prefix' => 'kkk_',
+
+            /**
+             * The name of your site.
+             **/
             'site_name' => 'KittoKittoKitto',
+
+            /**
+             * The name of your site's currency.
+             **/
             'currency_name_singular' => 'Gold',
             'currency_name_plural' => 'Golds',
-            'starting_funds' => 500,
-            'max_pets' => 2,
-            'post_interval' => 30,
 
-            // The HTMLPurifier cache must be writable by the webserver's user.
-            // Set this to null to disable the cache (but you *want* the cache
-            // for performance reasons!). Oh, and no trailing slash.
+            /**
+             * How much money should the user start out with?
+             **/
+            'starting_funds' => 500,
+
+            /**
+             * The maximum number of pets a single user may have.
+             **/
+            'max_pets' => 2,
+
+            /**
+             * The number of seconds a user must wait between creating posts
+             * on the forums.
+             **/
+            'post_interval' => 30,
+            
+            /**
+             * How many seconds does it take for a pet to lose hunger/
+             * happiness levels?
+             **/
+            'hunger_interval' => (3600 * 6), // 6 hours
+            
+            /**
+             * The HTMLPurifier cache must be writable by the webserver's user.
+             * Set this to null to disable the cache (but you *want* the cache
+             * for performance reasons!). Oh, and no trailing slash.
+             **/
             'htmlpurifier_cachedir' => '/var/www/kittokittokitto/cache',
 		);
 		

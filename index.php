@@ -58,8 +58,11 @@ else
     
     if($jump_page->getIncludeTinymce() == 'Y')
     {
-        $renderer->assign('include_tinymce',true);
-        $renderer->assign('tinymce_theme','advanced');
+        if($User->getTextareaPreference() == 'tinymce')
+        {
+            $renderer->assign('include_tinymce',true);
+            $renderer->assign('tinymce_theme','advanced');
+        }
     } // end include tinyMCE
     
     if(is_object($User) == true)

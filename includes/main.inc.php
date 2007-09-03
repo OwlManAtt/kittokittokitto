@@ -68,6 +68,7 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
         
         // Load the active pet (if any!)
         $Pet = $User->grabActivePet();
+        $Pet->doDecrement(); // Make it hungry.
 	}
 	else
 	{

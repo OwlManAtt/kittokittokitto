@@ -12,25 +12,26 @@
         <input type='hidden' name='state' value='spawn' />
         <input type='hidden' name='pet[specie_id]' value='{$pet.id}' />
         
-        <table class='dataTable' width='20%'>
+        <table class='inputTable' width='20%'>
             <tr>
-                <td class='dataTableSubhead'>
+                <td class='inputTableRow inputTableSubhead'>
                     <label for='pet[name]'>Name</label>
                 </td>
-                <td class='dataTableRow'>
+                <td class='inputTableRow'>
                     <input type='text' name='pet[name]' id='pet[name]' maxlength='25' />
                 </td>
             </tr>
             <tr>
-                <td class='dataTableSubhead'>
+                <td class='inputTableRowAlt inputTableSubhead'>
                     <label for='pet[color_id]'>Color</label>
                 </td>
-                <td class='dataTableRow'>
+                <td class='inputTableRowAlt'>
                     {html_options name='pet[color_id]' options=$colors id='pet[color_id]'}
                 </td>
             </tr>
             <tr>
-                <td align='right' class='dataTableRow' colspan='2'> 
+                <td class='inputTableRow'>&nbsp;</td>
+                <td align='right' class='inputTableRow'> 
                     <input type='submit' value='Adopt' />
                 </td>
             </tr>
