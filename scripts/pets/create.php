@@ -1,4 +1,34 @@
 <?php
+/**
+ * Allows a user to create a new pet. 
+ *
+ * This file is part of 'Kitto_Kitto_Kitto'.
+ *
+ * 'Kitto_Kitto_Kitto' is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free
+ * Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * 
+ * 'Kitto_Kitto_Kitto' is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General
+ * Public License along with 'Kitto_Kitto_Kitto'; if not,
+ * write to the Free Software Foundation, Inc., 51
+ * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
+ * @copyright Nicolas Evans, 2007
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @package Kitto_Kitto_Kitto
+ * @subpackage Pets
+ * @version 1.0.0
+ **/
+
 $renderer->display('pets/topnav.tpl');
 
 switch($_REQUEST['state'])
@@ -72,7 +102,8 @@ switch($_REQUEST['state'])
                 $COLOR_LIST = array('' => 'Select one...');
                 foreach($colors as $color)
                 {
-                    $COLOR_LIST[$color->getPetSpeciePetSpecieColorId()] = $color->getColorName();
+                    // $COLOR_LIST[$color->getPetSpeciePetSpecieColorId()] = $color->getColorName();
+                    $COLOR_LIST[$color->getColorImg()] = $color->getColorName();
                 }
                
                 if(sizeof($COLOR_LIST) == 1)
@@ -93,6 +124,7 @@ switch($_REQUEST['state'])
                 'name' => $specie->getSpecieName(),
                 'description'=> $specie->getSpecieDescr(),
                 'image' => null, 
+                'image_dir' => $specie->getRelativeImageDir(),
             );
 
             $color = PetSpecie_PetSpecieColor::randomColor($specie->getPetSpecieId(),$db);
@@ -157,21 +189,32 @@ switch($_REQUEST['state'])
         {
             $ERRORS[] = 'Invalid specie ID specified.';
         } // end no pet
-        
-        $color = new PetSpecie_PetSpecieColor($db);
-        $color = $color->findOneBy(array(
-            'pet_specie_pet_specie_color_id' => $color_id,
-            array(
-                'table' => 'pet_specie_color',
-                'column' => 'base_color',
-                'value' => 'Y',
-            ),
-        ));
-
-        if($color == null)
+        else
         {
-            $ERRORS[] = 'Invalid color specified.';
-        }
+            $color = new PetSpecie_PetSpecieColor($db);
+            $color = $color->findOneBy(array(
+                array(
+                    'table' => 'pet_specie_color',
+                    'column' => 'color_img',
+                    'value' => $color_id,
+                ),
+                array(
+                    'table' => 'pet_specie',
+                    'column' => 'pet_specie_id',
+                    'value' => $specie->getPetSpecieId(),
+                ),
+                array(
+                    'table' => 'pet_specie_color',
+                    'column' => 'base_color',
+                    'value' => 'Y',
+                ),
+            ));
+
+            if($color == null)
+            {
+                $ERRORS[] = 'Invalid color specified.';
+            }
+        } // end pet exists
        
         if(sizeof($ERRORS) > 0)
         {

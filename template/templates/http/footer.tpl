@@ -1,5 +1,4 @@
-                <!-- Page ends here. -->	
-            </div>
+            <!-- Page ends here. -->	
         </div>
         
         <br clear='all' /><br />

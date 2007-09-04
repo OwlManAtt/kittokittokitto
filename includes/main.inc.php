@@ -1,25 +1,49 @@
 <?php
-/******************************************************************
-* 	  _____ _______       _____   _____ _    _          _   _ 	  *
-* 	 / ____|__   __|/\   |  __ \ / ____| |  | |   /\   | \ | |	  *
-* 	| (___    | |  /  \  | |__) | |    | |__| |  /  \  |  \| |	  *
-* 	 \___ \   | | / /\ \ |  _  /| |    |  __  | / /\ \ | . ` |	  *
-* 	 ____) |  | |/ ____ \| | \ \| |____| |  | |/ ____ \| |\  |	  *
-* 	|_____/   |_/_/    \_\_|  \_\\_____|_|  |_/_/    \_\_| \_|	  *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *                              
-*	              _             _                            	  *
-* 	   |\ | __|_ / \   o_|_ _  |_) _._|__|_| __|_ _  _. _| _ 	  *
-* 	   | \|(_)|_ \_X|_|| |_(/_ |_)(_| |_ |_|(/_|_(_)(_|(_|_> 	  *
-* =============================================================== *
-* Base include file.											  *
-******************************************************************/
+/**
+ * Base include file. This aggregates config and does some set-up work. 
+ *
+ * This file is part of 'Kitto_Kitto_Kitto'.
+ *
+ * 'Kitto_Kitto_Kitto' is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free
+ * Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * 
+ * 'Kitto_Kitto_Kitto' is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General
+ * Public License along with 'Kitto_Kitto_Kitto'; if not,
+ * write to the Free Software Foundation, Inc., 51
+ * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
+ * @copyright Nicolas Evans, 2007
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @package Kitto_Kitto_Kitto
+ * @subpackage Core
+ * @version 1.0.0
+ **/
+
+/**
+ * This gives us most of the other libraries.
+ **/
 require('includes/config.inc.php');
 
-// Non-critical third-party libraries (Rendering-related, pretty much)
+/**
+ * Non-critical third-party libraries (Rendering-related, pretty much).
+ **/
 require_once('Smarty/Smarty.class.php');
 
-// HTMLPurified is require_once()'d, but not in main - see the clean_xhtml
-// macro for details on why..
+/*
+* == ADDITIONAL INCLUDE ==
+* HTMLPurified is require_once()'d, but not in main - see the clean_xhtml
+* macro for details on why..
+*/
 
 // Deploy the renderer.
 $renderer = new Smarty();
@@ -37,6 +61,7 @@ $renderer->assign('display_settings',$DISPLAY_SETTINGS);
 $renderer->assign('site_name',$APP_CONFIG['site_name']);
 $renderer->assign('currency_singular',$APP_CONFIG['currency_name_singular']);
 $renderer->assign('currency_plural',$APP_CONFIG['currency_name_plural']);
+$renderer->assign('admin_email',$APP_CONFIG['administrator_email']);
 
 // $renderer->debugging = true;
 
@@ -67,8 +92,12 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
         
         // Load the active pet (if any!)
         $Pet = $User->grabActivePet();
-        $Pet->doDecrement(); // Make it hungry.
-	}
+
+        if($Pet != null)
+        {
+            $Pet->doDecrement(); // Make it hungry.
+        }
+	} // user exists
 	else
 	{
 		$User = null;
@@ -81,5 +110,4 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
 } // end if cookies are set
 
 $renderer->assign('logged_in',$logged_in);
-
 ?>

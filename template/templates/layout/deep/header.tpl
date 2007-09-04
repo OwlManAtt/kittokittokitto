@@ -14,7 +14,7 @@
     </head>
     <body>
         <div id='header'>
-            <h1><a href='{$display_settings.public_dir}'>{$site_name}</a></h1>
+            <h1><a id='site_name' href='{$display_settings.public_dir}'>{$site_name}</a></h1>
         </div>
         
         <div id='main-box'>

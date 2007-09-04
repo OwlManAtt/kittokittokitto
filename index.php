@@ -1,7 +1,41 @@
 <?php
+/**
+ * Routing file for all pages.
+ *
+ * This file is part of 'KittoKittoKitto'.
+ *
+ * 'KittoKittoKitto' is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free
+ * Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * 
+ * 'KittoKittoKitto' is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General
+ * Public License along with 'KittoKittoKitto'; if not,
+ * write to the Free Software Foundation, Inc., 51
+ * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
+ * @copyright Nicolas Evans, 2007
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @package KittoKittoKitto
+ * @subpackage Core
+ * @version 1.0.0
+ **/
+
 session_start();
 ob_start();
-require('includes/main.inc.php'); // <-- Provides $User, $logged_in, $access_level, etc.
+
+/**
+ * Provides $User, $logged_in, $access_level, etc.
+ **/
+require('includes/main.inc.php');
 
 // Load page info.
 if($_REQUEST['page_slug'] == null)
@@ -40,8 +74,10 @@ foreach(Cronjob::listPendingJobs($db) as $job)
 // Display page.
 if(is_a($jump_page,'JumpPage') == false)
 {
-	// TODO - This should be a 404 page.
-	die('lol how do i mined for fish? -\_(O-o)_/-');
+	header("HTTP/1.1 404 Not Found");
+    $renderer->display('http/404.tpl');
+
+    die();
 }
 else
 {
@@ -88,9 +124,8 @@ else
 	{
 		if($access_level == 'banned')
 		{
-			// 403 B&'d
-			// TODO
-			print "<p>B&, GTFO FAGGOT.</p>";
+            header("HTTP/1.1 403 Forbidden");
+            $renderer->display('http/403_banned.tpl');
 		}
 		elseif($access_level == 'public' && $jump_page->getAccessLevel() == 'user')
 		{
@@ -98,9 +133,8 @@ else
 		} // end unregister'd trying to hit page needing registration.
 		else
 		{
-			// Show 403
-			// TODO
-			print "<p>excuse me WTF R U DOIN?</p>";
+            header("HTTP/1.1 403 Forbidden");
+            $renderer->display('http/403.tpl');
 		} // end user trying to hit mod page
 	} // end no access
 	else

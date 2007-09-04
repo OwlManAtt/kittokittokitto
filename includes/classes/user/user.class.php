@@ -1,17 +1,46 @@
 <?php
 /**
- *  
+ * User classfile. 
+ *
+ * This file is part of 'Kitto_Kitto_Kitto'.
+ *
+ * 'Kitto_Kitto_Kitto' is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free
+ * Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * 
+ * 'Kitto_Kitto_Kitto' is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General
+ * Public License along with 'Kitto_Kitto_Kitto'; if not,
+ * write to the Free Software Foundation, Inc., 51
+ * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
+ * @copyright Nicolas Evans, 2007
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @package Kitto_Kitto_Kitto
+ * @subpackage Core
+ * @version 1.0.0
  **/
 
 /**
- * User 
+ * User class.
+ *
+ * This provides all user-related attributes and has RELATED sets defined
+ * for most things a user owns. 
  * 
  * @uses ActiveTable
  * @package Kitto_Kitto_Kitto
  * @subpackage Core 
  * @copyright 2007 Nicholas Evans
  * @author Nick 'Owl' Evans <owlmanatt@gmail> 
- * @license GNU GPL v3 {@link http://www.gnu.org/licenses/gpl-3.0.txt}
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  **/
 class User extends ActiveTable
 {
@@ -79,16 +108,23 @@ class User extends ActiveTable
 	 * appropriate format and stored. The plaintext is discarded
 	 * when this function completes.
      * 
-     * @param mixed $password 
+     * @param string $password 
      * @return void
      **/
 	public function setPassword($password)
 	{
-		// Doing this twice makes the passwords a mite harder to 
-		// brute-force. I do not labour under the idiotic delusion
-		// that this actually improves security; quite the contrary,
-		// my only goal is to keep some faggot from looking the
-		// chucksum up in a rainbow table.
+        /*
+		* Doing this twice makes the passwords a mite harder to 
+		* brute-force. I do not labour under the idiotic delusion
+		* that this actually improves security; quite the contrary,
+		* my only goal is to keep some assclown from looking the
+		* chucksum up in a rainbow table and getting 80% of the users'
+        * plaintexts.
+        *
+        * Because you know 8/10 people chose 'kittokitto' as their password.
+        *
+        * :-(
+        */
 		$this->setPasswordHash(md5(md5($password)));
 	} // end setPassword
 	
@@ -138,7 +174,6 @@ class User extends ActiveTable
      * @param string|int $datetime A UNIX timestamp. A non-int will be
      *                      converted with strototime().
      * @return string The localized date/time.
-     * @todo replace it with something that isn't bullocks.
      **/
 	public function formatDate($datetime)
 	{
@@ -316,6 +351,13 @@ class User extends ActiveTable
         return $notice->save();
     } // end notify
 
+    /**
+     * Empty out the user's notification history in an efficient manner. 
+     * 
+     * Note that the SQL query *should* work on all major RDBMSes.
+     *
+     * @return bool 
+     **/
     public function clearNotifications()
     {
         $this->db->query('DELETE FROM user_notification WHERE user_id = ?',array($this->getUserId()));
@@ -323,6 +365,13 @@ class User extends ActiveTable
         return true;
     } // end clearNotifications
 
+    /**
+     * Return the total number of messages a user has. 
+     *
+     * Useful for pagination. 
+     * 
+     * @return integer 
+     **/
     public function grabMessagesSize()
     {
         $result = $this->db->getOne("
@@ -340,6 +389,13 @@ class User extends ActiveTable
         return $result;
     } // end grabMessagesSize
     
+    /**
+     * Grab all of the user's messages, or a slice of their messages. 
+     * 
+     * @param integer $start 
+     * @param integer $end 
+     * @return array An array of Message instances.
+     **/
     public function grabMessages($start=null,$end=null)
     {
         if(($start === null && $end === null) == false && 
@@ -373,7 +429,6 @@ class User extends ActiveTable
         
         return "{$APP_CONFIG['public_dir']}/resources/avatars/{$this->getAvatarImage()}";
     } // end getAvatarUrl
-
 } // end User 
 
 ?>

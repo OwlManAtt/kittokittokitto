@@ -1,4 +1,30 @@
 /**
+ * Useful javascript functions. 
+ *
+ * This file is part of 'KittoKittoKitto'.
+ *
+ * 'KittoKittoKitto' is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free
+ * Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * 
+ * 'KittoKittoKitto' is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General
+ * Public License along with 'KittoKittoKitto'; if not,
+ * write to the Free Software Foundation, Inc., 51
+ * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @package KittoKittoKitto
+ * @version 1.0.0
+ **/
+
+/**
  * Dustin Diaz's most excellent getElementByClass.
  * 
  * @author Dustin Diaz
@@ -24,10 +50,10 @@ function getElementsByClass(searchClass,node,tag) {
     return classElements;
 } // end getElementByClass
 
-function quotePlain(post_div_id,textarea_id) 
+function quotePlain(post_div_id,sTextarea_id) 
 {
     div = document.getElementById(post_div_id);
-    textarea = document.getElementById(textarea_id);
+    textarea = document.getElementById(sTextarea_id);
 
     window.location.hash = "post";
     textarea.value += "<blockquote>" + div.innerHTML + "</blockquote>\n\n";
@@ -37,12 +63,12 @@ function quotePlain(post_div_id,textarea_id)
     return true;
 } // end quote
 
-function quoteTinyMce(post_div_id)
+function quoteTinyMce(post_div_id,tinyMCE)
 {
     div = document.getElementById(post_div_id);
-
+    
     window.location.hash = "post";
-    tinyMCE.execCommand('mceInsertContent',false,"<blockquote>" + div.innerHTML + "</blockquote>\n\n");
+    tinyMCE.execInstanceCommand('mce_editor_0','mceInsertContent',false,"<blockquote>" + div.innerHTML + "</blockquote>\n\n");
 }
 
 function doForumAdminConfirms(action)
@@ -66,9 +92,9 @@ function doForumAdminConfirms(action)
     return confirm(confirmation_text);
 } // end doForumAdminConfirms
 
-function tickAll(class)
+function tickAll(class_name)
 {
-    elements = getElementsByClass(class);
+    elements = getElementsByClass(class_name);
 
     for(i=0;i < elements.length;i++)
     {
@@ -107,14 +133,16 @@ function addToField(container_id)
     return true;
 } // end addToField
 
-function avatarPicker(file,url_base)
+function imagePicker(file,url_base,image_id,hide_if_null)
 {
-    image = document.getElementById('avatar_image');
+    if(hide_if_null == null) hide_if_null = true;
+    
+    image = document.getElementById(image_id);
     if(image == null) return false;
 
     if(file == '')
     {
-        image.style.display = 'none';
+        if(hide_if_null == true) image.style.display = 'none';
         return true;
     }
     
@@ -123,3 +151,18 @@ function avatarPicker(file,url_base)
 
     return true;
 } // end avatarPicker
+
+function setCaretToEnd(element) 
+{
+    var pos = element.value.length;
+    if(element.createTextRange) 
+    {
+        var range = element.createTextRange();
+        range.moveStart('character', pos);
+        range.select();
+    } 
+    else if(element.setSelectionRange) 
+    {
+        element.setSelectionRange(pos, pos);
+    }
+} // end setCaretToEnd

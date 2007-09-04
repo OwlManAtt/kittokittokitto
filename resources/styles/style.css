@@ -166,10 +166,12 @@ h3 {
 
 .inputTableRow {
     background-color: #EBEFD1;
+    text-align: left;
 }
 
 .inputTableRowAlt {
     background-color: #DADFB5;
+    text-align: left;
 }
 
 .inputTableSubhead

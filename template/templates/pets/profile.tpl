@@ -33,7 +33,7 @@
 
         {if $pet.owner.id == $user->getUserId()}
         <tr>
-            <td colspan='2' align='center' class='inputTableRow' style='font-size: large; font-weight: bold;'>{kkkurl link_text='Edit Profile' slug='edit-pet' args=$pet.id}</td>
+            <td colspan='2' style='text-align: center;' class='inputTableRow' style='font-size: large; font-weight: bold;'>{kkkurl link_text='Edit Profile' slug='edit-pet' args=$pet.id}</td>
         </tr>
         {/if}
 

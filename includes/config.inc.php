@@ -1,19 +1,33 @@
 <?php
-/******************************************************************
-* 	  _____ _______       _____   _____ _    _          _   _ 	  *
-* 	 / ____|__   __|/\   |  __ \ / ____| |  | |   /\   | \ | |	  *
-* 	| (___    | |  /  \  | |__) | |    | |__| |  /  \  |  \| |	  *
-* 	 \___ \   | | / /\ \ |  _  /| |    |  __  | / /\ \ | . ` |	  *
-* 	 ____) |  | |/ ____ \| | \ \| |____| |  | |/ ____ \| |\  |	  *
-* 	|_____/   |_/_/    \_\_|  \_\\_____|_|  |_/_/    \_\_| \_|	  *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-*	              _             _                            	  *
-* 	   |\ | __|_ / \   o_|_ _  |_) _._|__|_| __|_ _  _. _| _ 	  *
-* 	   | \|(_)|_ \_X|_|| |_(/_ |_)(_| |_ |_|(/_|_(_)(_|(_|_> 	  *
-* =============================================================== *
-* Configuration file; include critical libraries (non-rendering   *
-* stuff), pick the appropriate paths based on environment, etc.	  *
-******************************************************************/
+/**
+ * Config files; includes all critical libraries & sets paths.
+ *
+ * This file is part of 'Kitto_Kitto_Kitto'.
+ *
+ * 'Kitto_Kitto_Kitto' is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free
+ * Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * 
+ * 'Kitto_Kitto_Kitto' is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General
+ * Public License along with 'Kitto_Kitto_Kitto'; if not,
+ * write to the Free Software Foundation, Inc., 51
+ * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
+ * @copyright Nicolas Evans, 2007
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @package Kitto_Kitto_Kitto
+ * @subpackage Core
+ * @version 1.0.0
+ **/
 
 switch($_SERVER['RELEASE_MODE'])
 {
@@ -30,6 +44,12 @@ switch($_SERVER['RELEASE_MODE'])
 				'hostspec' => 'localhost',
 				'database' => 'kkk',
 			),
+            
+            /**
+             * The administator's e-mail address. Password recovery notices
+             * come from this address, too!
+             **/
+            'administrator_email' => 'owlmanatt@gmail.com',
             
             /**
              * The absolute path (on the filesystem) to your app. On UNIX,
@@ -144,11 +164,18 @@ switch($_SERVER['RELEASE_MODE'])
 
 } // end release mode switch
 
-// These are mission-critical libraries. Nothing else will function correctly without these.
+/**
+ * These are mission-critical libraries. Nothing else will function 
+ * correctly without these. APHP needs to come before any other classes,
+ * otherwise they will cause a fatal error because their parent class is
+ * undefined.
+ **/
 require_once('DB.php');
 require_once('aphp/aphp.php');
 
-// These are our libs.
+/**
+ * KKK library files.
+ **/
 require('includes/meta/macros.lib.php');
 require('includes/meta/jump_page.class.php');
 require('includes/meta/pagination.php');

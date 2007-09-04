@@ -1,7 +1,7 @@
 <div align='center'>
     <div class='pet-box' style='float:none;'>
         <div align='center'>
-            {if $pet.image != null}<img src='{$pet.image}' border='0' alt='{$pet.name}' />{else}No Image{/if}
+            {if $pet.image != null}<img src='{$pet.image}' border='0' alt='{$pet.name}' id='pet_image' />{else}No Image{/if}
         </div>
         <p><strong>{$pet.name}</strong>: {$pet.description}</p>
     </div>
@@ -23,10 +23,10 @@
             </tr>
             <tr>
                 <td class='inputTableRowAlt inputTableSubhead'>
-                    <label for='pet[color_id]'>Color</label>
+                    <label for='pet_color'>Color</label>
                 </td>
                 <td class='inputTableRowAlt'>
-                    {html_options name='pet[color_id]' options=$colors id='pet[color_id]'}
+                    {html_options name='pet[color_id]' options=$colors id='pet_color' onChange="return imagePicker(this.form.pet_color[this.form.pet_color.selectedIndex].value,'`$display_settings.public_dir`/resources/pets/`$pet.image_dir`/','pet_image',false);"}
                 </td>
             </tr>
             <tr>

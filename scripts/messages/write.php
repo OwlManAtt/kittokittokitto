@@ -1,4 +1,48 @@
 <?php
+/**
+ * Display a compose new message form.
+ *
+ * This page has several URLs mapped to it:
+ *   1. write-new-message/
+ *   2. write-new-message/1
+ *   3. write-message-reply/10032
+ *   3. write-message-reply/10032/all
+ *
+ * The write-new-message series of URLs displays a blank form. The '1' at
+ * the end of the URL is an optional user ID; if specified, that user will be
+ * pre-populated into a To: field.
+ *
+ * The write-message-reply series of URLs displays a form with RE: + old title, the
+ * previous body in a <blockquote>, and the sender in the To: field. If the optional
+ * /all is specified, the sender + all recipients minus the user responding will be
+ * populated into the To: field.
+ *
+ * This file is part of 'Kitto_Kitto_Kitto'.
+ *
+ * 'Kitto_Kitto_Kitto' is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free
+ * Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * 
+ * 'Kitto_Kitto_Kitto' is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General
+ * Public License along with 'Kitto_Kitto_Kitto'; if not,
+ * write to the Free Software Foundation, Inc., 51
+ * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
+ * @copyright Nicolas Evans, 2007
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @package Kitto_Kitto_Kitto
+ * @subpackage Messages
+ * @version 1.0.0
+ **/
 
 $ERRORS = array();
 $TO = array(); // id => name
