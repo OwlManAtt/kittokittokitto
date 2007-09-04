@@ -8,5 +8,8 @@
     <input type='hidden' name='default[editor]' value='{$info.editor}' />
     <input type='hidden' name='default[profile]' value='{$info.profile}' />
     <input type='hidden' name='default[signature]' value='{$info.signature}' />
+    <input type='hidden' name='default[avatar_id]' value='{$info.avatar_id}' />
+    <input type='hidden' name='default[timezone]' value='{$info.timezone}' />
+    <input type='hidden' name='default[datetime_format]' value='{$info.datetime_format}' />
     <input type='submit' value='Go back' />
 </form>

@@ -19,7 +19,10 @@
     </tr>
     <tr>
         <td class='inputTableRow inputTableSubhead'>Body</td>
-        <td class='inputTableRow' style='vertical-align:top; height: 10em; padding-top: 0; padding-bottom: 0;'>{$message.body}</td>
+        <td class='inputTableRow' style='vertical-align:top; height: 10em; padding-top: 0; padding-bottom: 0;'>
+            {$message.body}
+            {if $message.from.signature != ''}<div class='post-signature'>{$message.from.signature}</div>{/if}
+        </td>
     </tr>
     <tr>
         <td class='inputTableRowAlt'>&nbsp;</td>

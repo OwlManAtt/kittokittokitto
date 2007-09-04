@@ -22,6 +22,10 @@ switch($_REQUEST['state'])
             'editor' => $User->getTextareaPreference(),
             'profile' => $User->getProfile(),
             'signature' => $User->getSignature(),
+            'avatar_id' => $User->getAvatarImage(),
+            'avatar_url' => $User->getAvatarUrl(),
+            'timezone_id' => $User->getTimezoneId(),
+            'datetime_format_id' => $User->getDatetimeFormatId(),
         );
 
         // If someone hit here with defaults from the back button,
@@ -41,13 +45,43 @@ switch($_REQUEST['state'])
                 }
             } // end mog-into-prefs loop
         } // end defaults
+
+        // Get the list of avatars.
+        $AVATARS = array('' => 'Select one...');
+        $avatars = new Avatar($db);
+        $avatars = $avatars->findByActive('Y');
+
+        foreach($avatars as $avatar)
+        {
+            $AVATARS[$avatar->getAvatarImage()] = $avatar->getAvatarName();
+        } // end avatar mogger
+
+        // Build lists for our temporal friends.
+        $TIMEZONES = array();
+        $timezones = new Timezone($db);
+        $timezones = $timezones->findBy(array(),'ORDER BY order_by, timezone_continent, timezone_short_name ASC');
+        foreach($timezones as $timezone)
+        {
+            $TIMEZONES[$timezone->getTimezoneId()] = $timezone->getTimezoneName();
+        } // end timezone loop
+
+        $DATETIME_FORMATS = array();
+        $formats = new DatetimeFormat($db);
+        $formats = $formats->findBy(array());
+        foreach($formats as $format)
+        {
+            $DATETIME_FORMATS[$format->getDatetimeFormatId()] = $format->getDatetimeFormatName();
+        } // end datetime format loop
         
         if($_SESSION['pref_notice'] != null)
         {
             $renderer->assign('notice',$_SESSION['pref_notice']);
             unset($_SESSION['pref_notice']);
         }
-
+        
+        $renderer->assign('avatars',$AVATARS);
+        $renderer->assign('timezones',$TIMEZONES);
+        $renderer->assign('datetime_formats',$DATETIME_FORMATS);
         $renderer->assign('genders',$GENDER);
         $renderer->assign('ages',$AGE);
         $renderer->assign('editors',$EDITORS);
@@ -75,6 +109,9 @@ switch($_REQUEST['state'])
             'editor' => stripinput($_POST['user']['editor']),
             'profile' => clean_xhtml($_POST['user']['profile']),
             'signature' => clean_xhtml($_POST['user']['signature']),
+            'avatar_image' => stripinput($_POST['user']['avatar']),
+            'datetime_format' => stripinput($_POST['user']['datetime_format']),
+            'timezone' => stripinput($_POST['user']['timezone']),
         );
        
         if($PASSWORD['new_confirm'] != null || $PASSWORD['new_confirm'])
@@ -126,6 +163,42 @@ switch($_REQUEST['state'])
         {
             $ERRORS[] = 'Invalid editor specified.';
         }
+
+        if($USER['avatar_image'] == null)
+        {
+            $avatar_id = 0;
+        }
+        else
+        {
+            $avatar = new Avatar($db);
+            $avatar = $avatar->findOneByAvatarImage($USER['avatar_image']);
+            
+            if($avatar == null)
+            {
+                $ERRORS[] = 'Invalid avatar specified.';
+            }
+            else
+            {
+                $avatar_id = $avatar->getAvatarId();
+            }
+        } // end avatar specified
+
+        $datetime_format = new DatetimeFormat($db);
+        $datetime_format = $datetime_format->findOneByDatetimeFormatId($USER['datetime_format']);
+
+        if($datetime_format == null)
+        {
+            $ERRORS[] = 'Invalid date/time format specified.';
+        }
+         
+        $timezone = new Timezone($db);
+        $timezone = $timezone->findOneByTimezoneId($USER['timezone']);
+
+        if($timezone == null)
+        {
+            $ERRORS[] = 'Invalid timezone specified.';
+        }
+        
         
         if(sizeof($ERRORS) > 0)
         {
@@ -145,6 +218,9 @@ switch($_REQUEST['state'])
             $User->setProfile($USER['profile']);
             $User->setSignature($USER['signature']);
             $User->setTextareaPreference($USER['editor']); 
+            $User->setAvatarId($avatar_id);
+            $User->setDatetimeFormatId($datetime_format->getDatetimeFormatId());
+            $User->setTimezoneId($timezone->getTimezoneId());
             $User->save();
             
             // Update the password hash stored in the cookie.

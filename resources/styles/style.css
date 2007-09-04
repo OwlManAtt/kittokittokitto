@@ -236,9 +236,13 @@ h3 {
 
 #site-notice {
     text-align: left;
-    padding-left: .5em;
+    padding: 1em;
+    padding-bottom: .1em;
     margin: 0;
 	background: #DADFB5;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
 }
 
 #site-notice h2 {

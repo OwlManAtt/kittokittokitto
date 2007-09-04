@@ -1,0 +1,59 @@
+ACDT,Australian Central Daylight Time,Australia,10.5
+ACST,Australian Central Standard Time,Australia,9.5
+ADT,Atlantic Daylight Time,North America,-3
+AEDT,Australian Eastern Daylight Time,Australia,11
+AEST,Australian Eastern Standard Time,Australia,10
+AKDT,Alaska Daylight Time,North America,-8
+AKST,Alaska Standard Time,North America,-9
+AST,Atlantic Standard Time,North America,-4
+AWDT,Australian Western Daylight Time,Australia,9
+AWST,Australian Western Standard Time,Australia,8
+BST,British Summer Time,Europe,1
+CDT,Central Daylight Time,North America,-5
+CEDT,Central European Daylight Time,Europe,2
+CEST,Central European Summer Time,Europe,2
+CET,Central European Time,Europe,1
+CST,Central Summer (Daylight) Time,Australia,10.5
+CST,Central Standard Time,Australia,9.5
+CST,Central Standard Time,North America,-6
+CXT,Christmas Island Time,Australia,7
+EDT,Eastern Daylight Time,North America,-4
+EEDT,Eastern European Daylight Time,Europe,3
+EEST,Eastern European Summer Time,Europe,3
+EET,Eastern European Time,Europe,2
+EST,Eastern Summer (Daylight) Time,Australia,11
+EST,Eastern Standard Time,Australia,10
+EST,Eastern Standard Time,North America,-5
+GMT,Greenwich Mean Time,Europe,0
+HAA,Heure Avancée de l'Atlantique,North America,-3
+HAC,Heure Avancée du Centre,North America,-5
+HADT,Hawaii-Aleutian Daylight Time,North America,-9
+HAE,Heure Avancée de l'Est,North America,-4
+HAP,Heure Avancée du Pacifique,North America,-7
+HAR,Heure Avancée des Rocheuses,North America,-6
+HAST,Hawaii-Aleutian Standard Time,North America,-10
+HAT,Heure Avancée de Terre-Neuve,North America,-2.5
+HAY,Heure Avancée du Yukon,North America,-8
+HNA,Heure Normale de l'Atlantique,North America,-4
+HNC,Heure Normale du Centre,North America,-6
+HNE,Heure Normale de l'Est,North America,-5
+HNP,Heure Normale du Pacifique,North America,-8
+HNR,Heure Normale des Rocheuses,North America,-7
+HNT,Heure Normale de Terre-Neuve,North America,-3.5
+HNY,Heure Normale du Yukon,North America,-9
+IST,Irish Summer Time,Europe,1
+MDT,Mountain Daylight Time,North America,-6
+MESZ,Mitteleuropäische Sommerzeit,Europe,2
+MEZ,Mitteleuropäische Zeit,Europe,1
+MST,Mountain Standard Time,North America,-7
+NDT,Newfoundland Daylight Time,North America,-2.5
+NFT,Norfolk (Island) Time,Australia,11.5
+NST,Newfoundland Standard Time,North America,-3.5
+PDT,Pacific Daylight Time,North America,-7
+PST,Pacific Standard Time,North America,-8
+UTC,Coordinated Universal Time,Europe,0
+WEDT,Western European Daylight Time,Europe,1
+WEST,Western European Summer Time,Europe,1
+WET,Western European Time,Europe,0
+WST,Western Summer (Daylight) Time,Australia,9
+WST,Western Standard Time,Australia,8

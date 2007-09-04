@@ -24,6 +24,18 @@ class User extends ActiveTable
             'foreign_key' => 'avatar_id',
             'join_type' => 'left',
         ),
+        array(
+            'local_key' => 'timezone_id',
+            'foreign_table' => 'timezone',
+            'foreign_key' => 'timezone_id',
+            'join_type' => 'inner',
+        ),
+        array(
+            'local_key' => 'datetime_format_id',
+            'foreign_table' => 'datetime_format',
+            'foreign_key' => 'datetime_format_id',
+            'join_type' => 'inner',
+        ),
     );
     protected $RELATED = array(
         'pets' => array(
@@ -130,9 +142,15 @@ class User extends ActiveTable
      **/
 	public function formatDate($datetime)
 	{
-		return $datetime;
+        if(is_string($datetime)) $datetime = strtotime($datetime);
+        $gmt_unix = gmdate('U',$datetime); 
+
+        $offset = ($this->getTimezoneOffset() * (60 * 60));
+        $local_unix = $gmt_unix + $offset;
+
+        return date($this->getDatetimeFormat(),$gmt_unix);
 	} // end formatdate
-	
+
     /**
      * Determine if this user has a permission. 
      * 
@@ -337,6 +355,24 @@ class User extends ActiveTable
         
         return $this->grab('messages','ORDER BY user_message.sent_at DESC',$limit);
     } // end grabMessages
+
+    /**
+     * Return the URL to the image.
+     * 
+     * @return null|string  
+     **/
+    public function getAvatarUrl()
+    {
+        global $APP_CONFIG;
+
+        // It's a LEFT JOIN, mind you - it could come up with nothing.
+        if($this->getAvatarId() == 0)
+        {
+            return null;
+        }
+        
+        return "{$APP_CONFIG['public_dir']}/resources/avatars/{$this->getAvatarImage()}";
+    } // end getAvatarUrl
 
 } // end User 
 

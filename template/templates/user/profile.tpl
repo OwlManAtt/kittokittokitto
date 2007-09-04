@@ -1,6 +1,6 @@
 {if $profile.profile != ''}<div id='user-profile-area'>{$profile.profile}</div>{/if}
 	
-<table class='inputTable' width='30%' style='margin-left: auto; margin-right: auto;'>
+<table class='inputTable' width='50%' style='margin-left: auto; margin-right: auto;'>
 	<tr>
 		<td class='inputTableRow inputTableSubhead' width='40%'>User</td>
         <td class='inputTableRow'>{$profile.user_name}</td>

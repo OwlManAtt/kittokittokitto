@@ -116,6 +116,8 @@ switch($_REQUEST['state'])
             $new_user->setUserTitle('User');
             $new_user->setTextareaPreference('tinymce');
             $new_user->setDatetimeCreated($new_user->sysdate());
+            $new_user->setTimezoneId(54); // 54 = UTC
+            $new_user->setDatetimeFormatId(1); // Y-m-d H:i:s
 			$new_user->save();
 			
 			// Log the user in and send him back home.

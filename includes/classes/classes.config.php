@@ -10,6 +10,9 @@ require('getter.class.php');
 require('user/user.class.php');
 require('user/notification.class.php');
 require('user/message.class.php');
+require('user/avatar.class.php');
+require('user/datetime_format.class.php');
+require('user/timezone.class.php');
 
 // Pet stuff.
 require('pet/pet_specie.class.php');

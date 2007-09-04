@@ -46,14 +46,29 @@
         
         <table class='inputTable' width='100%' style='padding-top: 3em;'>
             <tr>
-                <td colspan='2' class='inputTableHead'>Preferences</td>
+                <td colspan='3' class='inputTableHead'>Preferences</td>
             </tr>
-
+            <tr>
+                <td width='20%' class='inputTableRow inputTableSubhead'>
+                    <label for='user[timezone]'>Timezone</label>
+                </td>
+                <td class='inputTableRow' width='80%' colspan='2'>
+                    {html_options name='user[timezone]' id='user[timezone]' selected=$prefs.timezone_id options=$timezones}
+                </td>
+            </tr>
+            <tr>
+                <td width='20%' class='inputTableRowAlt inputTableSubhead'>
+                    <label for='user[datetime_format]'>Date &amp; Time Format</label>
+                </td>
+                <td class='inputTableRowAlt' width='80%' colspan='2'>
+                    {html_options name='user[datetime_format]' id='user[datetime_format]' selected=$prefs.datetime_format_id options=$datetime_formats}
+                </td>
+            </tr>
             <tr>
                 <td width='20%' class='inputTableRow inputTableSubhead'>
                     <label for='user[gender]'>Gender</label>
                 </td>
-                <td class='inputTableRow' width='80%'>
+                <td class='inputTableRow' width='80%' colspan='2'>
                     {html_options name='user[gender]' id='user[gender]' options=$genders selected=$prefs.gender}
                 </td>
             </tr>
@@ -61,7 +76,7 @@
                 <td width='20%' class='inputTableRowAlt inputTableSubhead'>
                     <label for='user[age]'>Age</label>
                 </td>
-                <td class='inputTableRowAlt' width='80%'>
+                <td class='inputTableRowAlt' width='80%' colspan='2'>
                     {html_options name='user[age]' id='user[age]' options=$ages selected=$prefs.age}
                 </td>
             </tr>
@@ -69,29 +84,40 @@
                 <td width='20%' class='inputTableRow inputTableSubhead'>
                     <label for='user[editor]'>Texteditor</label>
                 </td>
-                <td width='80%' class='inputTableRow'>
+                <td width='80%' class='inputTableRow' colspan='2'>
                     {html_options name='user[editor]' id='user[editor]' options=$editors selected=$prefs.editor}
                 </td>
             </tr>
             <tr>
                 <td width='20%' class='inputTableRowAlt inputTableSubhead'>
-                    <label for='user[profile]'>Profile</label>
+                    <label for='avatar'>Avatar</label>
                 </td>
-                <td width='80%' class='inputTableRowAlt'>
-                    <textarea name='user[profile]' id='user[profile]' cols='55' rows='10'>{$prefs.profile}</textarea>
+                <td class='inputTableRowAlt' style='vertical-align: top;'>
+                    {html_options name='user[avatar]' id='avatar' options=$avatars selected=$prefs.avatar_id onChange="return avatarPicker(this.form.avatar[this.form.avatar.selectedIndex].value,'`$display_settings.public_dir`/resources/avatars/');"}
+                </td>
+                <td class='inputTableRowAlt'>
+                    <img src='{$prefs.avatar_url}' alt='Avatar' border='0' id='avatar_image' {if $prefs.avatar_id == ''}style='display: none;' {/if}/>
                 </td>
             </tr>
             <tr>
                 <td width='20%' class='inputTableRow inputTableSubhead'>
+                    <label for='user[profile]'>Profile</label>
+                </td>
+                <td width='80%' class='inputTableRow' colspan='2'>
+                    <textarea name='user[profile]' id='user[profile]' cols='55' rows='10'>{$prefs.profile}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td width='20%' class='inputTableRowAlt inputTableSubhead'>
                     <label for='user[signature]'>Signature</label>
                 </td>
-                <td width='80%' class='inputTableRow'>
+                <td width='80%' class='inputTableRowAlt' colspan='2'>
                     <textarea name='user[signature]' id='user[signature]' cols='55' rows='10'>{$prefs.signature}</textarea>
                 </td>
             </tr>
             <tr>
-                <td class='inputTableRowAlt'>&nbsp;</td>
-                <td class='inputTableRowAlt' align='right'>
+                <td class='inputTableRow'>&nbsp;</td>
+                <td class='inputTableRow' align='right' colspan='2'>
                     <input type='submit' value='Save' />
                 </td>
             </tr>

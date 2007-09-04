@@ -106,3 +106,20 @@ function addToField(container_id)
 
     return true;
 } // end addToField
+
+function avatarPicker(file,url_base)
+{
+    image = document.getElementById('avatar_image');
+    if(image == null) return false;
+
+    if(file == '')
+    {
+        image.style.display = 'none';
+        return true;
+    }
+    
+    image.src = url_base + file;
+    image.style.display = '';
+
+    return true;
+} // end avatarPicker

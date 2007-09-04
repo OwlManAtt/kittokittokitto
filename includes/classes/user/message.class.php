@@ -8,7 +8,7 @@
  * 
  * @uses ActiveTable
  * @package Kitto_Kitto_Kitto
- * @subpackage Mail 
+ * @subpackage Messages
  * @copyright 2007 Nicholas Evans
  * @author Nick 'Owl' Evans <owlmanatt@gmail> 
  * @license GNU GPL v3 {@link http://www.gnu.org/licenses/gpl-3.0.txt}
@@ -85,7 +85,12 @@ class Message extends ActiveTable
     {
         return $this->get('user_name','sender');
     } // end getSenderUserName
-    
+
+    public function getSenderSignature()
+    {
+        return $this->get('signature','sender');
+    } // end getSenderSignature
+
     /**
      * Returns an array of id/username pairs. 
      * 

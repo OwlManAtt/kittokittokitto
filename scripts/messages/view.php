@@ -26,6 +26,13 @@ if(sizeof($ERRORS) > 0)
 }
 else
 {
+    // Mark this as read.
+    if($message->getMessageRead() == 'N')
+    {
+        $message->setMessageRead('Y');
+        $message->save();
+    } // end mark as read
+    
     // === Note:
     // The HTML for the recipient list is generated here because Smarty has
     // no facilities to do an implode() on an array itself.
@@ -41,6 +48,7 @@ else
         'from' => array(
             'id' => $message->getSenderUserId(),
             'name' => $message->getSenderUserName(),
+            'signature' => $message->getSenderSignature(),
         ),  
         'recipients' => implode(', ',$LIST),
         'title' => $message->getMessageTitle(),
