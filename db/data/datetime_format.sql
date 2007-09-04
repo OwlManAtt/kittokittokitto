@@ -16,15 +16,15 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `avatar`
+-- Dumping data for table `datetime_format`
 --
 
 
-/*!40000 ALTER TABLE `avatar` DISABLE KEYS */;
-LOCK TABLES `avatar` WRITE;
-INSERT INTO `avatar` (`avatar_id`, `avatar_name`, `avatar_image`, `active`) VALUES (1,'Kitto','kitto.png','Y'),(2,'Zutto','zutto.png','Y');
+/*!40000 ALTER TABLE `datetime_format` DISABLE KEYS */;
+LOCK TABLES `datetime_format` WRITE;
+INSERT INTO `datetime_format` (`datetime_format_id`, `datetime_format_name`, `datetime_format`) VALUES (1,'YYYY-MM-DD 24:MM:SS','Y-m-d H:i:s'),(2,'YYYY-MM-DD 12:MM:SS','Y-m-d g:i:s A'),(3,'Mon, DD, YYYY 12:mm:ss','M j, Y g:i:s A');
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `avatar` ENABLE KEYS */;
+/*!40000 ALTER TABLE `datetime_format` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

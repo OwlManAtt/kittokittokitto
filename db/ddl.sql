@@ -25,7 +25,8 @@ CREATE TABLE `avatar` (
   `avatar_name` varchar(50) NOT NULL,
   `avatar_image` varchar(50) NOT NULL,
   `active` enum('Y','N') NOT NULL default 'Y',
-  PRIMARY KEY  (`avatar_id`)
+  PRIMARY KEY  (`avatar_id`),
+  UNIQUE KEY `avatar_image` (`avatar_image`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -90,6 +91,18 @@ CREATE TABLE `cron_tab` (
   `unixtime_next_run` bigint(11) unsigned NOT NULL,
   `enabled` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`cron_tab_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `datetime_format`
+--
+
+DROP TABLE IF EXISTS `datetime_format`;
+CREATE TABLE `datetime_format` (
+  `datetime_format_id` int(11) NOT NULL auto_increment,
+  `datetime_format_name` varchar(30) NOT NULL,
+  `datetime_format` text NOT NULL,
+  PRIMARY KEY  (`datetime_format_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -236,6 +249,21 @@ CREATE TABLE `shop_restock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Table structure for table `timezone`
+--
+
+DROP TABLE IF EXISTS `timezone`;
+CREATE TABLE `timezone` (
+  `timezone_id` int(11) NOT NULL auto_increment,
+  `timezone_short_name` varchar(4) NOT NULL,
+  `timezone_long_name` varchar(32) character set utf8 NOT NULL,
+  `timezone_continent` varchar(13) NOT NULL,
+  `timezone_offset` float(3,1) NOT NULL,
+  `order_by` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`timezone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `user`
 --
 
@@ -261,10 +289,14 @@ CREATE TABLE `user` (
   `textarea_preference` enum('tinymce','plain') NOT NULL default 'tinymce',
   `datetime_last_post` datetime NOT NULL,
   `active_user_pet_id` int(11) NOT NULL,
+  `timezone_id` int(11) NOT NULL,
+  `datetime_format_id` int(11) NOT NULL,
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `user_name` (`user_name`),
   KEY `active_user_pet_id` (`active_user_pet_id`),
-  KEY `avatar_id` (`avatar_id`)
+  KEY `avatar_id` (`avatar_id`),
+  KEY `timezone_id` (`timezone_id`),
+  KEY `datetime_format_id` (`datetime_format_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
