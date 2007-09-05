@@ -52,7 +52,12 @@ Right-o. Introductions are out of the way. Let's get down to business.
     I strongly advise you to load *all* of it in, even if you delete most of 
     it once you understand how everything fits together.
 
-5. Edit /includes/config.inc.php. You need to specify your database/user/pw,
+5. Rename the '_htaccess' file to '.htaccess' (no quotes). Without the 
+   mod_rewrite rules provided by this file, your installation will not work.
+   If you get 500 Internal Server errors, something is wrong with your
+   webserver's configuration.
+
+6. Edit /includes/config.inc.php. You need to specify your database/user/pw,
    the base path (on the filesystem), and the public directory (the base URL),
    at the minimum. There are lots more options to play with in there, though.
    Don't fret - there's lots of delicious in-line documentation.
@@ -64,11 +69,11 @@ Right-o. Introductions are out of the way. Let's get down to business.
    people to use and upgrade once all of our changes are tested in DEV ;))
    and use version control. You know what a bitch configs can be...
    
-6. Register and hopefully have it work. You can set your user to have 
+7. Register and hopefully have it work. You can set your user to have 
    `user`.`access_level` = 'admin' to get admin rights. That gives you board
    moderation powers. The admin panel is Coming Soon(tm).
 
-7. Customize. Redesign.
+8. Customize. Redesign.
 
 My tips to you at this point:
     
