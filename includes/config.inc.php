@@ -29,6 +29,13 @@
  * @version 1.0.0
  **/
 
+/**
+ * Add the /external_lib/ folder to PHP's include path so everything 
+ * external should Just Work. Feel free to use your system's PEAR install,
+ * a shared Smarty install, etc. This directory is just for convinience.
+ **/
+ini_set('include_path',ini_get('include_path').':../external_lib:');
+
 switch($_SERVER['RELEASE_MODE'])
 {
 	case 'DEV':
