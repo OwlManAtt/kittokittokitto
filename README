@@ -54,7 +54,20 @@ Right-o. Introductions are out of the way. Let's get down to business.
 
 5. Rename the '_htaccess' file to '.htaccess' (no quotes). Without the 
    mod_rewrite rules provided by this file, your installation will not work.
-   If you get 500 Internal Server errors, something is wrong with your
+ 
+   Open this file and change the line 'RewriteBase /kittokittokitto' to what
+   is appropriate for your installation. The /kittokittokitto is the base
+   path of your installation. Examples:
+
+   +-----------------------------------------------------------------------+
+   | URL                                                | RewriteBase      |
+   +----------------------------------------------------+------------------+
+   | http://demo.kittokittokitto.yasashiisyndicate.org/ | /                |
+   | http://bell.owl.ys/kittokittokitto                 | /kittokittokitto |
+   | http://example.org/apps/kitto                      | /apps/kitto      |
+   +----------------------------------------------------+------------------+
+   
+   If you still get 500 Internal Server errors, something is wrong with your
    webserver's configuration.
 
 6. Edit /includes/config.inc.php. You need to specify your database/user/pw,
