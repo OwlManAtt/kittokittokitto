@@ -1,0 +1,18 @@
+All scripts, templates, and CSS are licensed under the GNU GPL v3 unless 
+otherwise specified. Specification will include the original author and 
+license the code is distributed under.
+
+All artwork is licensed under the Creative Commons-Attributive-Share Alike 3.0.
+
+== Notes on External Libraries ==
+The /external_lib/ folder contains a variety of libraries, from APHP to Smarty.
+These libraries all have their own licenses specified, and as such, the above
+statement *does not apply* to these packages. 
+
+== License URLs ==
+<http://www.gnu.org/licenses/gpl-2.0.txt>
+<http://www.gnu.org/licenses/gpl-3.0.txt>
+<http://creativecommons.org/licenses/by-sa/2.5/legalcode>
+<http://creativecommons.org/licenses/by-sa/3.0/legalcode>
+
+See the docs/licenses folder for fulltexts of these licenses.

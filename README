@@ -1,0 +1,114 @@
+ _  ___ _   _          _  ___ _   _        
+| |/ (_) |_| |_ ___   | |/ (_) |_| |_ ___  
+| ' /| | __| __/ _ \  | ' /| | __| __/ _ \ 
+| . \| | |_| || (_) | | . \| | |_| || (_) |
+|_|\_\_|\__|\__\___/  |_|\_\_|\__|\__\___/ 
+              _  ___ _   _        
+             | |/ (_) |_| |_ ___  
+             | ' /| | __| __/ _ \ 
+             | . \| | |_| || (_) |
+             |_|\_\_|\__|\__\___/ 
+=================================================
+
+Welcome to KittoKittoKitto, a new Virtual Pet Site template app.
+I'll write some pretty, inspiring text about education and improving
+the community for the final release and put it here.
+
+You early-adopters/beloved beta-testers probably don't care about
+the fucking marketing double-speak, right? I hope you don't mind its 
+absense in this release. 
+
+Right-o. Introductions are out of the way. Let's get down to business.
+
+== 0. Requirements ==
+* PHP >=5.1 (PHP 5.0 may work, too, but who uses that anymore?)
+* MySQL >=4 (test on 5, but it'll work on 4 - I promise).
+  * Oracle 9i/10g might actually work with a few changes (grep the includes/
+    directory for @rdbms-specific to see what you need to change - there's not
+    really that much marrying this to MySQL). So, if you're really a sadistic
+    son-of-a-bitch, have at it.
+* Apache + mod_rewrite
+ * If you want to write lighttpd rewrite rules, *PLEASE SEND THEM TO ME!*
+
+== 1. Installation ==
+1. Unzip package and transmit its contents to your webserver.
+
+2. Chmod the /cache/ dir so that it is writable by the webserver.
+
+3. Chmod the /template/cache, /template/config/, and /template/templates_c
+   directories to be writable by the webserver. However, DO NOT DO THIS TO 
+   /template/templates - that is insecure.
+   
+4. Load the db/ddl.sql file into your MySQL database. ddl.sql contains all of
+   the table structures needed by this app.
+   * You're SOL if you want Oracle DDL. If you port it, please send the SQL to
+     me!
+
+4a. Optionally load some SQL files from /db/data in to your database. These
+    contain seed data. The jump_page.sql, datetime_format.sql, and timezone.sql
+    files not being loaded *WILL* cause your installation to be completely 
+    broken. 
+    
+    I strongly advise you to load *all* of it in, even if you delete most of 
+    it once you understand how everything fits together.
+
+5. Edit /includes/config.inc.php. You need to specify your database/user/pw,
+   the base path (on the filesystem), and the public directory (the base URL),
+   at the minimum. There are lots more options to play with in there, though.
+   Don't fret - there's lots of delicious in-line documentation.
+
+   Furthermore, you may want to set your $_SERVER['RELEASE_MODE'] at the top of
+   the config file. The setting in .htaccess does not always work properly,
+   depending on your configuration. The DEV and PROD modes are provided for
+   those of us who have two installs (one for developing against, one for
+   people to use and upgrade once all of our changes are tested in DEV ;))
+   and use version control. You know what a bitch configs can be...
+   
+6. Register and hopefully have it work. You can set your user to have 
+   `user`.`access_level` = 'admin' to get admin rights. That gives you board
+   moderation powers. The admin panel is Coming Soon(tm).
+
+7. Customize. Redesign.
+
+My tips to you at this point:
+    
+    * Read through the code. Learn where things go in the directory tree. There
+      really isn't that much code to look at - most of the work is being done
+      by ActiveTable automagically.
+
+    * __LEARN HOW TO USE ACTIVETABLE__. It's a brand-new library, and docs are
+      still forthcoming (although there's pretty good in-line documentation that
+      can be compiled into HTML with phpdocumentor), but ActiveTable is a 
+      *SERIOUS* timesaver. Without it, I would not have been able to write
+      Kitto in (literally) five days. 
+
+      There's some documentation for the library at 
+      <http://aphp.yasashiisyndicate.org>. It's not complete, but it's not 
+      exactly sparse, either. 
+      
+      Writing and debugging SQL is a bitch. It's error-prone. It's a timesink. 
+      Why not have most of your SQL written for you by ActiveTable? ;-)
+
+      Furthermore, ActiveTable uses PEAR::DB#prepare()/PEAR::DB#execute() for
+      all of its operations, so you're absolutely safe from SQL injection,
+      even if you don't use stripinput() in whatever you're passing it. How
+      can you pass that up?
+
+   * Use Smarty templates. As you can see, they keep all of your script files
+     very small, clean, and easy-to-read. Plus, Smarty has a kickass caching
+     engine, so when you realize the boards are causing high server loads, you
+     can have Smarty cache the HTML it generates with a few extra lines. 
+     
+     No SQL/HTML generation = less load. You can even have Smarty expire a 
+     cached template whenever someone makes a new post. Believe me - Smarty
+     has a lot of features that make it worth learning.
+     
+     The Smarty manual is available at <http://smarty.php.net>. Give it a once-
+     over, at the very least!
+
+Nick 'Owl' Evans, 2007-09-04
+
+KittoKittoKitto has been brought to you by the Yasashii Syndicate. 
+<http://yasashiisyndicate.org>
+
+Yasashii yoake!
