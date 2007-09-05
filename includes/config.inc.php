@@ -29,12 +29,8 @@
  * @version 1.0.0
  **/
 
-/**
- * Add the /external_lib/ folder to PHP's include path so everything 
- * external should Just Work. Feel free to use your system's PEAR install,
- * a shared Smarty install, etc. This directory is just for convinience.
- **/
-ini_set('include_path',ini_get('include_path').':../external_lib:');
+// See the README for info...
+// $_SERVER['RELEASE_MODE'] = 'DEV';
 
 switch($_SERVER['RELEASE_MODE'])
 {
@@ -170,6 +166,13 @@ switch($_SERVER['RELEASE_MODE'])
 	} // end default
 
 } // end release mode switch
+
+/**
+ * Add the /external_lib/ folder to PHP's include path so everything 
+ * external should Just Work. Feel free to use your system's PEAR install,
+ * a shared Smarty install, etc. This directory is just for convinience.
+ **/
+ini_set('include_path',ini_get('include_path').":{$APP_CONFIG['base_path']}/external_lib");
 
 /**
  * These are mission-critical libraries. Nothing else will function 
