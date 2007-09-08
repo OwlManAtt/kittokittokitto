@@ -44,6 +44,22 @@ class StaffGroup extends ActiveTable
     protected $table_name = 'staff_group';
     protected $primary_key = 'staff_group_id';
     
+    /**
+     * Delete a staff group and its permission mapping. 
+     * 
+     * @return bool
+     **/
+    public function destroy()
+    {
+        $result = $this->db->query('DELETE FROM staff_group_staff_permission WHERE staff_group_id = ?',array($this->getStaffGroupId()));
+
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+        
+        return parent::destroy();
+    } // end destroy
 } // end StaffGroup
 
 ?>
