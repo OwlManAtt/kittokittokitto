@@ -43,6 +43,23 @@ class PetSpecieColor extends ActiveTable
 {
     protected $table_name = 'pet_specie_color';
     protected $primary_key = 'pet_specie_color_id';
+
+    /**
+     * Deletes any pet <=> color mappings for this color prior to deletion.
+     * 
+     * @return bool 
+     **/
+    public function destroy()
+    {
+        $result = $this->db->query('DELETE FROM pet_specie_pet_specie_color WHERE pet_specie_color_id = ?',array($this->getPetSpecieColor()));
+        
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+
+        return parent::destroy();
+    } // end destroy
 } // end PetSpecieColor
 
 ?>

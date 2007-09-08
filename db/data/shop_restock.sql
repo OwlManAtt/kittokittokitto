@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `shop_restock` DISABLE KEYS */;
 LOCK TABLES `shop_restock` WRITE;
-INSERT INTO `shop_restock` (`shop_restock_id`, `shop_id`, `item_type_id`, `restock_frequency_seconds`, `unixtime_next_restock`, `min_price`, `max_price`, `min_quantity`, `max_quantity`, `store_quantity_cap`) VALUES (1,1,1,3600,1189262600,1,15,5,10,30);
+INSERT INTO `shop_restock` (`shop_restock_id`, `shop_id`, `item_type_id`, `restock_frequency_seconds`, `unixtime_next_restock`, `min_price`, `max_price`, `min_quantity`, `max_quantity`, `store_quantity_cap`) VALUES (1,1,1,3600,1189282613,1,15,5,10,30);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `shop_restock` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
