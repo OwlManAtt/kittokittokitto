@@ -43,6 +43,87 @@ class StaffGroup extends ActiveTable
 {
     protected $table_name = 'staff_group';
     protected $primary_key = 'staff_group_id';
+
+    /**
+     * Updates a groups permissions. 
+     * 
+     * This works by deleting rows from the mapping table where the
+     * permission ID is *not* one of the IDs passed, then selecting
+     * the permission ID rows into the table where the ID is in the list.
+     * The IGNORE on the insert prevents it from throwing an error
+     * if the uniqueness constraint fails (ie, it handles mappings that
+     * exist already).
+     * 
+     * @rdbms-specific Very MySQL 4/5-specific.
+     * @param array $permission_ids An array of integers.
+     * @return bool
+     **/
+    public function updatePermissions($permission_ids)
+    {
+        // Delete all is a little different.
+        if(sizeof($permission_ids) == 0)
+        {
+            $result = $this->db->query('DELETE FROM staff_group_staff_permission WHERE staff_group_id = ?',array($this->getStaffGroupId()));
+                  
+            if(PEAR::isError($result))
+            {
+                throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+            }
+
+            return true;
+        } // end handle delete all
+        
+        // Handle the delete or add *some*.
+        $holders = array_fill(0,(sizeof($permission_ids)),'?');
+        $holders = implode(',',$holders);
+        
+        $result = $this->db->query("
+            DELETE FROM staff_group_staff_permission 
+            WHERE staff_permission_id NOT IN ($holders) 
+            AND staff_group_id = ?
+        ",array_merge($permission_ids,array($this->getStaffGroupId())));
+        
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+        
+        $result = $this->db->query("
+            INSERT IGNORE INTO staff_group_staff_permission 
+            (staff_permission_id,staff_group_id) 
+            SELECT 
+                staff_permission_id, 
+                ? AS group_id 
+            FROM staff_permission 
+            WHERE staff_permission_id IN ($holders)
+        ",array_merge(array($this->getStaffGroupId()),$permission_ids));
+
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+        
+        return true;
+    } // end updatePermissions
+
+    public function hasPermission($name)
+    {
+        $result = $this->db->getOne('
+            SELECT 
+                count(*) 
+            FROM staff_group_staff_permission 
+            INNER JOIN staff_permission ON staff_group_staff_permission.staff_permission_id = staff_permission.staff_permission_id 
+            WHERE staff_permission.api_name = ?
+            AND staff_group_staff_permission.staff_group_id = ?
+        ',array($name,$this->getStaffGroupId()));
+
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+        
+        return (bool)$result; 
+    } // end hasPermission
     
     /**
      * Delete a staff group and its permission mapping. 

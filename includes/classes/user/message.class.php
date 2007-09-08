@@ -76,7 +76,6 @@ class Message extends ActiveTable
         $values = array($user_id);
         $values = array_merge($values,array_unique($MESSAGES));
 
-        // Since it starts from zero, sizeof(messages) - 1.
         $holders = array_fill(0,(sizeof($MESSAGES)),'?');
         $holders = implode(',',$holders);
 

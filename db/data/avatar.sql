@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `avatar` DISABLE KEYS */;
 LOCK TABLES `avatar` WRITE;
-INSERT INTO `avatar` (`avatar_id`, `avatar_name`, `avatar_image`, `active`) VALUES (1,'Kitto','kitto.png','Y'),(2,'Zutto','zutto.png','Y');
+INSERT INTO `avatar` (`avatar_id`, `avatar_name`, `avatar_image`, `active`) VALUES (1,'Kitto','kitto.png','Y'),(2,'Zutto','zutto.png','Y'),(3,'Vita-chan','vitachan.png','Y');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `avatar` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

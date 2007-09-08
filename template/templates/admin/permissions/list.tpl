@@ -15,12 +15,13 @@
     <tr>
         <td class='{$class}' width='70%'>{$group.name}</td>
         <td class='{$class}' align='center'>
-            <form action='' method='get'>
+            <form action='{$display_settings.public_dir}/admin-permissions-edit/' method='get'>
+                <input type='hidden' name='group[id]' value='{$group.id}' />
                 <input type='submit' value='Edit' />
             </form>
         </td>
         <td class='{$class}' align='center'>
-            <form action='' method='post' onSubmit='return confirm("Are you sure you wish to delete the {$group.name} group?");'>
+            <form action='{$display_settings.public_dir}/admin-permissions/' method='post' onSubmit='return confirm("Are you sure you wish to delete the {$group.name} group?");'>
                 <input type='hidden' name='state' value='delete' />
                 <input type='hidden' name='group[id]' value='{$group.id}' />
                 <input type='submit' value='Delete' />
@@ -28,4 +29,12 @@
         </td>
     </tr>
     {/section}
+    {cycle values='dataTableRow,dataTableRowAlt' assign=class}
+    <tr>
+        <td class='{$class}' align='center' colspan='3'>
+            <form action='{$display_settings.public_dir}/admin-permissions-edit/' method='get'>
+                <input type='submit' value='New Group' />
+            </form>
+        </td>
+    </tr>
 </table>
