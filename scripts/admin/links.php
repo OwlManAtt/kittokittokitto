@@ -29,14 +29,29 @@
  **/
 
 $LINKS = array(
-    // Slug => Permission
-    'admin-permissions' => 'manage_permissions',
-    'admin-pet-colors' => 'manage_pets',
-    'admin-pet-species' => 'manage_pets',
-    'admin-users' => 'manage_users',
-    'admin-boards' => 'manage_boards',
-    'admin-shops' => 'manage_shops',
-    'admin-items' => 'manage_items',
+    // Slug => (Permission, Nicename)
+    'admin-permissions' => array('manage_permissions','Permission Manager'),
+    'admin-pet-colors' => array('manage_pets','Pet Color Manager'),
+    'admin-pet-species' => array('manage_pets','Pet Specie Manager'),
+    'admin-users' => array('manage_users','User Editor'),
+    'admin-boards' => array('manage_boards','Manage Boards'),
+    'admin-shops' => array('manage_shops','Manage Shops'),
+    'admin-items' => array('manage_items','Manage Items'),
 );
+
+$SHOW = array();
+foreach($LINKS as $slug => $details)
+{
+    if($User->hasPermission($details[0]) == true)
+    {
+        $SHOW[] = array(
+            'slug' => $slug,
+            'text' => $details[1],
+        );
+    }
+} // end link loop
+
+$renderer->assign('links',$SHOW);
+$renderer->display('admin/links.tpl');
 
 ?>
