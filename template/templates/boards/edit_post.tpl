@@ -11,7 +11,7 @@
                 <tr>
                     <td style='vertical-align: top; font-weight: bold; font-size: large;'>Message</td>
                     <td colspan='2'>
-                        <textarea name='post_text' id='post_text' cols='60' rows='15'>{$text|kkkp2nl}</textarea>
+                        <textarea name='post_text' id='post_text' cols='60' rows='15'>{kkkp2nl text=$text}</textarea>
                     </td>
                 </tr>
                 <tr>

@@ -29,7 +29,6 @@
  * @version 1.0.0
  **/
 
-
 $post_id = stripinput($_REQUEST['post_id']);
 $page = stripinput($_REQUEST['page']);
 

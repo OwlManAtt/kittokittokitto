@@ -60,29 +60,24 @@ else
     );
 
     // Add a special note if needed.
-    switch($profile->getAccessLevel())
+    if($profile->getAccessLevel() == 'banned')
     {
-        case 'admin':
+        $PROFILE['special_status'] = 'This user has been banned.';
+    } // end banned test
+    else
+    {
+        $group_string = null;
+        $groups = $profile->grabStaffGroups();
+        if(sizeof($groups) > 0)
         {
-            $PROFILE['special_status'] = 'This user is an administrator.';
+            foreach($groups as $group)
+            {
+                $group_string[] = $group->getGroupName();
+            } // end group reformatitng loop
 
-            break;
-        } // end admin
-
-        case 'mod':
-        {
-            $PROFILE['special_status'] = 'This user is a moderator.';
-
-            break;
-        } // end admin
-
-        case 'banned':
-        {
-            $PROFILE['special_status'] = 'This user has been banned.';
-
-            break;
-        } // end admin
-    } // end userlevel switch
+            $PROFILE['special_status'] = 'Staff: '.implode(', ',$group_string);
+        } // end has groups
+    } // end try to load groups
    
     $PETS = array();
     $pets = $profile->grabPets();

@@ -1,0 +1,14 @@
+=== 1.0.1 () ===
+* Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
+  cause too many newline characters to be inserted, causing the formatting to
+  look terrible.
+
+* The error page for creating new threads has a 'back' button that will 
+  preserve any title or message entered. This prevents you from losing your
+  post text if you forgot to enter a title.
+
+* A real permission system has been implemented. Users belong to one or more 
+  staff groups, and each group has certian permisisons mapped to it. 
+
+=== 1.0.0 (2007-09-04) ===
+* Initial release.

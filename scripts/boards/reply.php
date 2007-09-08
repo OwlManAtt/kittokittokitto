@@ -76,7 +76,7 @@ else
     $thread->setThreadLastPostedDatetime($thread->sysdate());
     $thread->save();
     
-    $_SESSION['board_notice'] = "Your message has been posted successfully in <strong>{$thread->getThreadName()}</strong>";
+    $_SESSION['board_notice'] = "Your message has been posted successfully in <strong>{$thread->getThreadName()}</strong>.";
 
     redirect(null,null,"threads/{$thread->getBoardId()}");
 } // end create post

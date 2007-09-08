@@ -45,7 +45,7 @@
             </td>
         </tr>
         {if $profile.special_status != ''}<tr>
-            <td align='center' class='inputTableRowAlt' colspan='2' style='font-size: x-large;'>{$profile.special_status}</td>
+            <td class='inputTableRowAlt' colspan='2' style='text-align: center; font-size: x-large;'>{$profile.special_status}</td>
         </tr>{/if}
     </table>
 </div>

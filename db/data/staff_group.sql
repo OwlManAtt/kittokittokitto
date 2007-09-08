@@ -16,15 +16,15 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `cron_tab`
+-- Dumping data for table `staff_group`
 --
 
 
-/*!40000 ALTER TABLE `cron_tab` DISABLE KEYS */;
-LOCK TABLES `cron_tab` WRITE;
-INSERT INTO `cron_tab` (`cron_tab_id`, `cron_class`, `cron_frequency_seconds`, `unixtime_next_run`, `enabled`) VALUES (1,'Job_RestockShops',3600,1189219518,'Y');
+/*!40000 ALTER TABLE `staff_group` DISABLE KEYS */;
+LOCK TABLES `staff_group` WRITE;
+INSERT INTO `staff_group` (`staff_group_id`, `group_name`, `group_descr`) VALUES (1,'High Administrators ','The High Administrators are the owner(s) of the site. It is their job to coordinate the efforts of all other staff members and keep the site on-course.'),(2,'Moderators','The moderators deal with inappropriate forum posts and other complaints by users.');
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `cron_tab` ENABLE KEYS */;
+/*!40000 ALTER TABLE `staff_group` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

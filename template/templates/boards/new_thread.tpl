@@ -12,7 +12,7 @@
                         <label for='post[title]'>Title</title>
                     </td>
                     <td colspan='2'>
-                        <input type='text' name='post[title]' id='post[title]' maxlength='60' size='61' />
+                        <input type='text' name='post[title]' id='post[title]' maxlength='60' size='61' value='{$post.title}' />
                     </td>
                 </tr>
                 <tr>
@@ -20,7 +20,7 @@
                         <label for='post[text]'>Message</label>
                     </td>
                     <td colspan='2'>
-                        <textarea name='post[text]' id='post[text]' cols='60' rows='15'></textarea>
+                        <textarea name='post[text]' id='post[text]' cols='60' rows='15'>{$post.body}</textarea>
                     </td>
                 </tr>
                 <tr>

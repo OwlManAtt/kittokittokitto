@@ -1,9 +1,6 @@
 <?php
 /**
- * Jumppage class definition.
- *
- * Jump pages translate slugs => files and provide important details
- * about the individual page, like permissions and layout.
+ * Staff groups. 
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -33,50 +30,20 @@
  **/
 
 /**
- * JumpPage 
+ * Staff groups. 
  * 
  * @uses ActiveTable
  * @package Kitto_Kitto_Kitto
  * @subpackage Core 
  * @copyright 2007 Nicholas Evans
  * @author Nick 'Owl' Evans <owlmanatt@gmail> 
- * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @license http://www.gnu.org/licenses/gpl-3.0.txt GNU GPL v3
  **/
-class JumpPage extends ActiveTable
+class StaffGroup extends ActiveTable
 {
-	protected $table_name = 'jump_page';
-    protected $primary_key = 'jump_page_id';
-
-	/**
-	 * Determine if if $position has rights to view this page.
-	 *
-	 * @param User|null
-	 * @return boolean
-	 **/
-	public function hasAccess($user)
-	{
-        if($user == null)
-        {
-            if($this->getAccessLevel() == 'public')
-            {
-                return true;
-            }
-
-            return false;
-        } // end not logged in
-        
-        if($user->getAccessLevel() == 'banned')
-        {
-            return false;
-        }
-
-        if($this->getAccessLevel() == 'restricted')
-        {
-            return $user->hasPermission($this->getRestrictedPermissionApiName());
-        }
-
-        return true;
-	} // end hasAccess
-} // end JumpPage
+    protected $table_name = 'staff_group';
+    protected $primary_key = 'staff_group_id';
+    
+} // end StaffGroup
 
 ?>

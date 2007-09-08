@@ -16,15 +16,15 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `cron_tab`
+-- Dumping data for table `staff_permission`
 --
 
 
-/*!40000 ALTER TABLE `cron_tab` DISABLE KEYS */;
-LOCK TABLES `cron_tab` WRITE;
-INSERT INTO `cron_tab` (`cron_tab_id`, `cron_class`, `cron_frequency_seconds`, `unixtime_next_run`, `enabled`) VALUES (1,'Job_RestockShops',3600,1189219518,'Y');
+/*!40000 ALTER TABLE `staff_permission` DISABLE KEYS */;
+LOCK TABLES `staff_permission` WRITE;
+INSERT INTO `staff_permission` (`staff_permission_id`, `api_name`, `permission_name`) VALUES (1,'ignore_board_lock','Post In Locked Board'),(2,'delete_post','Delete Post'),(3,'edit_post','Edit Post'),(4,'manage_thread','Lock/Stick Thread'),(5,'admin_panel','Admin Panel Access'),(6,'moderate','Moderation Dropdown');
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `cron_tab` ENABLE KEYS */;
+/*!40000 ALTER TABLE `staff_permission` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -7,4 +7,5 @@
     <li>{kkkurl link_text='Games' slug='games'}</li>
     <li>{kkkurl link_text='Boards' slug='boards'}</li>
     <li>{kkkurl link_text='Messages' slug='messages'}</li>
+    {if $show_admin_panel == 1}<li>{kkkurl link_text='Admin' slug='admin'}</li>{/if}
 </ul>

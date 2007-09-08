@@ -116,11 +116,16 @@ else
             
             $renderer->assign('site_notice',$NOTICE);
         } // end notice exists
+
+        if($User->hasPermission('admin_panel') == true)
+        {
+            $renderer->assign('show_admin_panel',true);
+        }
     } // end user exists
     
 	$renderer->display("layout/{$jump_page->getLayoutType()}/header.tpl");
 
-	if($jump_page->hasAccess($access_level) == false)
+	if($jump_page->hasAccess($User) == false)
 	{
 		if($access_level == 'banned')
 		{

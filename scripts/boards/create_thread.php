@@ -61,6 +61,17 @@ else
                 'id' => $board->getBoardId(),
                 'name' => $board->getBoardName(),
             );        
+
+            // POSTback from a failed attempt to post.
+            if(is_array($_REQUEST['error']) == true)
+            {
+                $POST = array(
+                    'title' => stripinput($_REQUEST['error']['title']),
+                    'body' => clean_xhtml($_REQUEST['error']['body']),
+                );
+
+                $renderer->assign('post',$POST);
+            } // end handle postback errors
            
             $renderer->assign('board',$BOARD_DATA);
             $renderer->display('boards/new_thread.tpl');
@@ -96,7 +107,16 @@ else
             if(sizeof($ERRORS) > 0)
             {
                 draw_errors($ERRORS);
-            }
+
+                $POST = array(
+                    'board_id' => stripinput($_REQUEST['board_id']),
+                    'title' => $title,
+                    'message' => $text,
+                );
+                
+                $renderer->assign('post',$POST);
+                $renderer->display('boards/new_thread_error.tpl');
+            } // end show errors
             else
             {
                 $thread = new BoardThread($db);

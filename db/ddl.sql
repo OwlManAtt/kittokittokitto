@@ -149,7 +149,8 @@ CREATE TABLE `jump_page` (
   `page_html_title` varchar(255) NOT NULL default '',
   `layout_type` enum('basic','deep') NOT NULL default 'deep',
   `page_slug` varchar(25) NOT NULL default '',
-  `access_level` enum('admin','mod','user','public') NOT NULL default 'user',
+  `access_level` enum('restricted','user','public') NOT NULL default 'user',
+  `restricted_permission_api_name` varchar(35) NOT NULL,
   `php_script` varchar(100) NOT NULL default '',
   `include_tinymce` enum('N','Y') NOT NULL default 'N',
   `active` enum('Y','N') NOT NULL default 'Y',
@@ -249,6 +250,43 @@ CREATE TABLE `shop_restock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Table structure for table `staff_group`
+--
+
+DROP TABLE IF EXISTS `staff_group`;
+CREATE TABLE `staff_group` (
+  `staff_group_id` int(11) NOT NULL auto_increment,
+  `group_name` varchar(50) NOT NULL,
+  `group_descr` text NOT NULL,
+  PRIMARY KEY  (`staff_group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `staff_group_staff_permission`
+--
+
+DROP TABLE IF EXISTS `staff_group_staff_permission`;
+CREATE TABLE `staff_group_staff_permission` (
+  `staff_group_staff_permission` int(11) NOT NULL auto_increment,
+  `staff_group_id` int(11) NOT NULL,
+  `staff_permission_id` int(11) NOT NULL,
+  PRIMARY KEY  (`staff_group_staff_permission`),
+  UNIQUE KEY `staff_group_id` (`staff_group_id`,`staff_permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `staff_permission`
+--
+
+DROP TABLE IF EXISTS `staff_permission`;
+CREATE TABLE `staff_permission` (
+  `staff_permission_id` int(11) NOT NULL auto_increment,
+  `api_name` varchar(50) NOT NULL,
+  `permission_name` varchar(50) NOT NULL,
+  PRIMARY KEY  (`staff_permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `timezone`
 --
 
@@ -276,7 +314,7 @@ CREATE TABLE `user` (
   `registered_ip_addr` varchar(16) default NULL,
   `last_ip_addr` varchar(16) default NULL,
   `last_activity` datetime default NULL,
-  `access_level` enum('banned','user','mod','admin') NOT NULL default 'user',
+  `access_level` enum('banned','user') NOT NULL default 'user',
   `email` text NOT NULL,
   `age` smallint(3) unsigned NOT NULL,
   `gender` enum('male','female') NOT NULL,
@@ -367,6 +405,19 @@ CREATE TABLE `user_pet` (
   KEY `user_id` (`user_id`),
   KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Pets = specie + user + color.';
+
+--
+-- Table structure for table `user_staff_group`
+--
+
+DROP TABLE IF EXISTS `user_staff_group`;
+CREATE TABLE `user_staff_group` (
+  `user_staff_group_id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL,
+  `staff_group_id` int(11) NOT NULL,
+  PRIMARY KEY  (`user_staff_group_id`),
+  UNIQUE KEY `user_id` (`user_id`,`staff_group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

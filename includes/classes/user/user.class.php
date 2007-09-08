@@ -99,7 +99,19 @@ class User extends ActiveTable
             'local_key' => 'user_id',
             'foreign_key' => 'recipient_user_id',
         ),
+        'staff_groups' => array(
+            'class' => 'User_StaffGroup',
+            'local_key' => 'user_id',
+            'foreign_key' => 'user_id',
+        ),
     );
+
+    /**
+     * Caches loaded permissions so another SQL lookup doesn't need to be done. 
+     * 
+     * @var array
+     **/
+    protected $permission_cache = array();
 
     /**
 	 * Set the password for a user by passing in plaintext.
@@ -188,42 +200,41 @@ class User extends ActiveTable
 
     /**
      * Determine if this user has a permission. 
+     *
+     * This works by checking a the object's cache for a permission. If it
+     * is cached, a lookup is done to grab it from the DB (slow, many joins).
+     * The permission is added to the cache and the cached value is returned.
      * 
      * @param string $permission The permission's name.
      * @return bool
-     * @todo replace it with something that isn't bollocks.
      **/
 	public function hasPermission($permission)
 	{
-		$has = false;
-		
-		switch($permission)
-		{
-            case 'ignore_board_lock':
+        // Fucktarded developer protection.
+        $permission = strtolower($permission);
+        
+        if(array_key_exists($permission,$this->permission_cache) == false)
+        {
+            $result = $this->db->getOne('
+                SELECT 
+                    count(*) AS has_permission
+                FROM user
+                INNER JOIN user_staff_group ON user.user_id = user_staff_group.user_id
+                INNER JOIN staff_group_staff_permission ON user_staff_group.staff_group_id = staff_group_staff_permission.staff_group_id
+                INNER JOIN staff_permission ON staff_group_staff_permission.staff_permission_id = staff_permission.staff_permission_id
+                WHERE staff_permission.api_name = ?
+                AND user.user_id = ?
+            ',array($permission,$this->getUserId()));
+
+            if(PEAR::isError($result))
             {
-				if($this->getAccessLevel() == 'admin')
-                {
-                    $has = true;
-                }
-            
-                break;
-            } // end ignore_board_lock
-            
-            case 'delete_post': 
-            case 'edit_post': 
-            case 'manage_thread': 
-			case 'forum_mod':
-			{
-				if(in_array($this->getAccessLevel(),array('mod','admin')) == true)
-				{
-					$has = true;
-				}
-				
-				break;
-			} // end forum_mod
-		} // end permission switch
-		
-		return $has;
+                throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+            }
+
+            $this->permission_cache[$permission] = (bool)$result;
+        } // end do load
+        
+        return $this->permission_cache[$permission];
 	} // end hasPermission
 
     /**
@@ -429,6 +440,29 @@ class User extends ActiveTable
         
         return "{$APP_CONFIG['public_dir']}/resources/avatars/{$this->getAvatarImage()}";
     } // end getAvatarUrl
+
+    /**
+     * Grab the list of groups.
+     *
+     * This method is kinda slow. To retain its agnosticism, I didn't
+     * write a query to go directly from user => group. The actual RELATED
+     * entry grabs rows from user_staff_group and then loads the group for
+     * each of those rows.
+     * 
+     * @return array An array of UserGroups. 
+     **/
+    public function grabStaffGroups()
+    {
+        $groups = $this->grab('staff_groups');
+
+        $REAL = array();
+        foreach($groups as $group)
+        {
+            $REAL[] = $group->grabGroup();
+        } // end grouploop
+
+        return $REAL;
+    } // end grabGroups
 } // end User 
 
 ?>
