@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `cron_tab` DISABLE KEYS */;
 LOCK TABLES `cron_tab` WRITE;
-INSERT INTO `cron_tab` (`cron_tab_id`, `cron_class`, `cron_frequency_seconds`, `unixtime_next_run`, `enabled`) VALUES (1,'Job_RestockShops',3600,1189282613,'Y');
+INSERT INTO `cron_tab` (`cron_tab_id`, `cron_class`, `cron_frequency_seconds`, `unixtime_next_run`, `enabled`) VALUES (1,'Job_RestockShops',3600,1189352818,'Y');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `cron_tab` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

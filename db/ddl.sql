@@ -208,7 +208,7 @@ DROP TABLE IF EXISTS `shop`;
 CREATE TABLE `shop` (
   `shop_id` int(11) NOT NULL auto_increment,
   `shop_name` varchar(30) NOT NULL,
-  `shop_image` varchar(50) NOT NULL,
+  `shop_image` varchar(200) NOT NULL,
   `welcome_text` text NOT NULL,
   PRIMARY KEY  (`shop_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -321,7 +321,7 @@ CREATE TABLE `user` (
   `profile` text NOT NULL,
   `signature` text NOT NULL,
   `avatar_id` int(11) NOT NULL,
-  `user_title` varchar(50) NOT NULL default 'User',
+  `user_title` varchar(20) NOT NULL default 'User',
   `datetime_created` datetime default NULL,
   `post_count` int(10) unsigned NOT NULL,
   `textarea_preference` enum('tinymce','plain') NOT NULL default 'tinymce',
