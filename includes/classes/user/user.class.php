@@ -463,6 +463,54 @@ class User extends ActiveTable
 
         return $REAL;
     } // end grabGroups
+
+    public function updateGroups($group_ids)
+    {
+        // Delete all is a little different.
+        if(sizeof($group_ids) == 0)
+        {
+            $result = $this->db->query('DELETE FROM user_staff_group WHERE user_id = ?',array($this->getUserId()));
+                  
+            if(PEAR::isError($result))
+            {
+                throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+            }
+
+            return true;
+        } // end handle delete all
+        
+        // Handle the delete or add *some*.
+        $holders = array_fill(0,(sizeof($group_ids)),'?');
+        $holders = implode(',',$holders);
+        
+        $result = $this->db->query("
+            DELETE FROM user_staff_group 
+            WHERE staff_group_id NOT IN ($holders) 
+            AND user_id = ?
+        ",array_merge($group_ids,array($this->getUserId())));
+        
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+        
+        $result = $this->db->query("
+            INSERT IGNORE INTO user_staff_group 
+            (staff_group_id,user_id) 
+            SELECT 
+                staff_group_id, 
+                ? AS user_id 
+            FROM staff_group
+            WHERE staff_group_id IN ($holders)
+        ",array_merge(array($this->getUserId()),$group_ids));
+
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        }
+        
+        return true;
+    } // end updateGroups
 } // end User 
 
 ?>

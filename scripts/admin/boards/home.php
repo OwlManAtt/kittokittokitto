@@ -70,7 +70,7 @@ switch($_REQUEST['state'])
         $board_id = stripinput($_POST['board']['id']);
         
         $board = new Board($db);
-        $board = $group->findByOneBoardId($board_id);
+        $board = $board->findOneByBoardId($board_id);
 
         if($board == null)
         {
@@ -92,18 +92,5 @@ switch($_REQUEST['state'])
 
         break;
     } // end delete
-    case 'create':
-    {
-        // LOL
-        $boards = new Board($db);
-        $insert = array(
-            'board_name'   => $_POST['board']['name'],
-            'board_descr'  => $_POST['board']['descr'],
-            'board_locked' => $_POST['board']['locked'],
-            'news_source'  => $_POST['board']['news_source'],
-            'order_by'     => $_POST['board']['order_by']
-            );
-        $boards->create($insert);
-    } // end create
 } // end state switch
 ?>

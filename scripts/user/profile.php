@@ -95,6 +95,7 @@ else
     $renderer->assign('pets',$PETS); 
     $renderer->assign('pet_count',sizeof($PETS)); 
 	$renderer->assign('profile',$PROFILE);
+    $renderer->assign('edit_user',$User->hasPermission('manage_users'));
 	$renderer->display('user/profile.tpl');
 } // end no errors
 ?>

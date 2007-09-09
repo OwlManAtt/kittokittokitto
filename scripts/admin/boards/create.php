@@ -30,14 +30,70 @@
  **/
 
 // LOL
-$boards = new Board($db);
-$insert = array(
-    'board_name'   => $_POST['board']['name'],
-    'board_descr'  => $_POST['board']['descr'],
-    'board_locked' => $_POST['board']['locked'],
-    'news_source'  => $_POST['board']['news_source'],
-    'order_by'     => $_POST['board']['order_by']
-    );
-$boards->create($insert);
-?>
+switch($_REQUEST['state'])
+{
+    default:
+    {
 
+        if($_SESSION['permission_notice'] != null)
+        {
+            $renderer->assign('notice',$_SESSION['permission_notice']);
+            unset($_SESSION['permission_notice']);
+        }
+        $renderer->display('admin/boards/create.tpl');
+        break;
+    }
+    case 'create':
+    {
+        $ERRORS = array();
+        $boards = new Board($db);
+
+        $BOARD = array(
+            'board_name'   => $_POST['board']['name'],
+            'board_descr'  => $_POST['board']['descr'],
+            'board_locked' => $_POST['board']['locked'],
+            'news_source'  => $_POST['board']['news_source'],
+            'order_by'     => $_POST['board']['order_by']
+        );
+
+        if($BOARD['board_name'] == null) { ## max 100
+            $ERRORS[] = "No board name given.";
+        }
+        elseif(strlen($BOARD['board_name']) > 10) {
+            $ERRORS[] = "Board name too long.";
+        }
+        
+        if($BOARD['board_descr'] == null) { ## max 2^8-1
+            $ERRORS[] = "No board description given.";
+        }
+        elseif(strlen($BOARD['board_descr']) > 255) {
+            $ERRORS[] = "Board description too long.";
+        }
+        
+
+        if($BOARD['board_locked'] == null) {
+            $ERRORS[] = "Board Locked attribute undefined.";
+        }
+
+        if($BOARD['news_source'] == null) {
+            $ERRORS[] = "News Source attribute undefined.";
+        }
+
+        if($BOARD['order_by'] == null) {
+            $ERRORS[] = "Order By cannot be left blank";
+        }
+        
+        if(sizeof($ERRORS) > 0)
+        {
+            draw_errors($ERRORS);
+        }
+        else
+        {
+            $name = $_POST['board']['name'];
+            $_SESSION['permission_notice'] = "You have created the <strong>$name</strong> board.";
+            $boards->create($BOARD);
+            redirect('admin-boards');
+        } // end no errors
+    } // end delete
+} // end state switch
+?> 

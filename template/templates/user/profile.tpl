@@ -39,9 +39,15 @@
         </tr>
         <tr>
             <td style='text-align: center;' class='inputTableRow' colspan='2'>
-                <form action='{$display_settings.public_dir}/write-new-message/{$profile.id}/' method='get'>
+                <form action='{$display_settings.public_dir}/write-new-message/{$profile.id}/' method='get' style='display: inline; padding-right: 1em;'>
                     <input type='submit' value='Send Message' />
                 </form>
+                {if $edit_user == 1}
+                <form action='{$display_settings.public_dir}/admin-users/' method='get' style='display: inline;'>
+                    <input type='hidden' name='user_id' value='{$profile.id}' />
+                    <input type='submit' value='User Admin Panel' />
+                </form>
+                {/if}
             </td>
         </tr>
         {if $profile.special_status != ''}<tr>
