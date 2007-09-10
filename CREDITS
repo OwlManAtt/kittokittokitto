@@ -1,6 +1,7 @@
 == Contributors ==
 * Nicholas 'OwlManAtt' Evans - Main developer, designer.
 * Caroline 'Tigress' Lukens  - Artwork, pagination.
+* Stacey 'InfinityB' Ell     - Admin panel sections.
 * Leif 'Eurleif' K-Brooks    - Sagely CSS/Javascript advice. 
 
 == Special Thanks ==
@@ -8,3 +9,6 @@
 * Phu Ly, the designer of the original Gentle Calm layout from where
   the look, feel, and colorscheme of KittoKittoKitto's default template
   originated.
+* The HTMLPurifier team.
+* The Smarty team.
+* The Adobe Labs team.

@@ -1,4 +1,4 @@
-=== 1.0.1 () ===
+=== 1.0.1 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
   cause too many newline characters to be inserted, causing the formatting to
   look terrible.
@@ -9,6 +9,13 @@
 
 * A real permission system has been implemented. Users belong to one or more 
   staff groups, and each group has certian permisisons mapped to it. 
+
+* The admin panel has been (mostly) completed. Items and shop restock jobs are not done,
+  but the rest of the site can be administrated. 
+
+* Form validations using Adobe's Spry library have been added to all forms. This change adds
+  visual cues and errors without the need to reload the page. Use of Spry will be expanded to
+  do AJAX requests in order to perform username lookups, autosuggests, etc., in the future.
 
 === 1.0.0 (2007-09-04) ===
 * Initial release.
