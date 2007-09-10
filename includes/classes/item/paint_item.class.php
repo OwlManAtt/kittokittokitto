@@ -76,6 +76,12 @@ class Paint_Item extends Item
         return "{$pet->getPetName()} looks snazzy in <strong>{$color->getColorName()}</strong>!";
     } // end paint
 
+    public function listAttributes()
+    {
+        return array(
+            'pet_specie_color_id' => 'Color',
+        );
+    } // end listAttributes
 } // end Paint_Item
 
 ?>

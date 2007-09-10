@@ -19,7 +19,7 @@
         <p><strong>Supply</strong>: {$item.quantity|number_format}</p>
     </div>
     
-    <form action='{$display_settings.public_dir}/shop/{$shop.id}' method='post' onSubmit='return confirm("Are you sure you wish to buy {$item.name}?")'>
+    <form action='{$display_settings.public_dir}/shop/{$shop.id}' method='post'>
         <input type='hidden' name='state' value='buy' />
         <input type='hidden' name='stock_id' value='{$item.id}' />
     
@@ -28,16 +28,23 @@
                 <td class='inputTableRow inputTableSubhead'>
                     <label for='item_{$item.id}'>Quantity</label>
                 </td>
-                <td class='inputTableRow'>
+                <td class='inputTableRow' id='item_{$item.id}_td'>
                     <input type='text' size='4' name='item[quantity]' id='item_{$item.id}' value='1' />
                 </td>
             </tr>
             <tr>
-                <td colspan='2' align='center' class='inputTableRowAlt'>
+                <td colspan='2' class='inputTableRowAlt' style='text-align: center;'>
                     <input type='submit' value='Buy' />
                 </td>
             </tr>
         </table>
+
+        {literal}
+        <script type='text/javascript'>
+            var item_{/literal}{$item.id} = new Spry.Widget.ValidationTextField("item_{$item.id}{literal}_td", "integer", {useCharacterMasking:true, validateOn:['change','blur'], allowNegative: false, minValue: 1, maxValue: {/literal}{$item.quantity}{literal}});    
+
+        </script>
+        {/literal}
     </form>
 </div>
 {sectionelse}

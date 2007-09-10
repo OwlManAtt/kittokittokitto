@@ -15,18 +15,20 @@
         <table class='inputTable' width='20%'>
             <tr>
                 <td class='inputTableRow inputTableSubhead'>
-                    <label for='pet[name]'>Name</label>
+                    <label for='name'>Name</label>
                 </td>
-                <td class='inputTableRow'>
-                    <input type='text' name='pet[name]' id='pet[name]' maxlength='25' />
+                <td class='inputTableRow' id='name_td'>
+                    <input type='text' name='pet[name]' id='name' maxlength='25' /><br />
+                    <span class='textfieldRequiredMsg valid'>You must pick a name.</span>
                 </td>
             </tr>
             <tr>
                 <td class='inputTableRowAlt inputTableSubhead'>
-                    <label for='pet_color'>Color</label>
+                    <label for='color'>Color</label>
                 </td>
-                <td class='inputTableRowAlt'>
-                    {html_options name='pet[color_id]' options=$colors id='pet_color' onChange="return imagePicker(this.form.pet_color[this.form.pet_color.selectedIndex].value,'`$display_settings.public_dir`/resources/pets/`$pet.image_dir`/','pet_image',false);"}
+                <td class='inputTableRowAlt' id='color_td'>
+                    {html_options name='pet[color_id]' options=$colors id='color' onChange="return imagePicker(this.form.color[this.form.color.selectedIndex].value,'`$display_settings.public_dir`/resources/pets/`$pet.image_dir`/','pet_image',false);"}<br />
+                    <span class='selectRequiredMsg valid'>You must pick a color.</span>
                 </td>
             </tr>
             <tr>
@@ -38,3 +40,10 @@
         </table>
     </form>
 </div>
+
+{literal}
+<script type='text/javascript'>
+    var name = new Spry.Widget.ValidationTextField("name_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var color = new Spry.Widget.ValidationSelect('color_td',{validateOn:['blur','change'], invalidValue: '0'});
+</script>
+{/literal}

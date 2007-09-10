@@ -118,19 +118,57 @@ switch($_REQUEST['state'])
         break;
     } // end default
 
-    case 'save':
+    case 'save_account':
     {
         $ERRORS = array();
-        $reset_login = false; // True = refresh cookie just before redirect(). 
-        
         $PASSWORD = array(
             'old' => $_POST['password']['old'],
             'new' => $_POST['password']['a'],
             'new_confirm' => $_POST['password']['b'],
+            'email' => stripinput($_POST['user']['email']),
         );
+
+        if(md5(md5($PASSWORD['old'])) != $User->getPasswordHash())
+        {
+            $ERRORS[] = 'The old password you specified is incorrect.';
+        }
+            
+        if($PASSWORD['new'] != $PASSWORD['new_confirm'])
+        {
+            $ERRORS[] = 'The two new passwords you specified did not match.';
+        }
+
+        if(preg_match('/^[a-z0-9_+.]{1,64}@([a-z0-9-.]*){1,}\.[a-z]{1,5}$/i',$PASSWORD['email']) == false)
+        {
+            $ERRORS[] = 'Invalid e-mail address specified.';
+        }
+        
+        if(sizeof($ERRORS) > 0)
+        {
+            draw_errors($ERRORS);
+        }
+        else
+        {
+            $User->setPassword($PASSWORD['new']);
+            $User->setEmail($PASSWORD['email']);
+            $User->save();
+
+            // Refresh the cookie with the new password.
+            $User->logout();
+            $User->login();
+
+            $_SESSION['pref_notice'] = 'Your settings have been updated.';
+            redirect('preferences');
+        } // end no errors
+
+        break;
+    } // end save account
+
+    case 'save_preferences':
+    {
+        $ERRORS = array();
         
         $USER = array(
-            'email' => stripinput($_POST['user']['email']),
             'gender' => stripinput($_POST['user']['gender']),
             'age' => stripinput($_POST['user']['age']),
             'editor' => stripinput($_POST['user']['editor']),
@@ -140,41 +178,6 @@ switch($_REQUEST['state'])
             'datetime_format' => stripinput($_POST['user']['datetime_format']),
             'timezone' => stripinput($_POST['user']['timezone']),
         );
-       
-        if($PASSWORD['new_confirm'] != null || $PASSWORD['new_confirm'])
-        {
-            if(md5(md5($PASSWORD['old'])) != $User->getPasswordHash())
-            {
-                $ERRORS[] = 'The old password you specified is incorrect.';
-            }
-            else
-            {
-                if($PASSWORD['new'] != $PASSWORD['new_confirm'])
-                {
-                    $ERRORS[] = 'The two new passwords you specified did not match.';
-                }
-                else
-                {
-                    // Update this here and don't worry about it later.
-                    $User->setPassword($PASSWORD['new']);
-                    $reset_login = true;
-                } // update PW
-            } // end old pw is OK
-            
-        } // end password change
-
-        if($USER['email'] != $User->getEmail())
-        {
-            if(md5(md5($PASSWORD['old'])) != $User->getPasswordHash())
-            {
-                $ERRORS[] = 'The old password you specified is incorrect.';
-            }
-
-            if(preg_match('/^[a-z0-9_+.]{1,64}@([a-z0-9-.]*){1,}\.[a-z]{1,5}$/i',$USER['email']) == false)
-            {
-                $ERRORS[] = 'Invalid e-mail address specified.';
-            }
-        } // end do email update
         
         if(in_array($USER['gender'],array_keys($GENDER)) == false)
         {
@@ -236,10 +239,6 @@ switch($_REQUEST['state'])
         }
         else
         {
-            // === Note:
-            // User#setPassword() handled above - see there for details.
-            
-            $User->setEmail($USER['email']);
             $User->setAge($USER['age']);
             $User->setGender($USER['gender']);
             $User->setProfile($USER['profile']);
@@ -250,19 +249,11 @@ switch($_REQUEST['state'])
             $User->setTimezoneId($timezone->getTimezoneId());
             $User->save();
             
-            // Update the password hash stored in the cookie.
-            // Otherwise, they'd be kicked out upon redirect.
-            if($reset_login == true)
-            {
-                $User->logout();
-                $User->login();
-            } // end reset login
-
             $_SESSION['pref_notice'] = 'Your preferences have been updated.';
             redirect('preferences');
         } // end do save
         
         break; 
-    } // end save
+    } // end save preferences
 } // end switch
 ?>

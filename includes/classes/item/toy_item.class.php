@@ -56,6 +56,13 @@ class Toy_Item extends Item
         
         return "{$pet->getPetName()} is happier now.";
     } // end playWith
+
+    public function listAttributes()
+    {
+        return array(
+            'happiness_bonus' => 'Happiness Level',
+        );
+    } // end listAttributes
 } // end Toy_Item
 
 ?>

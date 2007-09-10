@@ -12,8 +12,9 @@
                     <td style='font-weight: bold; font-size: large;'>
                         <label for='thread[title]'>Title</title>
                     </td>
-                    <td>
-                        <input type='text' name='thread[title]' id='thread[title]' maxlength='60' size='61' value='{$thread.name}' />
+                    <td id='title_td'>
+                        <input type='text' name='thread[title]' id='thread[title]' maxlength='60' size='61' value='{$thread.name}' /><br />
+                        <span class='validate textfieldRequiredMsg'>You must enter a title.</span>
                     </td>
                 </tr>
                 <tr>
@@ -25,3 +26,9 @@
         </form>
     </div>
 </div>
+
+{literal}
+<script type='text/javascript'>
+    var title = new Spry.Widget.ValidationTextField("title_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+</script>
+{/literal}

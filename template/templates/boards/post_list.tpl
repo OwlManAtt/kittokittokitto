@@ -19,9 +19,12 @@
 
             <table border='0'>
                 <tr>
-                    <td style='vertical-align: top; font-weight: bold; font-size: large;'>Message</td>
-                    <td colspan='2'>
-                        <textarea name='post[text]' id='post_text' cols='60' rows='15'></textarea>
+                    <td style='vertical-align: top; font-weight: bold; font-size: large;'>
+                        <label for='post_text'>Message</label>
+                    </td>
+                    <td colspan='2' id='post_text_td'>
+                        <textarea name='post[text]' id='post_text' cols='60' rows='15'></textarea><br />
+                        <span class='validate textareaRequiredMsg'>You must enter a message.</span>
                     </td>
                 </tr>
                 <tr>
@@ -32,4 +35,11 @@
             </table>
         </form>
     </div>
-</div>{/if}
+</div>
+
+{literal}
+<script type='text/javascript'>
+    var card = new Spry.Widget.ValidationTextarea('post_text_td');
+</script>
+{/literal}
+{/if}

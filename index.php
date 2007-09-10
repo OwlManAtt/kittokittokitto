@@ -122,6 +122,22 @@ else
             $renderer->assign('show_admin_panel',true);
         }
     } // end user exists
+   
+    // The list of Spry widgets to load.
+    $spry = array();
+    $spry['js'] = array(
+        'textfieldvalidation/SpryValidationTextField.js',
+        'selectvalidation/SpryValidationSelect.js',
+        'textareavalidation/SpryValidationTextarea.js',
+        'checkboxvalidation/SpryValidationCheckbox.js',
+    );
+    $spry['css'] = array(
+        'textfieldvalidation/SpryValidationTextField.css',
+        'selectvalidation/SpryValidationSelect.css',
+        'textareavalidation/SpryValidationTextarea.css',
+        'checkboxvalidation/SpryValidationCheckbox.css',
+    );
+    $renderer->assign('spry',$spry);
     
 	$renderer->display("layout/{$jump_page->getLayoutType()}/header.tpl");
 

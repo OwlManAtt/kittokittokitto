@@ -8,18 +8,24 @@
         <table width='20%' class='inputTable'>
             <tr>
                 <td class='inputTableRow inputTableSubhead'>
-                    <label for='give[username]'>Username</label>
+                    <label for='username'>Username</label>
                 </td>
-                <td class='inputTableRow'>
-                    <input type='text' name='give[username]' id='give[username]' maxlength='25' />
+                <td class='inputTableRow' id='username_td'>
+                    <input type='text' name='give[username]' id='username' maxlength='25' /><br />
+                    <span class='textfieldRequiredMsg valid'>You must pick a user.</span>
                 </td>
             </tr>
             <tr>
-                <td class='inputTableRowAlt'>&nbsp;</td>
-                <td class='inputTableRowAlt' align='right'>
+                <td colspan='2' class='inputTableRowAlt' style='text-align: right;'>
                     <input type='submit' value='Give' />
                 </td>
             </tr>
         </table>
     </form>
 </div>
+
+{literal}
+<script type='text/javascript'>
+    var user_name = new Spry.Widget.ValidationTextField("username_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+</script>
+{/literal}

@@ -7,7 +7,7 @@
                 <td class='inputTableRow inputTableSubhead'>
                     <label for='to[1]'>To</label>
                 </td>
-                <td class='inputTableRow'>
+                <td class='inputTableRow' id='to_td'>
                     <div id='to_cell' style='display: inline;'>
                         {foreach from=$to item=to_user key=current}
                         {math equation="x + 1" x=$current assign=current}
@@ -16,31 +16,41 @@
                         <input type='text' name='to[]' id='to[1]' maxlength='25' class='to_field' />
                         {/foreach}
                     </div>
-                    {if $to_total < $max_to}<a href='#' id='add_to' onClick='return addToField("to_cell");'>+</a>{/if}
+                    {if $to_total < $max_to}<a href='#' id='add_to' onClick='return addToField("to_cell");'>+</a><br />{/if}
+                    <span class='validate textfieldRequiredMsg'>You must at least one recipient.</span>
                 </td>
             </tr>
             <tr>
                 <td class='inputTableRowAlt inputTableSubhead'>
-                    <label for='message[title]'>Title</label>
+                    <label for='title'>Title</label>
                 </td>
-                <td class='inputTableRowAlt'>
-                    <input type='text' name='message[title]' id='message[title]' maxlength='255' size='63' value='{$message.title}' />
+                <td class='inputTableRowAlt' id='title_td'>
+                    <input type='text' name='message[title]' id='title' maxlength='255' size='63' value='{$message.title}' /><br />
+                    <span class='validate textfieldRequiredMsg'>You must enter a title.</span>
                 </td>
             </tr>
             <tr>
                 <td class='inputTableRow inputTableSubhead'>
-                    <label for='message[body]'>Body</label>
+                    <label for='body'>Body</label>
                 </td>
-                <td class='inputTableRow'>
-                    <textarea name='message[body]' id='message[body]' cols='60' rows='15'>{$message.body}</textarea>
+                <td class='inputTableRow' id='body_td'>
+                    <textarea name='message[body]' id='body' cols='60' rows='15'>{$message.body}</textarea><br />
+                    <span class='validate textareaRequiredMsg'>You must enter a message.</span>
                 </td>
             </tr>
             <tr>
-                <td class='inputTableRowAlt'>&nbsp;</td>
-                <td class='inputTableRowAlt' align='right'>
+                <td class='inputTableRowAlt' colspan='2' style='text-align: right;'>
                     <input type='submit' value='Send' />
                 </td>
             </tr>
         </table>
     </form>
 </div>
+
+{literal}
+<script type='text/javascript'>
+    var to_1 = new Spry.Widget.ValidationTextField("to_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var title = new Spry.Widget.ValidationTextField("title_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var post_text = new Spry.Widget.ValidationTextarea('body_td');
+</script>
+{/literal}

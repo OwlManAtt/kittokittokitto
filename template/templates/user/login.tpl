@@ -6,16 +6,16 @@
         
         <table class='inputTable'>
             <tr>
-                <td class='inputTableRow inputTableSubhead'><label for='user[username]'>User Name</label></td>
-                <td class='inputTableRow'>
-                    <input type='text' name='user[username]' id='user[username]' maxlength='25' />
+                <td class='inputTableRow inputTableSubhead'><label for='username'>User Name</label></td>
+                <td class='inputTableRow' id='username_td'>
+                    <input type='text' name='user[username]' id='username' maxlength='25' /><br />
                 </td>
             </tr>
 
             <tr>
-                <td class='inputTableRowAlt inputTableSubhead'><label for='user[password]'>Password</label></td>
-                <td class='inputTableRowAlt'>
-                    <input type='password' name='user[password]' id='user[password]' />
+                <td class='inputTableRowAlt inputTableSubhead'><label for='password'>Password</label></td>
+                <td class='inputTableRowAlt' id='password_td'>
+                    <input type='password' name='user[password]' id='password' /><br />
                 </td>
             </tr>
             
@@ -28,3 +28,10 @@
         </table>
     </form>
 </div>
+
+{literal}
+<script type='text/javascript'>
+    var user_name = new Spry.Widget.ValidationTextField("username_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var password = new Spry.Widget.ValidationTextField("password_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+</script>
+{/literal}

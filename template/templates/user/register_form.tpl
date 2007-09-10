@@ -9,55 +9,63 @@
         <table class='inputTable'>
             <tr>
                 <td class='inputTableRow inputTableSubhead'>
-                    <label for='user[user_name]'>User Name</label>
+                    <label for='username'>User Name</label>
                 </td>
-                <td class='inputTableRow'>
-                    <input type='text' name='user[user_name]' id='user[user_name]' value='' maxlength='25' /> <span class='tiny'>(No more than 25 characters &amp; you can put some funky stuff in!) <!-- FUNKY CAT MEBE?!?! --></span>
+                <td class='inputTableRow' id='username_td'>
+                    <input type='text' name='user[user_name]' id='username' value='' maxlength='25' /> <span class='tiny'>(You can put some funky stuff in!) <!-- FUNKY CAT MEBE?!?! --></span><br />
+                    <span class='textfieldRequiredMsg valid'>You must pick a username.</span>
                 </td>
             </tr>
             
             <tr>
                 <td class='inputTableRowAlt inputTableSubhead'>
-                    <label for='user[password]'>Password</label>
+                    <label for='password'>Password</label>
                 </td>
-                <td class='inputTableRowAlt'>
-                    <input type='password' name='user[password]' id='user[password]' value='' />
+                <td class='inputTableRowAlt' id='password_td'>
+                    <input type='password' name='user[password]' id='password' value='' /><br />
+                    <span class='textfieldRequiredMsg valid'>You must pick a password.</span>
                 </td>
             </tr>
 
             <tr>
                 <td class='inputTableRow inputTableSubhead'>
-                    <label for='user[password_again]'>Password Again</label>
+                    <label for='password_again'>Password Again</label>
                 </td>
-                <td class='inputTableRow'>
-                    <input type='password' name='user[password_again]' id='user[password_again]' value='' />
+                <td class='inputTableRow' id='password_again_td'>
+                    <input type='password' name='user[password_again]' id='password_again' value='' /><br />
+                    <span class='textfieldRequiredMsg valid'>You must repeat your password.</span>
+                    <span class='textfieldInvalidFormatMsg valid'>Passwords does not match.</span>
                 </td>
             </tr>
         
             <tr>
                 <td class='inputTableRowAlt inputTableSubhead'>
-                    <label for='user[email]'>E-mail Address</label>
+                    <label for='email'>E-mail Address</label>
                 </td>
-                <td class='inputTableRowAlt'>
-                    <input type='text' name='user[email]' id='user[email]' value='' />
+                <td class='inputTableRowAlt' id='email_td'>
+                    <input type='text' name='user[email]' id='email' value='' /><br />
+                    <span class='textfieldRequiredMsg valid'>You must specify your e-mail address.</span>
+                    <span class='textfieldInvalidFormatMsg valid'>Invalid e-mail address.</span>
                 </td>
             </tr>
 
             <tr>
                 <td class='inputTableRow inputTableSubhead'>
-                    <label for='user[age]'>Age</label>
+                    <label for='age'>Age</label>
                 </td>
-                <td class='inputTableRow'>
-                    {html_options name=user[age] options=$ages}
+                <td class='inputTableRow' id='age_td'>
+                    {html_options id='age' name=user[age] options=$ages}<br />
+                    <span class='selectInvalidMsg valid'>You must specify your age.</span>
                 </td>
             </tr>
 
             <tr>
                 <td class='inputTableRowAlt inputTableSubhead'>
-                    <label for='user[gender]'>Gender</label>
+                    <label for='gender'>Gender</label>
                 </td>
-                <td class='inputTableRowAlt'>
-                    {html_options name=user[gender] options=$genders}
+                <td class='inputTableRowAlt' id='gender_td'>
+                    {html_options id='gender' name=user[gender] options=$genders}<br />
+                    <span class='selectInvalidMsg valid'>You must specify your gender.</span>
                 </td>
             </tr>
 
@@ -67,8 +75,9 @@
                         <img id="captchaimage" src="{$display_settings.public_dir}/captcha.php" alt="CAPTCHA image" style='border: 0;' />
                     </a>
                 </td>
-                <td class='inputTableRow'>
-                    <input type='text' name='captcha_code' id='captcha_code' value='' />
+                <td class='inputTableRow' id='code_td'>
+                    <input type='text' name='captcha_code' id='captcha_code' value='' /><br />
+                    <span class='textfieldRequiredMsg valid'>You must enter the code.</span>
                 </td>
             </tr>
             
@@ -87,3 +96,22 @@
         </table>
     </form>
 </div>
+
+{literal}
+<script type='text/javascript'>
+    var passwordTheSame = function(value,options) {
+        var other_value = document.getElementById('password').value;
+        if(value != other_value) return false;
+
+        return true;
+    } // end anon
+
+    var user_name = new Spry.Widget.ValidationTextField("username_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var password = new Spry.Widget.ValidationTextField("password_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var password_again = new Spry.Widget.ValidationTextField("password_again_td", "custom", {validation: passwordTheSame, validateOn:['change','blur']});    
+    var email = new Spry.Widget.ValidationTextField("email_td", "email", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var age = new Spry.Widget.ValidationSelect('age_td',{validateOn:['blur','change'], invalidValue: ''});
+    var gender = new Spry.Widget.ValidationSelect('gender_td',{validateOn:['blur','change'], invalidValue: '0'});
+    var captcha = new Spry.Widget.ValidationTextField("code_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+</script>
+{/literal}

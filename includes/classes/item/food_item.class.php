@@ -57,6 +57,13 @@ class Food_Item extends Item
          
         return "You have fed {$pet->getPetName()} the <strong>$name</strong>.";
     } // end feedTo
+
+    public function listAttributes()
+    {
+        return array(
+            'hunger_bonus' => 'Hunger Level',
+        );
+    } // end listAttributes
 } // end Food_Item
 
 ?>

@@ -63,6 +63,29 @@ class ItemType extends ActiveTable
         
         return "{$APP_CONFIG['public_dir']}/resources/items/{$this->getRelativeImageDir()}/{$this->getItemImage()}";
     } // end getImageUrl
+
+    /**
+     * List a key => value pair of attributes specific to an item type.
+     * 
+     * This should be defined in any child classes. The return should
+     * be:
+     *
+     * Array (
+     *    'db_column_name' => 'Pretty Name',
+     *    'happiness_bonus' => 'Happiness Level',
+     * ) 
+     *
+     * These attributes should be the columns in iten_type that are specific
+     * to this particular item class. 
+     *
+     * This method is used for the admin console.
+     * 
+     * @return array 
+     **/
+    public function listAttributes()
+    {
+        throw new ArgumentErrors('#listAttributes has not been defined for this item.',10);
+    } // end listAttributes
 } // end ItemType
 
 ?>
