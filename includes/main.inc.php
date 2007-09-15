@@ -97,6 +97,8 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
         {
             $Pet->doDecrement(); // Make it hungry.
         }
+	
+        $renderer->assign('editor',$User->getTextareaPreference());
 	} // user exists
 	else
 	{
@@ -107,7 +109,6 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
     // Give these to Smarty.
 	$renderer->assign('user',$User);
 	$renderer->assign('active_pet',$Pet);
-	$renderer->assign('editor',$User->getTextareaPreference());
 } // end if cookies are set
 
 $renderer->assign('logged_in',$logged_in);
