@@ -34,7 +34,7 @@ switch($_REQUEST['state'])
     default:
     {
         $item_types = new ItemType($db);
-        $item_types = $item_types->findBy(array(),'ORDER BY item_type.item_type_name ASC');
+        $item_types = $item_types->findBy(array(),'ORDER BY item_type.item_name ASC');
 
         $SHOPS = array();
         foreach($item_types as $item_type)
