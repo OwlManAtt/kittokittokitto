@@ -16,6 +16,10 @@
 * Boards can now be set to only allow users with certain permissions to view 
   them.
 
+* Added external_lib/PEAR.php file - this is a required external lib that is 
+  'usually' fine to leave out. In some cases, a shared host may not provide the
+  library.
+
 === 1.1.0 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
   cause too many newline characters to be inserted, causing the formatting to
