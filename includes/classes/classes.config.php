@@ -59,6 +59,7 @@ require('pet/pet.class.php');
  * Item-related classes.
  **/
 require('item/item_type.class.php');
+require('item/item_class.class.php');
 require('item/item.class.php');
 require('item/food_item.class.php');
 require('item/toy_item.class.php');

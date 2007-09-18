@@ -1,6 +1,6 @@
 <?php
 /**
- * Toy item definition. 
+ * Item class utility class. 
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -30,8 +30,8 @@
  **/
 
 /**
- * A toy.
- * 
+ * An item type class. 
+ *
  * @uses ActiveTable
  * @package Kitto_Kitto_Kitto
  * @subpackage Items 
@@ -39,36 +39,11 @@
  * @author Nick 'Owl' Evans <owlmanatt@gmail> 
  * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  **/
-class Toy_Item extends Item
+class ItemClass extends ActiveTable
 {
-    /**
-     * Increase a pet's happiness level.
-     *
-     * Increases the pet's happiness level and destroys the item. 
-     * 
-     * @param Pet $pet 
-     * @return string The success message.
-     **/
-    public function playWith(Pet $pet)
-    {
-        $pet->play($this->getHappinessBonus());
-        $this->destroy();
-        
-        return "{$pet->getPetName()} is happier now.";
-    } // end playWith
+    protected $table_name = 'item_class';
+    protected $primary_key = 'item_class_id';
 
-    public function listAttributes()
-    {
-        return array(
-            array(
-                'name' => 'happiness_bonus',
-                'label' => 'Happiness Level',
-                'type' => 'text',
-                'validation_type' => 'integer',
-                'max_length' => 3,
-            ),
-        );
-    } // end listAttributes
-} // end Toy_Item
+} // end ItemType
 
 ?>

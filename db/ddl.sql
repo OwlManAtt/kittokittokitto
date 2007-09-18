@@ -134,7 +134,7 @@ CREATE TABLE `item_type` (
   `happiness_bonus` tinyint(3) unsigned NOT NULL,
   `hunger_bonus` tinyint(3) unsigned NOT NULL,
   `pet_specie_color_id` int(11) NOT NULL,
-  `item_image` varchar(50) NOT NULL,
+  `item_image` varchar(200) NOT NULL,
   PRIMARY KEY  (`item_type_id`),
   KEY `item_class_id` (`item_class_id`),
   KEY `pet_specie_color_id` (`pet_specie_color_id`)

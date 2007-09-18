@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `item_type` DISABLE KEYS */;
 LOCK TABLES `item_type` WRITE;
-INSERT INTO `item_type` (`item_type_id`, `item_name`, `item_descr`, `item_class_id`, `happiness_bonus`, `hunger_bonus`, `pet_specie_color_id`, `item_image`) VALUES (1,'Apple','A delicious, healthy red apple.',1,0,3,0,'apple.png');
+INSERT INTO `item_type` (`item_type_id`, `item_name`, `item_descr`, `item_class_id`, `happiness_bonus`, `hunger_bonus`, `pet_specie_color_id`, `item_image`) VALUES (1,'Apple','A delicious, healthy red apple.',1,0,3,0,'apple.png'),(2,'Foo','Narwhales',1,0,0,0,'o lawd');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `item_type` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

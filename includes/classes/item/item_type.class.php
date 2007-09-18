@@ -71,11 +71,14 @@ class ItemType extends ActiveTable
      * be:
      *
      * Array (
-     *    'db_column_name' => 'Pretty Name',
-     *    'happiness_bonus' => 'Happiness Level',
+     *    array(
+     *    'name' => 'db_column_name',
+     *    'label' => 'Happiness Level',
+     *    'type' => 'text',
+     *   ),
      * ) 
      *
-     * These attributes should be the columns in iten_type that are specific
+     * These attributes should be the columns in item_type that are specific
      * to this particular item class. 
      *
      * This method is used for the admin console.
@@ -84,6 +87,15 @@ class ItemType extends ActiveTable
      **/
     public function listAttributes()
     {
+        // The class name is held in the DB. 
+        eval('$item = new '.$this->getPhpClass().'($this->db);');
+        $attributes = $item->listAttributes();
+
+        if(is_array($attributes) == true)
+        {
+            return $attributes;
+        }
+        
         throw new ArgumentErrors('#listAttributes has not been defined for this item.',10);
     } // end listAttributes
 } // end ItemType

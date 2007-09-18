@@ -65,7 +65,7 @@ class Paint_Item extends Item
         // that species (ie, nobody fucking drew it). Handle that.
         if($color == null)
         {
-            return "You put the brush down, realizing that {$pet->getPetName()} would not look good in that color.";
+            return "You put the brush down, realizing that {$pet->getPetName()} is not available for your pet.";
         }
         
         $pet->setPetSpecieColorId($color->getPetSpecieColorId());
@@ -78,8 +78,22 @@ class Paint_Item extends Item
 
     public function listAttributes()
     {
+        $COLORS = array();
+        $colors = new PetSpecieColor($this->db);
+        $colors = $colors->findBy(array());
+
+        foreach($colors as $color)
+        {
+            $COLORS[$color->getPetSpecieColorId()] = $color->getColorName();
+        } // end color reformat
+        
         return array(
-            'pet_specie_color_id' => 'Color',
+            array(
+                'name' => 'pet_specie_color_id',
+                'label' => 'Color',
+                'type' => 'select',
+                'values' => $COLORS,
+            ),
         );
     } // end listAttributes
 } // end Paint_Item

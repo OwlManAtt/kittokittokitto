@@ -61,7 +61,13 @@ class Food_Item extends Item
     public function listAttributes()
     {
         return array(
-            'hunger_bonus' => 'Hunger Level',
+            array(
+                'name' => 'hunger_bonus',
+                'label' => 'Hunger Level',
+                'type' => 'text',
+                'validation_type' => 'integer',
+                'max_length' => 3,
+            ),
         );
     } // end listAttributes
 } // end Food_Item

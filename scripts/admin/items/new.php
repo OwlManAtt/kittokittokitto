@@ -1,6 +1,6 @@
 <?php
 /**
- * ItemType admin. 
+ * Begin adding an item.
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -33,43 +33,39 @@ switch($_REQUEST['state'])
 {
     default:
     {
-        $item_types = new ItemType($db);
-        $item_types = $item_types->findBy(array(),'ORDER BY item_type.item_name ASC');
-
-        $ITEMS = array();
-        foreach($item_types as $item_type)
+        $TYPES = array('' => 'Select one...',);
+        $classes = new ItemClass($db);
+        $classes = $classes->findBy(array(),'ORDER BY item_class.class_descr');
+        foreach($classes as $class)
         {
-            $ITEMS[] = array(
-                'id' => $item_type->getItemTypeId(),
-                'name' => $item_type->getItemName(),
-                'type' => $item_type->getClassDescr(),
-            );
-        } // end item_type reformatter
-
-        if($_SESSION['item_type_notice'] != null)
-        {
-            $renderer->assign('notice',$_SESSION['item_type_notice']);
-            unset($_SESSION['item_type_notice']);
-        } 
-
-        $renderer->assign('items',$ITEMS);
-        $renderer->display('admin/items/list.tpl');
+            $TYPES[$class->getItemClassId()] = $class->getClassDescr();
+        }
+        
+        $renderer->assign('classes',$TYPES); 
+        $renderer->display('admin/items/new.tpl');
 
         break;
     } // end default
 
-    case 'delete':
+    case 'save':
     {
         $ERRORS = array();
-        $item_type_id = stripinput($_POST['item_type']['id']);
+        $class_id = stripinput($_POST['item']['class_id']);
         
-        $item_type = new ItemType($db);
-        $item_type = $item_type->findOneByItemTypeId($item_type_id);
-
-        if($item_type == null)
+        if($class_id == null)
         {
-            $ERRORS[] = 'Invalid item_type specified.';
+            $ERRORS[] = 'No class specified.';
         }
+        else
+        {
+            $class = new ItemClass($db);
+            $class = $class->findOneByItemClassId($class_id);
+
+            if($class == null)
+            {
+                $ERRORS[] = 'Invalid class specified.';
+            }
+        } // end id given
 
         if(sizeof($ERRORS) > 0)
         {
@@ -77,16 +73,14 @@ switch($_REQUEST['state'])
         }
         else
         {
-            // Hold this for the delete message.
-            $name = $item_type->getItemTypeName();
-            $item_type->destroy();
+            $item = new ItemType($db);
+            $item->setItemClassId($class->getItemClassId());
+            $item->save();
             
-            $_SESSION['item_notice'] = "You have deleted <strong>$name</strong>.";
-            redirect('admin-items');
+            redirect(null,null,"admin-items-edit/?item[id]={$item->getItemTypeId()}");
         } // end no errors
 
         break;
-    } // end delete
-
+    } // end save
 } // end state switch
 ?>

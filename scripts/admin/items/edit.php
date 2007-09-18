@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit a shop.
+ * Edit a item.
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -30,10 +30,14 @@
  **/
 
 $ERRORS = array();
-$shop_id = stripinput($_REQUEST['shop']['id']);
+$item_id = stripinput($_REQUEST['item']['id']);
+$item = new ItemType($db);
+$item = $item->findOneByItemTypeId($item_id);
 
-$shop = new Shop($db);
-$shop = $shop->findOneByShopId($shop_id);
+if($item == null)
+{
+    $ERRORS[] = 'Invalid item specified.';
+}
 
 if(sizeof($ERRORS) > 0)
 {
@@ -45,60 +49,61 @@ else
     {
         default:
         {
-            if($shop != null)
+            if($item != null)
             {
-                $SHOP = array(
-                    'id' => $shop->getShopId(),
-                    'name' => $shop->getShopName(),
-                    'image' => $shop->getShopImage(),
-                    'welcome_text' => $shop->getWelcomeText(),
+                $ITEM = array(
+                    'id' => $item->getItemTypeId(),
+                    'type' => $item->getClassDescr(),
+                    'name' => $item->getItemName(),
+                    'image' => $item->getItemImage(),
+                    'description' => $item->getItemDescr(),
                 );
             } // end edit mode
-            
-            $renderer->assign('shop',$SHOP);
 
-            if($shop != null)
-            {
-                $renderer->display('admin/shops/edit.tpl');
-            }
-            else
-            {
-                $renderer->display('admin/shops/new.tpl');
-            }
+            $fields = $item->listAttributes();
+            
+            $renderer->assign('extra_fields',$fields);
+            $renderer->assign('item',$ITEM);
+            $renderer->display('admin/items/edit.tpl');
 
             break;
         } // end default
 
         case 'save':
         {
-            $SHOP = array(
-                'name' => trim(stripinput($_POST['shop']['name'])),
-                'image' => trim(stripinput($_POST['shop']['image'])),
-                'welcome_text' => trim(stripinput($_POST['shop']['welcome_text'])),
+            $ITEM = array(
+                'name' => trim(stripinput($_POST['item']['name'])),
+                'image' => trim(stripinput($_POST['item']['image'])),
+                'description' => trim(stripinput($_POST['item']['description'])),
             );
             
             // If the group could not be loaded, start making a new one.
-            if($shop == null)
+            if($item == null)
             {
-                $shop = new Shop($db);
+                $item = new ItemType($db);
             }
             
-            if($SHOP['name'] == null)
+            if($ITEM['name'] == null)
             {
                 $ERRORS[] = 'No name specified.';
             }
-            elseif(strlen($SHOP['name']) > 30)
+            elseif(strlen($ITEM['name']) > 50)
             {
-                $ERRORS[] = 'There is a maxlength=30 on that field for a reason.';
+                $ERRORS[] = 'There is a maxlength=50 on that field for a reason.';
             }
 
-            if($SHOP['image'] == null)
+            if($ITEM['image'] == null)
             {
                 $ERRORS[] = 'No image specified.';
             }
-            elseif(strlen($SHOP['image']) > 200)
+            elseif(strlen($ITEM['image']) > 200)
             {
                 $ERRORS[] = 'There is a maxlength=200 on that field for a reason.';
+            }
+
+            if($ITEM['description'] == null)
+            {
+                $ERRORS[] = 'No description specified.';
             }
 
             if(sizeof($ERRORS) > 0)
@@ -107,13 +112,13 @@ else
             }
             else
             {
-                $shop->setShopName($SHOP['name']);
-                $shop->setShopImage($SHOP['image']);
-                $shop->setWelcomeText($SHOP['welcome_text']);
-                $shop->save();
+                $item->setItemName($ITEM['name']);
+                $item->setItemImage($ITEM['image']);
+                $item->setItemDescr($ITEM['description']);
+                $item->save();
 
-                $_SESSION['shop_notice'] = "You have saved <strong>{$shop->getShopName()}</strong>.";
-                redirect('admin-shops');
+                $_SESSION['item_notice'] = "You have saved <strong>{$item->getItemName()}</strong>.";
+                redirect('admin-items');
             } // end no errors
 
             break;
