@@ -57,6 +57,13 @@ else
         {
             $ERRORS[] = 'Invalid board.';
         }
+        else
+        {
+            if($board->hasAccess($User) == false)
+            {
+                $ERRORS[] = 'Invalid board.';
+            }
+        }
     } // end thread exists
     
     if($User->hasPermission('edit_post') == false)

@@ -44,18 +44,21 @@ switch($_REQUEST['state'])
 		$password = stripinput($_REQUEST['user']['password']);
 		
 		$User = new User($db);
-		$User = $User->findOneBy(
-			array(
-				'user_name' => $username,
-                'password_hash' => md5(md5($password)),
-			)
-		);
+		$User = $User->findOneByUserName($username);
 
 		if(is_a($User,'User') == true)
 		{
-			$User->login();
-			redirect('home');
-		}
+            if($User->checkPlaintextPassword($password) == true)
+            {
+                $User->login();
+                redirect('home');
+            } // end password correct
+            else
+            {
+                $ERRORS = array('Incorrect username or password.');
+                draw_errors($ERRORS);
+            }
+		} // end user found
 		else
 		{
 			$ERRORS = array('Incorrect username or password.');

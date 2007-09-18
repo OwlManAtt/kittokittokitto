@@ -75,7 +75,7 @@ else
                 $group_string[] = $group->getGroupName();
             } // end group reformatitng loop
 
-            $PROFILE['special_status'] = 'Staff: '.implode(', ',$group_string);
+            $PROFILE['special_status'] = 'Groups: '.implode(', ',$group_string);
         } // end has groups
     } // end try to load groups
    

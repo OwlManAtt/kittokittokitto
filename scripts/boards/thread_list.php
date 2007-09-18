@@ -29,6 +29,8 @@
  * @version 1.0.0
  **/
 
+$ERRORS = array();
+
 /**
  * Be careful setting this higher - each thread
  * is a few queries a piece (done because I'm a lazy
@@ -62,7 +64,19 @@ $board = $board->findOneByBoardId($board_id);
 
 if($board == null)
 {
-    draw_errors('Invalid board specified.');
+    $ERRORS[] = 'Invalid board.';
+}
+else
+{
+    if($board->hasAccess($User) == false)
+    {
+        $ERRORS[] = 'Invalid board.';
+    }
+}
+
+if(sizeof($ERRORS) > 0)
+{
+    draw_errors($ERRORS);
 }
 else
 {

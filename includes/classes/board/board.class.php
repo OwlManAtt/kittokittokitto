@@ -43,6 +43,14 @@ class Board extends ActiveTable
 {
     protected $table_name = 'board';
     protected $primary_key = 'board_id';
+    protected $LOOKUPS = array(
+        array(
+            'local_key' => 'required_permission_id',
+            'foreign_table' => 'staff_permission',
+            'foreign_key' => 'staff_permission_id',
+            'join_type' => 'left',
+        ),
+    );
     protected $RELATED = array(
         'threads' => array(
             'class' => 'BoardThread',
@@ -50,6 +58,27 @@ class Board extends ActiveTable
             'foreign_key' => 'board_id',
         ),
     );
+    
+    /**
+     * Determine whether or not a user has access to this board.
+     * 
+     * @param User $user 
+     * @return bool 
+     **/
+    public function hasAccess(User $user)
+    {
+        // If there is a required permission on this this, check it. 
+        if($this->getApiName() == null)
+        {
+            return true;
+        }
+        elseif($user->hasPermission($this->getApiName()) == true)
+        {
+            return true; 
+        }
+
+        return false;
+    } // end hasAccess
 
     public function getBoardLocked(User $user)
     {

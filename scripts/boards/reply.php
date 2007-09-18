@@ -57,6 +57,21 @@ else
     {
         $ERRORS[] = 'That thread is locked.';
     }
+
+    $board = new Board($db);
+    $board = $board->findOneByBoardId($thread->getBoardId());
+    
+    if($board == null)
+    {
+        $ERRORS[] = 'Invalid board.';
+    }
+    else
+    {
+        if($board->hasAccess($User) == false)
+        {
+            $ERRORS[] = 'Invalid board.';
+        }
+    }
 } // end thread exists
 
 if(sizeof($ERRORS) > 0)

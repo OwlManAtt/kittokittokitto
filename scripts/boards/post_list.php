@@ -29,6 +29,7 @@
  * @version 1.0.0
  **/
 
+$ERRORS = array();
 $max_items_per_page = 15;
 
 // Handle the page ID for slicing and dicing the inventory up.
@@ -50,26 +51,45 @@ $thread = $thread->findOneByBoardThreadId($thread_id);
 
 if($thread == null)
 {
-    draw_errors('Invalid thread specified.');
+    $ERRORS[] = 'Invalid thread specified.';
 }
 else
 {
+    // Load the board info.
+    $board = new Board($db);
+    $board = $board->findOneByBoardId($thread->getBoardId());
+
+    if($board == null)
+    {
+        $ERRORS[] = 'Invalid board.';
+    }
+    else
+    {
+        if($board->hasAccess($User) == false)
+        {
+            $ERRORS[] = 'Invalid board.';
+        }
+    }
+} // end thread is valid
+    
+if(sizeof($ERRORS) > 0)
+{
+    draw_errors($ERRORS);
+}
+else
+{
+    $BOARD_DATA = array(
+        'id' => $board->getBoardId(),
+        'name' => $board->getBoardName(),
+        'locked' => $board->getBoardLocked($User),
+    );
+    
     $THREAD_DATA = array(
         'id' => $thread->getBoardThreadId(),
         'name' => $thread->getThreadName(),
         'locked' => $thread->getLocked(),
         'sticky' => $thread->getStickied(),
         'can_edit' => (($User->hasPermission('edit_post') == true)) ? true : false,
-    );
-    
-    // Load the board info.
-    $board = new Board($db);
-    $board = $board->findOneByBoardId($thread->getBoardId());
-    
-    $BOARD_DATA = array(
-        'id' => $board->getBoardId(),
-        'name' => $board->getBoardName(),
-        'locked' => $board->getBoardLocked($User),
     );
     
     // Generate the pagination. 

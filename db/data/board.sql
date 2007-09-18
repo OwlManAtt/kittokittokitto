@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `board` DISABLE KEYS */;
 LOCK TABLES `board` WRITE;
-INSERT INTO `board` (`board_id`, `board_name`, `board_descr`, `board_locked`, `news_source`, `order_by`) VALUES (1,'News & Announcements','The latest news and annoucements are posted here.','Y','Y',1),(2,'General Chat','Discuss KittoKittoKitto here.','N','N',3),(3,'Suggestions / Bugs','Found a bug? Have a brilliant, earth-shattering idea? Tell us!','N','N',6);
+INSERT INTO `board` (`board_id`, `board_name`, `board_descr`, `board_locked`, `news_source`, `required_permission_id`, `order_by`) VALUES (1,'News & Announcements','The latest news and annoucements are posted here.','Y','Y',0,1),(2,'General Chat','Discuss the KittoKittoKitto project here.','N','N',0,3),(3,'Suggestions / Bugs','Found a bug? Have a brilliant, earth-shattering idea? Tell us!','N','N',0,6),(4,'Staff Board','This is a board restricted to staff members.','N','N',13,100);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `board` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

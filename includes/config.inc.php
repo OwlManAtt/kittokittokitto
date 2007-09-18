@@ -36,9 +36,24 @@ switch($_SERVER['RELEASE_MODE'])
 {
 	case 'DEV':
 	{
+        // Even if your host has error reporting turned off, this *should* 
+        // force PHP to send errors to the browser. This is immensely useful
+        // during setup / development, but it's probably not wanted in a 
+        // production environment.
+        error_reporting(E_ALL ^ E_NOTICE);
+        
 		$APP_CONFIG = array(
             /**
              * The datasource name for your database.
+             * 
+             * phptype  = PEAR::DB driver to use (mysql, oci)
+             * username = The database user to connect as.
+             * password = The password for your database user. 
+             * database = The database to USE.
+             * hostspec = The hostname to connect to. If you don't know what
+             *            this is, the default 'localhost' is probably correct.
+             *
+             * @var array
              **/
 			'db_dsn' => array(
 				'phptype' => 'mysql', // This can also be run on Oracle (oci).
@@ -71,7 +86,14 @@ switch($_SERVER['RELEASE_MODE'])
              * live in here.
              **/
 			'template_path' => '/var/www/kittokittokitto/template',
-            
+
+            /**
+             * The HTMLPurifier cache must be writable by the webserver's user.
+             * Set this to null to disable the cache (but you *want* the cache
+             * for performance reasons!). Oh, and no trailing slash.
+             **/
+            'htmlpurifier_cachedir' => '/var/www/kittokittokitto/cache',
+
             /*
              * The full URL (no trailing slash) to your site.
              * ie, 'http://demo.kittokittokitto.yasashiisyndicate.org'
@@ -127,13 +149,6 @@ switch($_SERVER['RELEASE_MODE'])
              * your compose page be inconsistant with reality!
              **/
             'max_mail_recipients' => 5,
-            
-            /**
-             * The HTMLPurifier cache must be writable by the webserver's user.
-             * Set this to null to disable the cache (but you *want* the cache
-             * for performance reasons!). Oh, and no trailing slash.
-             **/
-            'htmlpurifier_cachedir' => '/var/www/kittokittokitto/cache',
 		);
 		
 		break;

@@ -35,7 +35,7 @@ $boards = $boards->findBy(array(),'ORDER BY order_by');
 
 foreach($boards as $board)
 {
-    $BOARD_LIST[] = array(
+     $BOARD = array(
         'id' => $board->getBoardId(),
         'name' => $board->getBoardName(),
         'description' => $board->getBoardDescr(),
@@ -43,6 +43,12 @@ foreach($boards as $board)
         'total_posts' => $board->grabPostCount(),
         'locked' => $board->getBoardLocked($User),
     );
+   
+    // If there is a required permission on this board, check it. 
+    if($board->hasAccess($User) == true)
+    {
+        $BOARD_LIST[] = $BOARD; 
+    }
 } // end board loop
 
 $renderer->assign('boards',$BOARD_LIST);

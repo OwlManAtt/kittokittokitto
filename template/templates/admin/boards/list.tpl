@@ -1,5 +1,3 @@
-<!--<p>Shown is a list of staff groups. Hit edit to modify the group's name, description, and permissions.</p>-->
-
 {if $notice != ''}<p id='notice_box' class='{$fat} notice-box'>{$notice}</p>{/if}
 
 <table class='dataTable' align='center' width='40%'>
@@ -32,7 +30,7 @@
     {cycle values='dataTableRow,dataTableRowAlt' assign=class}
     <tr>
         <td class='{$class}' align='center' colspan='3'>
-            <form action='{$display_settings.public_dir}/admin-boards-create/' method='get'>
+            <form action='{$display_settings.public_dir}/admin-boards-edit/' method='get'>
                 <input type='submit' value='New Board' />
             </form>
         </td>

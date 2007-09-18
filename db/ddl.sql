@@ -40,8 +40,10 @@ CREATE TABLE `board` (
   `board_descr` varchar(255) NOT NULL,
   `board_locked` enum('N','Y') NOT NULL default 'N',
   `news_source` enum('N','Y') NOT NULL default 'N',
+  `required_permission_id` int(11) NOT NULL,
   `order_by` tinyint(2) NOT NULL,
-  PRIMARY KEY  (`board_id`)
+  PRIMARY KEY  (`board_id`),
+  KEY `required_permission_id` (`required_permission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -310,7 +312,9 @@ CREATE TABLE `user` (
   `user_id` int(11) NOT NULL auto_increment,
   `currency` bigint(20) unsigned NOT NULL,
   `user_name` varchar(25) NOT NULL,
-  `password_hash` varchar(32) default NULL,
+  `password_hash` char(32) default NULL,
+  `current_salt` char(32) NOT NULL,
+  `current_salt_expiration` datetime NOT NULL,
   `registered_ip_addr` varchar(16) default NULL,
   `last_ip_addr` varchar(16) default NULL,
   `last_activity` datetime default NULL,

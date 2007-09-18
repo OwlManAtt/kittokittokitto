@@ -49,6 +49,23 @@ else
     {
         $ERRORS[] = 'Invalid thread.';
     }
+    else
+    {
+        $board = new Board($db);
+        $board = $board->findOneByBoardId($thread->getBoardId());
+        
+        if($board == null)
+        {
+            $ERRORS[] = 'Invalid board.';
+        }
+        else
+        {
+            if($board->hasAccess($User) == false)
+            {
+                $ERRORS[] = 'Invalid board.';
+            }
+        } 
+    } // end thread valid
 } // end post exists
 
 $MAP = array(

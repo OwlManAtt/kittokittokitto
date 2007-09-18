@@ -74,31 +74,34 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
 	
 	// Try logging in.
 	$User = new User($db);
-	$User = $User->findOneBy(
-		array(
-			'user_name' => $username,
-            'password_hash' => $password_hash,
-		)
-	);
+	$User = $User->findOneByUserName($username);
 	
 	if(is_a($User,'User') == true)
 	{
-		$logged_in = true;
-		$access_level = $User->getAccessLevel();
-		
-		$User->setLastIpAddr($_SERVER['REMOTE_ADDR']);
-		$User->setLastActivity($User->sysdate());
-		$User->save();
-        
-        // Load the active pet (if any!)
-        $Pet = $User->grabActivePet();
-
-        if($Pet != null)
+        if($User->checkSessionPassword($password_hash) == true)
         {
-            $Pet->doDecrement(); // Make it hungry.
+            $logged_in = true;
+            $access_level = $User->getAccessLevel();
+            
+            $User->setLastIpAddr($_SERVER['REMOTE_ADDR']);
+            $User->setLastActivity($User->sysdate());
+            $User->save();
+            
+            // Load the active pet (if any!)
+            $Pet = $User->grabActivePet();
+
+            if($Pet != null)
+            {
+                $Pet->doDecrement(); // Make it hungry.
+            }
+        
+            $renderer->assign('editor',$User->getTextareaPreference());
+        } // end password is right
+        else
+        {
+            $User->logout();
+            unset($User);
         }
-	
-        $renderer->assign('editor',$User->getTextareaPreference());
 	} // user exists
 	else
 	{

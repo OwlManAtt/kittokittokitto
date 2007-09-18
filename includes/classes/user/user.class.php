@@ -139,7 +139,52 @@ class User extends ActiveTable
         */
 		$this->setPasswordHash(md5(md5($password)));
 	} // end setPassword
+    
+    /**
+     * Determine if plaintext matches the hashed password. 
+     * 
+     * @param string $plaintext 
+     * @return bool 
+     **/
+    public function checkPlaintextPassword($plaintext)
+    {
+        $base = md5(md5($plaintext));
+        
+        if($base == $this->getPasswordHash())
+        {
+            return true;
+        }
+
+        return false;
+    } // end checkPassword
 	
+    /**
+     * Determines if the salted hash sent to the client is correct. 
+     * 
+     * @param string $session_password 
+     * @return bool 
+     **/
+    public function checkSessionPassword($session_password)
+    {
+        $base = $this->getPasswordHash();
+        $salt = $this->getCurrentSalt();
+        
+        // If the salt is expired, tear the user down.
+        if(strtotime($this->getCurrentSaltExpiration()) < time())
+        {
+            $this->logout();
+
+            return false;
+        } // end logout if salt expired
+        
+        if(md5($base.$salt) == $session_password)
+        {
+            return true;
+        }
+        
+        return false;
+    } // end checkSessionPassword
+    
 	/**
 	 * Log in as this user.
 	 *
@@ -155,13 +200,27 @@ class User extends ActiveTable
 			$username = $this->getUserName();
 			$password = $this->getPasswordHash();
 			$time = time() + $cookie_duration;
-		}
+        
+            // Generate and store the salt we're using for this session.
+            $salt = md5($_SERVER['REMOTE_ADDR'].(rand(1,100000) * rand(1,1000)));
+            $this->setCurrentSalt($salt);
+            $this->setCurrentSaltExpiration(date('Y-m-d H:i:s',$time));
+            $this->save();
+
+            // Better password hash.
+            $password = md5($password.$salt);
+		} // end logging in
 		else
 		{
 			$username = null;
 			$password = null;
 			$time = $_COOKIE[$APP_CONFIG['cookie_prefix'].'time'];
-		}
+            
+            // Rip the salt down.
+            $this->setCurrentSalt('');
+            $this->setCurrentSaltExpiration(0);
+            $this->save();
+		} // end zeroing
 		
 		setcookie("{$APP_CONFIG['cookie_prefix']}username",$username,$time,'/');
 		setcookie("{$APP_CONFIG['cookie_prefix']}hash",$password,$time,'/');

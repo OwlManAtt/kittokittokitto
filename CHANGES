@@ -2,6 +2,20 @@
 * Fixed a bug where Kitto would die with a fatal PHP error if the user your
   cookies belonged to does not exist.
 
+* The hash cookie now contains a throw-away token instead of the user's real
+  password hash. The token is generated using the password hash, the client's
+  IP address, and a random value. Even if an attacker is able to get this hash,
+  they will need to spoof the victim's IP to make it useful. These salts can
+  expire, too.
+
+* Most of the admin section has had the Spry form validations added so 
+  they are consistant with the rest of the site.
+
+* Board admin section added.
+
+* Boards can now be set to only allow users with certain permissions to view 
+  them.
+
 === 1.1.0 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
   cause too many newline characters to be inserted, causing the formatting to
