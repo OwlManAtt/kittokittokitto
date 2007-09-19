@@ -29,6 +29,15 @@
  * @version 1.0.0
  **/
 
+/**
+ * Include the exception handlers before our switch.
+ * 
+ * This keeps the config DRY, since it's setting based on
+ * the RELEASE_MODE and the function has to be defined
+ * _before_ the set_exception_handler() call.
+ **/
+require('includes/meta/debug.php');
+
 // See the README for info...
 // $_SERVER['RELEASE_MODE'] = 'DEV';
 
@@ -41,6 +50,9 @@ switch($_SERVER['RELEASE_MODE'])
         // during setup / development, but it's probably not wanted in a 
         // production environment.
         error_reporting(E_ALL ^ E_NOTICE);
+
+        // Make the errors useful for dev.
+        set_exception_handler('development_exception_handler');
         
 		$APP_CONFIG = array(
             /**
@@ -156,6 +168,8 @@ switch($_SERVER['RELEASE_MODE'])
 	
 	case 'PROD':
 	{
+        set_exception_handler('production_exception_handler');
+        
 		$APP_CONFIG = array(
 			'db_dsn' => array(
 				'phptype' => '',
