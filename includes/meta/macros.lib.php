@@ -174,9 +174,10 @@ function format_currency($number)
  * going to be used in ten scripts, tops. 
  * 
  * @param string $raw_xhtml Potentially evil HTML.
+ * @param bool Automatically turn newlines into paragraphs.
  * @return string Very nice, happy HTML.
  **/
-function clean_xhtml($raw_xhtml)
+function clean_xhtml($raw_xhtml,$newline_to_p=true)
 {
     global $APP_CONFIG;
 
@@ -194,7 +195,11 @@ function clean_xhtml($raw_xhtml)
         $config->set('Cache','SerializerPath',$APP_CONFIG['htmlpurifier_cachedir']);
     }
     
-    $config->set('AutoFormat','AutoParagraph',true);
+    if($newline_to_p == true)
+    {
+        $config->set('AutoFormat','AutoParagraph',true);
+    }
+    
     $config->set('AutoFormat','Linkify',true);
 
     // This will fail silently if Tidy is not installed and

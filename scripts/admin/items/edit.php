@@ -61,6 +61,10 @@ else
             } // end edit mode
 
             $fields = $item->listAttributes();
+            foreach($fields as $field)
+            {
+                $ITEM[$field['name']] = $item->get($field['name']);
+            }
             
             $renderer->assign('extra_fields',$fields);
             $renderer->assign('item',$ITEM);
@@ -74,14 +78,16 @@ else
             $ITEM = array(
                 'name' => trim(stripinput($_POST['item']['name'])),
                 'image' => trim(stripinput($_POST['item']['image'])),
-                'description' => trim(stripinput($_POST['item']['description'])),
+                'description' => trim(clean_xhtml($_POST['item']['description'],false)),
             );
             
-            // If the group could not be loaded, start making a new one.
-            if($item == null)
+            // Load the data for extra, item-specific fields.
+            $EXTRA = array();
+            $fields = $item->listAttributes();
+            foreach($fields as $field)
             {
-                $item = new ItemType($db);
-            }
+                $EXTRA[$field['name']] = trim(stripinput($_POST['extra'][$field['name']]));
+            } // end field loop
             
             if($ITEM['name'] == null)
             {
@@ -115,6 +121,13 @@ else
                 $item->setItemName($ITEM['name']);
                 $item->setItemImage($ITEM['image']);
                 $item->setItemDescr($ITEM['description']);
+                
+                // Do the extra fields.
+                foreach($EXTRA as $column => $value)
+                {
+                    $item->set($value,$column);
+                } // end sets for extras
+                
                 $item->save();
 
                 $_SESSION['item_notice'] = "You have saved <strong>{$item->getItemName()}</strong>.";

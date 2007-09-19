@@ -61,7 +61,7 @@ switch($_REQUEST['state'])
     case 'delete':
     {
         $ERRORS = array();
-        $item_type_id = stripinput($_POST['item_type']['id']);
+        $item_type_id = stripinput($_POST['item']['id']);
         
         $item_type = new ItemType($db);
         $item_type = $item_type->findOneByItemTypeId($item_type_id);

@@ -67,6 +67,7 @@ class Food_Item extends Item
                 'type' => 'text',
                 'validation_type' => 'integer',
                 'max_length' => 3,
+                'size' => 4,
             ),
         );
     } // end listAttributes
