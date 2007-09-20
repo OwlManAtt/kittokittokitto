@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `staff_group` DISABLE KEYS */;
 LOCK TABLES `staff_group` WRITE;
-INSERT INTO `staff_group` (`staff_group_id`, `group_name`, `group_descr`) VALUES (1,'High Administrators','<p>The High Administrators are the owner(s) of the site. It is their job to coordinate the efforts of all other staff members and keep the site on-course.</p>'),(2,'Moderators','<p>Moderators keep the boards running smoothly and deal with user complaints. </p>'),(14,'Artists','<p>Artists</p>'),(15,'Writers','<p>Writers create item descriptions and other backstory for the game.</p>');
+INSERT INTO `staff_group` (`staff_group_id`, `group_name`, `group_descr`, `show_staff_group`, `order_by`) VALUES (1,'High Administrators','The High Administrators are the owner(s) of the site. It is their job to coordinate the efforts of all other staff members and keep the site on-course.','Y',-1),(2,'Moderators','Moderators keep the boards running smoothly and deal with user complaints.','Y',0),(14,'Artists','Artists','Y',0),(15,'Writers','Writers create item descriptions and other backstory for the game.','Y',0);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `staff_group` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

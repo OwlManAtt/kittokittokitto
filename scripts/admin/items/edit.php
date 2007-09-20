@@ -87,6 +87,17 @@ else
             foreach($fields as $field)
             {
                 $EXTRA[$field['name']] = trim(stripinput($_POST['extra'][$field['name']]));
+
+                // If it's a select, make sure the ID is valid. These are 
+                // usually used for picking an option from another table, so 
+                // the item could break if this is crap...
+                if($field['type'] == 'select')
+                {
+                    if(in_array($EXTRA[$field['name']],array_keys($field['values'])) == false)
+                    {
+                        $ERRORS[] = "Invalid option specified for {$field['label']}.";
+                    }
+                } // end validate select
             } // end field loop
             
             if($ITEM['name'] == null)

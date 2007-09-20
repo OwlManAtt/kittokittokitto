@@ -46,6 +46,20 @@ class ShopRestock extends ActiveTable
 {
     protected $table_name = 'shop_restock';
     protected $primary_key = 'shop_restock_id';
+    protected $LOOKUPS = array(
+        array(
+            'local_key' => 'shop_id',
+            'foreign_table' => 'shop',
+            'foreign_key' => 'shop_id',
+            'join_type' => 'inner',
+        ),
+        array(
+            'local_key' => 'item_type_id',
+            'foreign_table' => 'item_type',
+            'foreign_key' => 'item_type_id',
+            'join_type' => 'inner',
+        ),
+    );
 
     /**
      * Find all pending restocks and call #stock() on them. 

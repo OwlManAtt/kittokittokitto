@@ -20,6 +20,11 @@
   'usually' fine to leave out. In some cases, a shared host may not provide the
   library.
 
+* includes/meta/debug.php added with exception handlers. The production handler
+  should be customized.
+
+* Item and restock admin has been added.
+
 === 1.1.0 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
   cause too many newline characters to be inserted, causing the formatting to

@@ -260,6 +260,8 @@ CREATE TABLE `staff_group` (
   `staff_group_id` int(11) NOT NULL auto_increment,
   `group_name` varchar(50) NOT NULL,
   `group_descr` text NOT NULL,
+  `show_staff_group` enum('Y','N') NOT NULL default 'Y',
+  `order_by` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`staff_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

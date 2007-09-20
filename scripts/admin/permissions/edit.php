@@ -30,6 +30,7 @@
  **/
 
 $ERRORS = array();
+$Y_N = array('Y' => 'Yes','N' => 'No');
 $group_id = stripinput($_REQUEST['group']['id']);
 
 $group = new StaffGroup($db);
@@ -50,6 +51,8 @@ else
                 $GROUP = array(
                     'id' => $group->getStaffGroupId(),
                     'name' => $group->getGroupName(),
+                    'show' => $group->getShowStaffGroup(),
+                    'order_by' => $group->getOrderBy(),
                     'description' => $group->getGroupDescr(),
                 );
 
@@ -77,7 +80,10 @@ else
                     $CHECKBOXES[$permission->getStaffPermissionId()] = $permission->getPermissionName();
                 } // end permission loop
             } // end new mode
-            
+           
+            array_unshift($Y_N,'Select one...'); 
+
+            $renderer->assign('show_options',$Y_N);
             $renderer->assign('permissions',$CHECKBOXES);
             $renderer->assign('permission_defaults',$CHECKBOX_DEFAULTS);
             $renderer->assign('group',$GROUP);
@@ -98,7 +104,9 @@ else
         {
             $GROUP = array(
                 'name' => trim(stripinput($_POST['group']['name'])),
-                'description' => trim(clean_xhtml($_POST['group']['descr'])),
+                'description' => trim(clean_xhtml($_POST['group']['descr'],false)),
+                'order_by' => trim(stripinput($_POST['group']['order_by'])),
+                'show' => trim(stripinput($_POST['group']['show'])),
             );
             
             // If the group could not be loaded, start making a new one.
@@ -121,6 +129,11 @@ else
                 $ERRORS[] = 'No description specified.';
             }
 
+            if(in_array($GROUP['show'],array_keys($Y_N)) == false)
+            {
+                $ERRORS[] = 'Invalid option for show on staff list specified.';
+            }
+
             if(sizeof($ERRORS) > 0)
             {
                 draw_errors($ERRORS);
@@ -129,6 +142,8 @@ else
             {
                 $group->setGroupName($GROUP['name']);
                 $group->setGroupDescr($GROUP['description']);
+                $group->setOrderBy($GROUP['order_by']);
+                $group->setShowStaffGroup($GROUP['show']);
                 $group->save();
                 $group->updatePermissions($_POST['group']['permissions']);
 
