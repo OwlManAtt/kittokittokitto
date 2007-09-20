@@ -43,6 +43,15 @@ class StaffGroup extends ActiveTable
 {
     protected $table_name = 'staff_group';
     protected $primary_key = 'staff_group_id';
+    protected $RELATED = array(
+        'users' => array(
+            'class' => 'User_StaffGroup',
+            'local_key' => 'staff_group_id',
+            'foreign_table' => 'user_staff_group',
+            'foreign_key' => 'staff_group_id',
+            'foreign_primary_key' => 'user_staff_group_id',
+        ),
+    );
 
     /**
      * Updates a groups permissions. 
@@ -141,6 +150,34 @@ class StaffGroup extends ActiveTable
         
         return parent::destroy();
     } // end destroy
+
+    /**
+     * Grab an array of users that belong in this group. 
+     * 
+     * Note that this is done inefficiently so that it can remain 
+     * rdbms-agnostic. As per the usual, optimizing it is an excercise
+     * left to you. 
+     * 
+     * @return array An array of User instances. 
+     **/
+    public function grabUsers()
+    {
+        $USERS = array();
+        
+        $mappings = $this->grab('users');
+        foreach($mappings as $mapping)
+        {
+            $user = new User($this->db);
+            $user = $user->findOneByUserId($mapping->getUserId());
+
+            if($user != null)
+            {
+                $USERS[] = $user;
+            }
+        } // end mapping loop
+
+        return $USERS;
+    } // end grabUsers
 } // end StaffGroup
 
 ?>

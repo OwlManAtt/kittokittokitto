@@ -1,6 +1,6 @@
 <?php
 /**
- * The homepage for the site. 
+ * The staff list. 
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -29,5 +29,35 @@
  * @version 1.0.0
  **/
 
-$renderer->display('meta/home.tpl');
+$GROUPS = array();
+$groups = new StaffGroup($db);
+$groups = $groups->findByShowStaffGroup('Y','ORDER BY order_by ASC');
+
+foreach($groups as $group)
+{
+    $USERS = $group->grabUsers();
+    
+    $DATA = array(
+        'group' => array(
+            'id' => $group->getStaffGroupId(),
+            'name' => $group->getGroupName(),
+            'description' => $group->getGroupDescr(),
+        ),
+        'users' => array(),
+    );
+    
+    foreach($USERS as $user)
+    {
+        $DATA['users'][] = array(
+            'id' => $user->getUserId(),
+            'name' => $user->getUserName(),
+        );
+    } // end user loop
+    
+    $GROUPS[] = $DATA;
+} // end group loop
+
+// This is a *very good* page to use Smarty's caching abilities with!
+$renderer->assign('groups',$GROUPS);
+$renderer->display('meta/staff.tpl');
 ?>

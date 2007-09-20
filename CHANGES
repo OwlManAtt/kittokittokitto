@@ -25,6 +25,10 @@
 
 * Item and restock admin has been added.
 
+* Staff page added. It will list any staff groups (and members of those groups)
+  that have show_staff_group = Y. Appropriate options were added to the group
+  admin pages.
+
 === 1.1.0 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
   cause too many newline characters to be inserted, causing the formatting to
