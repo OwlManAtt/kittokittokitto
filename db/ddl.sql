@@ -335,6 +335,8 @@ CREATE TABLE `user` (
   `active_user_pet_id` int(11) NOT NULL,
   `timezone_id` int(11) NOT NULL,
   `datetime_format_id` int(11) NOT NULL,
+  `password_reset_requested` datetime NOT NULL,
+  `password_reset_confirm` varchar(32) NOT NULL,
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `user_name` (`user_name`),
   KEY `active_user_pet_id` (`active_user_pet_id`),
