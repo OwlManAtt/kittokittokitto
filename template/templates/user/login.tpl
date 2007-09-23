@@ -29,6 +29,8 @@
     </form>
 </div>
 
+<p style='font-size: small;' align='center'>{kkkurl link_text='Forgot your password?' slug='reset-password'}</p>
+
 {literal}
 <script type='text/javascript'>
     var user_name = new Spry.Widget.ValidationTextField("username_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    

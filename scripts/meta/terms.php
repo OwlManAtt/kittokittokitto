@@ -1,6 +1,6 @@
 <?php
 /**
- * Exception handlers for Kitto. 
+ * The terms and conditions page. 
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -29,34 +29,5 @@
  * @version 1.0.0
  **/
 
-/**
- * The exception handler used if the release mode is DEV.
- *
- * This is very simple - it just print_rs the whole error before
- * exiting. 
- * 
- * @param object $e The exception.
- * @return void
- **/
-function development_exception_handler($e)
-{
-    pprint_r($e);
-    die();
-} // end development_exception_handler
-
-/**
- * The exception handler used if the release mode is PROD. 
- *
- * You probably want to change this function to e-mail you
- * and show a nicer page.
- * 
- * @todo Site-specific implementation.
- * @param object $e The exception.
- * @return void
- **/
-function production_exception_handler($e)
-{
-    print "An error occured!";
-    die();
-} // end production_exception_handler
+$renderer->display('meta/terms.tpl');
 ?>

@@ -29,6 +29,9 @@
  * @version 1.0.0
  **/
 
+/**
+ * The restock job.
+ ***/
 require('restock_shops.class.php');
 
 ?>

@@ -120,7 +120,7 @@ function stripinput($text)
 } // end stripinput
 
 /** 
- * Wrap print_r in <pre> tags so it can be read.
+ * Wrap print_r in pre tags so it can be read.
  * 
  * @bestfuckingfunctionever
  * @author Nick 'Owl' Evans <owlmanatt@gmail.com>
@@ -256,5 +256,28 @@ function truncate($word,$length=50,$end='. . .')
 
     return $word;
 } // end truncate
+
+/**
+ * A wrapper for sending emails.
+ *
+ * This uses PHP's built-in mail(), which calls sendmail. If
+ * you want to use another smtp server, check out replacing
+ * this function with some PEAR::Mail calls. 
+ * 
+ * @param string $to The e-mail address to send to.
+ * @param string $subject The e-mails subject line.
+ * @param string $body The message text.
+ * @return bool
+ **/
+function send_email($to,$subject,$body)
+{
+    global $APP_CONFIG;
+    
+    $headers = "From: {$APP_CONFIG['administrator_email']}\r\n";
+    $headers .= "Reply-To: {$APP_CONFIG['administrator_email']}\r\n";
+    $headers .= "X-Mailer: KittoKittoKitto/PHP/".phpversion();
+
+    return mail($to,$subject,$body,$headers);
+} // end send_email
 
 ?>

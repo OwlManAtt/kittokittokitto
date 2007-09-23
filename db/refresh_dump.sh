@@ -7,7 +7,7 @@ then
     exit 2;
 fi
 
-mysqldump -d -u root --password=$1 kkk > ddl.sql
+mysqldump -d -u root --password=$1 kkk > mysql5_ddl.sql
 
 for table in  ${tables[@]}
 do

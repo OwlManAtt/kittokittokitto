@@ -28,7 +28,7 @@
  * @copyright Nicolas Evans, 2007
  * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @package Kitto_Kitto_Kitto
- * @subpackage Core
+ * @subpackage News 
  * @version 1.0.0
  **/
 

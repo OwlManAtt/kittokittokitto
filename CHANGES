@@ -29,6 +29,10 @@
   that have show_staff_group = Y. Appropriate options were added to the group
   admin pages.
 
+* Reset password page added. 
+
+* Terms and conditions page added with basic Ts & Cs. 
+
 === 1.1.0 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
   cause too many newline characters to be inserted, causing the formatting to
