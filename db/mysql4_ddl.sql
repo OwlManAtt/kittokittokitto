@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Sep 22, 2007 at 08:38 PM
+-- Generation Time: Sep 23, 2007 at 04:50 PM
 -- Server version: 5.0.22
 -- PHP Version: 5.1.2
 -- 
@@ -171,7 +171,7 @@ CREATE TABLE `jump_page` (
   `active` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`jump_page_id`),
   UNIQUE KEY `page_slug` (`page_slug`)
-) TYPE=InnoDB AUTO_INCREMENT=69 ;
+) TYPE=InnoDB AUTO_INCREMENT=70 ;
 
 -- --------------------------------------------------------
 
@@ -350,6 +350,7 @@ CREATE TABLE `user` (
   `currency` bigint(20) unsigned NOT NULL,
   `user_name` varchar(25) NOT NULL,
   `password_hash` char(32) default NULL,
+  `password_hash_salt` char(32) NOT NULL,
   `current_salt` char(32) NOT NULL,
   `current_salt_expiration` datetime NOT NULL,
   `registered_ip_addr` varchar(16) default NULL,
@@ -364,7 +365,7 @@ CREATE TABLE `user` (
   `avatar_id` int(11) NOT NULL,
   `user_title` varchar(20) NOT NULL default 'User',
   `datetime_created` datetime default NULL,
-  `post_count` int(10) unsigned NOT NULL,
+  `post_count` int(11) unsigned NOT NULL,
   `textarea_preference` enum('tinymce','plain') NOT NULL default 'tinymce',
   `datetime_last_post` datetime NOT NULL,
   `active_user_pet_id` int(11) NOT NULL,
@@ -378,7 +379,7 @@ CREATE TABLE `user` (
   KEY `avatar_id` (`avatar_id`),
   KEY `timezone_id` (`timezone_id`),
   KEY `datetime_format_id` (`datetime_format_id`)
-) TYPE=InnoDB AUTO_INCREMENT=6 ;
+) TYPE=InnoDB AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 

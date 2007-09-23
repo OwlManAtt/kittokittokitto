@@ -141,17 +141,9 @@
 
 {literal}
 <script type='text/javascript'>
-    var passwordTheSame = function(value,options) {
-        var other_value = document.getElementById('a').value;
-        
-        if(value != other_value) return false;
-
-        return true;
-    } // end anon
-
     var old_password = new Spry.Widget.ValidationTextField("old_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
-    var password = new Spry.Widget.ValidationTextField("a_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
-    var password_again = new Spry.Widget.ValidationTextField("b_td", "custom", {validation: passwordTheSame, validateOn:['change','blur']});    
+    var password = new Spry.Widget.ValidationTextField("a_td", "none", {useCharacterMasking:true, validateOn:['change','blur'], isRequired: false});    
+    var password_again = new Spry.Widget.ValidationTextField("b_td", "none", {validateOn:['change','blur'], isRequired: false});    
     var email = new Spry.Widget.ValidationTextField("email_td", "email", {useCharacterMasking:true, validateOn:['change','blur']});    
     
     var timezone = new Spry.Widget.ValidationSelect('timezone_td',{validateOn:['blur','change'], invalidValue: ''});

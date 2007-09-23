@@ -119,25 +119,21 @@ class User extends ActiveTable
 	 * The plaintext password is automagically converted to the
 	 * appropriate format and stored. The plaintext is discarded
 	 * when this function completes.
+     *
+     * The password hash is built using a random salt + the plaintext.
+     * The salt is the md5 of random data + the current time + a string 
+     * that (hopefully) has *at least* one symbol that wasn't factored 
+     * into a rainbow table.
      * 
      * @param string $password 
      * @return void
      **/
 	public function setPassword($password)
 	{
-        /*
-		* Doing this twice makes the passwords a mite harder to 
-		* brute-force. I do not labour under the idiotic delusion
-		* that this actually improves security; quite the contrary,
-		* my only goal is to keep some assclown from looking the
-		* chucksum up in a rainbow table and getting 80% of the users'
-        * plaintexts.
-        *
-        * Because you know 8/10 people chose 'kittokitto' as their password.
-        *
-        * :-(
-        */
-		$this->setPasswordHash(md5(md5($password)));
+     	$salt = md5(rand(10000000,90000000).time().'isumi*+!@#|=');
+        $this->setPasswordHashSalt($salt);
+
+        $this->setPasswordHash(md5(md5($password.$salt)));
 	} // end setPassword
     
     /**
@@ -148,7 +144,7 @@ class User extends ActiveTable
      **/
     public function checkPlaintextPassword($plaintext)
     {
-        $base = md5(md5($plaintext));
+        $base = md5(md5($plaintext.$this->getPasswordHashSalt()));
         
         if($base == $this->getPasswordHash())
         {

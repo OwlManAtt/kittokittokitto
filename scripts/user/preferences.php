@@ -128,7 +128,7 @@ switch($_REQUEST['state'])
             'email' => stripinput($_POST['user']['email']),
         );
 
-        if(md5(md5($PASSWORD['old'])) != $User->getPasswordHash())
+        if($User->checkPlaintextPassword($PASSWORD['old']) == false)
         {
             $ERRORS[] = 'The old password you specified is incorrect.';
         }
@@ -149,7 +149,11 @@ switch($_REQUEST['state'])
         }
         else
         {
-            $User->setPassword($PASSWORD['new']);
+            if($PASSWORD['new'] != null)
+            {
+                $User->setPassword($PASSWORD['new']);
+            }
+            
             $User->setEmail($PASSWORD['email']);
             $User->save();
 
