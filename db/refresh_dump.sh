@@ -1,5 +1,5 @@
 #!/bin/bash
-tables=( jump_page item_class item_type pet_specie pet_specie_color cron_tab shop_restock board avatar timezone datetime_format staff_permission staff_group )
+tables=( jump_page item_class item_type pet_specie pet_specie_color cron_tab shop_restock board avatar timezone datetime_format staff_permission staff_group shop pet_specie_pet_specie_color )
 
 if [ "$1" = '' ]
 then
