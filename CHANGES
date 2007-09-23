@@ -35,6 +35,8 @@
 
 * Added an ER diagram of the database to the docs/ folder.
 
+* Locked threads now show as (Locked). Oops!
+
 === 1.1.0 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
   cause too many newline characters to be inserted, causing the formatting to

@@ -14,7 +14,7 @@
         {assign var='thread' value=$threads[index]}
         {cycle values='dataTableRow,dataTableRowAlt' assign=class}
         <tr>
-            <td class='{$class}' align='center'>{if $thread.sticky == 1}Sticky: {/if}{kkkurl link_text=$thread.topic slug='thread' args=$thread.id}{if $thread.last_page > 1} <small>({kkkurl link_text='Last Page' slug='thread' args=`$thread.id`/`$thread.last_page`})</small>{/if}</td>
+            <td class='{$class}' align='center'>{if $thread.sticky == 1}Sticky: {/if}{kkkurl link_text=$thread.topic slug='thread' args=$thread.id}{if $thread.locked == 'Y'} (Locked){/if}{if $thread.last_page > 1} <small>({kkkurl link_text='Last Page' slug='thread' args=`$thread.id`/`$thread.last_page`})</small>{/if}</td>
             <td class='{$class}' align='center'>{kkkurl link_text=$thread.poster_username slug='profile' args=$thread.poster_id}</td>
             <td class='{$class}' align='center'>{$thread.last_post_at}</td>
             <td class='{$class}' align='right'>{$thread.posts}</td>
