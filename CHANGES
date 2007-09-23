@@ -1,4 +1,4 @@
-== 1.2.0 (2007-09-xx) ==
+== 1.2.0 (2007-09-23) ==
 * Fixed a bug where Kitto would die with a fatal PHP error if the user your
   cookies belonged to does not exist.
 
@@ -35,7 +35,7 @@
 
 * Added an ER diagram of the database to the docs/ folder.
 
-* Locked threads now show as (Locked). Oops!
+* Locked threads now have an icon indicating that they are closed. 
 
 === 1.1.0 (2007-09-09) ===
 * Fixed p2nl modifier. Editing posts with the Rich Text Editor will no longer
