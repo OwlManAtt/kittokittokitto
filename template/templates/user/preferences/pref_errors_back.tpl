@@ -10,5 +10,6 @@
     <input type='hidden' name='default[avatar_id]' value='{$info.avatar_id}' />
     <input type='hidden' name='default[timezone]' value='{$info.timezone}' />
     <input type='hidden' name='default[datetime_format]' value='{$info.datetime_format}' />
+    <input type='hidden' name='default[show_online_status]' value='{$info.show_online_status}' />
     <input type='submit' value='Go back' />
 </form>

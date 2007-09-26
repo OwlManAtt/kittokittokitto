@@ -1,6 +1,7 @@
 <?php
 /**
- * Require the cronjob definition classes. This is for orginizational purposes. 
+ * Ghettocronjob definition for deleting online users who
+ * have not been active in the last five minutes. 
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -30,13 +31,35 @@
  **/
 
 /**
- * The restock job.
- ***/
-require('restock_shops.class.php');
+ * Cleans the user_online table up every few minutes. 
+ * 
+ * @uses Cron
+ * @package Kitto_Kitto_Kitto
+ * @subpackage Ghettocron 
+ * @copyright 2007 Nicholas Evans
+ * @author Nick 'Owl' Evans <owlmanatt@gmail> 
+ * @license GNU GPL v3 {@link http://www.gnu.org/licenses/gpl-3.0.txt}
+ **/
+class Job_UserOnline implements Job 
+{
+    protected $db;
+    
+    public function __construct(&$db)
+    {
+        $this->db = $db;
+    } // end __construct
 
-/**
- * user_online cleanup job.
- ***/
-require('user_online.class.php');
+    public function performJob()
+    {
+        $result = $this->db->query("DELETE FROM user_online WHERE (UNIX_TIMESTAMP(datetime_last_active) + (60 * 5)) < UNIX_TIMESTAMP(NOW())");
+        
+        if(PEAR::isError($result))
+        {
+            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+        } // end sql error
+    
+        return true;
+    } // end performJob
+} // end Job_UserOnline
 
 ?>

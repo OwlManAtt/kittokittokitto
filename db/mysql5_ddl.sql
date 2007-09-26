@@ -338,6 +338,7 @@ CREATE TABLE `user` (
   `datetime_format_id` int(11) NOT NULL,
   `password_reset_requested` datetime NOT NULL,
   `password_reset_confirm` varchar(32) NOT NULL,
+  `show_online_status` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `user_name` (`user_name`),
   KEY `active_user_pet_id` (`active_user_pet_id`),
@@ -393,6 +394,23 @@ CREATE TABLE `user_notification` (
   PRIMARY KEY  (`user_notification_id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `user_online`
+--
+
+DROP TABLE IF EXISTS `user_online`;
+CREATE TABLE `user_online` (
+  `user_online_id` int(11) NOT NULL auto_increment,
+  `user_type` enum('user','guest') NOT NULL default 'guest',
+  `user_id` int(11) NOT NULL,
+  `client_ip` varchar(15) NOT NULL,
+  `client_user_agent` varchar(255) NOT NULL,
+  `datetime_last_active` datetime NOT NULL,
+  PRIMARY KEY  (`user_online_id`),
+  KEY `user_id` (`user_id`),
+  KEY `client_ip` (`client_ip`)
+) ENGINE=MEMORY DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `user_pet`

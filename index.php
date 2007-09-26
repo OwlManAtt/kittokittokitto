@@ -138,6 +138,10 @@ else
         'checkboxvalidation/SpryValidationCheckbox.css',
     );
     $renderer->assign('spry',$spry);
+
+    // Get the number of users online for showing somewheres in the layout.
+    $online_users = UserOnline::totalOnline($db);
+    $renderer->assign('online_users',$online_users);
     
 	$renderer->display("layout/{$jump_page->getLayoutType()}/header.tpl");
 
@@ -162,7 +166,7 @@ else
 	{
 		include('scripts/'.$jump_page->getPhpScript());
 	} // end include script
-	
+
 	$renderer->display("layout/{$jump_page->getLayoutType()}/footer.tpl");
 } // end else-page found
 

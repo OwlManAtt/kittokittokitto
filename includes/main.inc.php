@@ -115,4 +115,40 @@ if(isset($_COOKIE[$APP_CONFIG['cookie_prefix'].'username']) && isset($_COOKIE[$A
 } // end if cookies are set
 
 $renderer->assign('logged_in',$logged_in);
+
+// Handle the online status of this client.
+$online = new UserOnline($db);
+
+if($logged_in == true)
+{
+    $online = $online->findOneByUserId($User->getUserId());
+} // end is a user
+else
+{
+    $online = $online->findOneByClientIp($_SERVER['REMOTE_ADDR']);
+} // end is a guest
+
+// If the user/guest was not found as online, recreate the instance and
+// we're all set. Otherwise, we have the appropriate instance loaded and
+// ready for updating.
+if($online == null)
+{
+    $online = new UserOnline($db);
+}
+
+// Add the correct stuff and save.
+if($logged_in == true)
+{
+    $online->setUserType('user');
+    $online->setUserId($User->getUserId());
+} // end user
+else
+{
+    $online->setUserType('guest');
+    $online->setClientIp($_SERVER['REMOTE_ADDR']);
+} // end guest
+
+$online->setClientUserAgent($_SERVER['HTTP_USER_AGENT']);
+$online->setDatetimeLastActive($online->sysdate());
+$online->save();
 ?>

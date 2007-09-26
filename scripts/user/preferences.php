@@ -30,6 +30,7 @@
  * @version 1.0.0
  **/
 
+$Y_N = array('Y' => 'Yes','N' => 'No');
 $GENDER = array('male' => 'Male', 'female' => 'Female');
 $AGE = array();
 for($i=5;$i<70;$i++)
@@ -53,6 +54,7 @@ switch($_REQUEST['state'])
             'avatar_url' => $User->getAvatarUrl(),
             'timezone_id' => $User->getTimezoneId(),
             'datetime_format_id' => $User->getDatetimeFormatId(),
+            'show_online_status' => $User->getShowOnlineStatus(),
         );
 
         // If someone hit here with defaults from the back button,
@@ -105,7 +107,8 @@ switch($_REQUEST['state'])
             $renderer->assign('notice',$_SESSION['pref_notice']);
             unset($_SESSION['pref_notice']);
         }
-        
+
+        $renderer->assign('online_status',$Y_N); 
         $renderer->assign('avatars',$AVATARS);
         $renderer->assign('timezones',$TIMEZONES);
         $renderer->assign('datetime_formats',$DATETIME_FORMATS);
@@ -181,6 +184,7 @@ switch($_REQUEST['state'])
             'avatar_image' => stripinput($_POST['user']['avatar']),
             'datetime_format' => stripinput($_POST['user']['datetime_format']),
             'timezone' => stripinput($_POST['user']['timezone']),
+            'show_online_status' => stripinput($_POST['user']['show_online_status']),
         );
         
         if(in_array($USER['gender'],array_keys($GENDER)) == false)
@@ -233,6 +237,10 @@ switch($_REQUEST['state'])
             $ERRORS[] = 'Invalid timezone specified.';
         }
         
+        if(in_array($USER['show_online_status'],array_keys($Y_N)) == false)
+        {
+            $ERRORS[] = 'Invalid value selected for Show Online Status.';
+        }
         
         if(sizeof($ERRORS) > 0)
         {
@@ -251,6 +259,7 @@ switch($_REQUEST['state'])
             $User->setAvatarId($avatar_id);
             $User->setDatetimeFormatId($datetime_format->getDatetimeFormatId());
             $User->setTimezoneId($timezone->getTimezoneId());
+            $User->setShowOnlineStatus($USER['show_online_status']);
             $User->save();
             
             $_SESSION['pref_notice'] = 'Your preferences have been updated.';

@@ -115,22 +115,30 @@
                 </tr>
                 <tr>
                     <td width='20%' class='inputTableRow inputTableSubhead'>
-                        <label for='profile'>Profile</label>
+                        <label for='show_status'>Show Online Status</label>
                     </td>
-                    <td width='80%' class='inputTableRow' colspan='2' id='profile_td'>
-                        <textarea name='user[profile]' id='profile' cols='55' rows='10'>{$prefs.profile}</textarea>
+                    <td width='80%' class='inputTableRow' colspan='2' id='show_status_td'>
+                        {html_options name='user[show_online_status]' id='show_status' options=$online_status selected=$prefs.show_online_status}
                     </td>
                 </tr>
                 <tr>
                     <td width='20%' class='inputTableRowAlt inputTableSubhead'>
+                        <label for='profile'>Profile</label>
+                    </td>
+                    <td width='80%' class='inputTableRowAlt' colspan='2' id='profile_td'>
+                        <textarea name='user[profile]' id='profile' cols='55' rows='10'>{$prefs.profile}</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td width='20%' class='inputTableRow inputTableSubhead'>
                         <label for='signature'>Signature</label>
                     </td>
-                    <td width='80%' class='inputTableRowAlt' colspan='2' id='signature_td'>
+                    <td width='80%' class='inputTableRow' colspan='2' id='signature_td'>
                         <textarea name='user[signature]' id='signature' cols='55' rows='10'>{$prefs.signature}</textarea>
                     </td>
                 </tr>
                 <tr>
-                    <td class='inputTableRow' style='text-align: right;' colspan='3'>
+                    <td class='inputTableRowAlt' style='text-align: right;' colspan='3'>
                         <input type='submit' value='Save Preferences' />
                     </td>
                 </tr>
@@ -152,7 +160,8 @@
     var gender = new Spry.Widget.ValidationSelect('gender_td',{validateOn:['blur','change'], invalidValue: '0'});
     var editor = new Spry.Widget.ValidationSelect('editor_td',{validateOn:['blur','change'], invalidValue: '0'});
     var avatar = new Spry.Widget.ValidationSelect('avatar_td',{validateOn:['blur','change'], invalidValue: '0', isRequired: false});
-    
+    var online_status = new Spry.Widget.ValidationSelect('show_status_td',{validateOn:['blur','change'], isRequired: false});
+
     var profile = new Spry.Widget.ValidationTextarea('profile_td',{isRequired: false});
     var signature = new Spry.Widget.ValidationTextarea('signature_td',{isRequired: false});
 </script>
