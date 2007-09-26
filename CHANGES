@@ -1,3 +1,9 @@
+== 1.2.2 (2007-09-xx) ==
+* Added a page to display users/guests currently browsing the site. 
+
+* Added an option to the preferences page for surpressing a username from
+  showing up on the online users list. 
+
 == 1.2.1 (2007-09-23) == 
 * Kitto no longer does the double-md5 to store the password hash. A unique
   salt is generated per-user and used to generate the password hash. This 
