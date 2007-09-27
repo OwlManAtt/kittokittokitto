@@ -1,0 +1,46 @@
+To upgrade from Kitto 1.2.1 to 1.2.2, run the following SQL:
+
+    -- Create the new table required.
+    CREATE TABLE `user_online` (
+    `user_online_id` INT NOT NULL AUTO_INCREMENT ,
+    `user_type` ENUM( 'user', 'guest' ) DEFAULT 'guest' NOT NULL ,
+    `user_id` INT NOT NULL ,
+    `client_ip` VARCHAR( 15 ) NOT NULL ,
+    `client_user_agent` VARCHAR( 255 ) NOT NULL ,
+    `datetime_last_active` DATETIME NOT NULL ,
+    PRIMARY KEY ( `user_online_id` ) ,
+    INDEX (`user_id`),
+    INDEX (`client_ip`),
+    ) TYPE = memory;
+
+    -- Add a new column for holding the user preference in.
+    ALTER TABLE `user` ADD `show_online_status` ENUM( 'Y', 'N' ) DEFAULT 'Y' NOT NULL ;
+
+    -- Add the new cronjob.
+    INSERT INTO `cron_tab` ( `cron_tab_id` , `cron_class` , `cron_frequency_seconds` , `unixtime_next_run` , `enabled` ) VALUES ('', 'Job_UserOnline', '300', '', 'Y');
+
+    -- Add the online users page and search page.
+    INSERT INTO `jump_page` ( `jump_page_id` , `page_title` , `page_html_title` , `layout_type` , `page_slug` , `access_level` , `restricted_permission_api_name` , `php_script` , `include_tinymce` , `active` ) VALUES ('', 'Online Users', 'Online Users', 'deep', 'online', 'public', '', 'meta/online.php', 'N', 'Y');
+    INSERT INTO `jump_page` ( `jump_page_id` , `page_title` , `page_html_title` , `layout_type` , `page_slug` , `access_level` , `restricted_permission_api_name` , `php_script` , `include_tinymce` , `active` ) VALUES ('', 'Search', 'Search', 'deep', 'search', 'user', '', 'meta/search.php', 'N', 'Y');   
+
+Then, upload the following changed/new files. If you have customized a file in this list,
+you will need to merge the changes. If you have not customized a file, it is recommended
+that you overwrite it with the updated version.
+
+    scripts/user/register.php (change is on line 151).
+    includes/classes/classes.config.php (change is online 49).
+    includes/main.inc.php (lines 119 to 153 were added).
+    includes/cronjobs/user_online.class.php (new file).
+    includes/cronjobs/cronjobs.config.php (lines 37 to 40 were added).
+    index.php (lines 142 to 144 added).
+    template/templates/layout/deep/footer.tpl (changed line 9 to include 'X User(s) Online' link).
+    scripts/meta/online.php (new file).
+    template/templates/meta/online.tpl (new file).
+    scripts/user/preferences.php (added lines 33, 57, 111, 187, 240 to 243, and 262).
+    template/templates/user/preferences/pref_errors_back.tpl (added line 13).
+    template/templates/user/preferences/preferences.tpl (added lines 116 to 123, modified all subsequent class='', and added line 163).
+    external_lib/aphp (ActivePHP 2.2.6, upload entire external_lib/aphp/ folder).
+    template/layout/user_box.tpl (added line 8).
+    script/meta/search.php (new file).
+    template/templates/meta/search (new folder).
+    .htaccess file - you will need to set the RewriteBase as per the installation instructions (added lines 37 to 38).

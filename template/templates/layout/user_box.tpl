@@ -5,6 +5,7 @@
         <li><strong>Pet</strong>: {if $active_pet == null}<em>None!</em>{else}{kkkurl link_text=$active_pet->getPetName() slug='pet' args=$active_pet->getUserPetId()}{/if}</li>
     </ul>
     <ul id='user-actions'>
+        <li>{kkkurl link_text='Search' slug='search'}</li>
         <li>{kkkurl link_text='Preferences' slug='preferences'}</li>
         <li>{kkkurl link_text='Logout' slug='logoff'}</li>
     </ul>

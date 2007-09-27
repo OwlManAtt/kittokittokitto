@@ -34,5 +34,8 @@ RewriteRule ^thread/([0-9]+)(/([0-9]+))? index.php?page_slug=thread&thread_id=$1
 RewriteRule ^edit-post/([0-9]+)(/([0-9]+))? index.php?page_slug=edit-post&post_id=$1&page=$3 [NC,L]
 RewriteRule ^edit-thread/([0-9]+)(/([0-9]+))? index.php?page_slug=edit-thread&thread_id=$1&page=$3 [NC,L]
 
+# Search page rules.
+RewriteRule ^search/([a-z0-9]+)(((/([^/]+))(/(exact|contains)?)(/([0-9])+)?))? index.php?page_slug=search&state=search&search=$1&term=$5&page=$9&precision=$7 [NC,L]
+
 # Gotta catch 'em all! Don't put any rules below this one.
 RewriteRule ^([A-Z0-9-]+)(/(.*))?$ index.php?page_slug=$1 [QSA,NC,L]

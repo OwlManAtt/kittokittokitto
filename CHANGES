@@ -1,8 +1,10 @@
-== 1.2.2 (2007-09-xx) ==
+== 1.2.2 (2007-09-26) ==
 * Added a page to display users/guests currently browsing the site. 
 
 * Added an option to the preferences page for surpressing a username from
   showing up on the online users list. 
+
+* Added a user/pet search page.
 
 == 1.2.1 (2007-09-23) == 
 * Kitto no longer does the double-md5 to store the password hash. A unique
