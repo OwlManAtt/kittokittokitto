@@ -1,3 +1,8 @@
+== 1.2.2.1 (2007-09-30) ==
+* Edward <are.you.cursed@gmail.com> discovered that the db/mysql4_ddl.sql file
+  in 1.2.2 had not been updated since 1.2.1 and was causing problems. This has
+  been corrected.
+
 == 1.2.2 (2007-09-26) ==
 * Added a page to display users/guests currently browsing the site. 
 

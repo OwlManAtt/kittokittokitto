@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Sep 23, 2007 at 04:50 PM
+-- Generation Time: Sep 30, 2007 at 11:41 PM
 -- Server version: 5.0.22
 -- PHP Version: 5.1.2
 -- 
@@ -98,7 +98,7 @@ CREATE TABLE `cron_tab` (
   `unixtime_next_run` bigint(11) unsigned NOT NULL,
   `enabled` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`cron_tab_id`)
-) TYPE=InnoDB AUTO_INCREMENT=2 ;
+) TYPE=InnoDB AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -171,7 +171,7 @@ CREATE TABLE `jump_page` (
   `active` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`jump_page_id`),
   UNIQUE KEY `page_slug` (`page_slug`)
-) TYPE=InnoDB AUTO_INCREMENT=70 ;
+) TYPE=InnoDB AUTO_INCREMENT=72 ;
 
 -- --------------------------------------------------------
 
@@ -373,13 +373,14 @@ CREATE TABLE `user` (
   `datetime_format_id` int(11) NOT NULL,
   `password_reset_requested` datetime NOT NULL,
   `password_reset_confirm` varchar(32) NOT NULL,
+  `show_online_status` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `user_name` (`user_name`),
   KEY `active_user_pet_id` (`active_user_pet_id`),
   KEY `avatar_id` (`avatar_id`),
   KEY `timezone_id` (`timezone_id`),
   KEY `datetime_format_id` (`datetime_format_id`)
-) TYPE=InnoDB AUTO_INCREMENT=2 ;
+) TYPE=InnoDB AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -438,6 +439,25 @@ CREATE TABLE `user_notification` (
 -- --------------------------------------------------------
 
 -- 
+-- Table structure for table `user_online`
+-- 
+
+DROP TABLE IF EXISTS `user_online`;
+CREATE TABLE `user_online` (
+  `user_online_id` int(11) NOT NULL,
+  `user_type` enum('user','guest') NOT NULL default 'guest',
+  `user_id` int(11) NOT NULL,
+  `client_ip` varchar(15) NOT NULL,
+  `client_user_agent` varchar(255) NOT NULL,
+  `datetime_last_active` datetime NOT NULL,
+  PRIMARY KEY  (`user_online_id`),
+  KEY `user_id` (`user_id`),
+  KEY `client_ip` (`client_ip`)
+) TYPE=MEMORY AUTO_INCREMENT=10 ;
+
+-- --------------------------------------------------------
+
+-- 
 -- Table structure for table `user_pet`
 -- 
 
@@ -456,7 +476,7 @@ CREATE TABLE `user_pet` (
   PRIMARY KEY  (`user_pet_id`),
   KEY `user_id` (`user_id`),
   KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
-) TYPE=InnoDB COMMENT='Pets = specie + user + color.' AUTO_INCREMENT=9 ;
+) TYPE=InnoDB COMMENT='Pets = specie + user + color.' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
