@@ -12,6 +12,12 @@
   set environment variables in .htaccess, so this should make Kitto easier to
   install on those kinds of setups.
 
+* The mysql4 and mysql5 DDL files have been consolidated into one DDL file that
+  supports both MySQL 4 and MySQL 5. 
+
+* There is a db/data/_all.sql file for those using PhpMyAdmin and wishing to load
+  in all of the data at once instead of doing it table-by-table.
+
 == 1.2.2.1 (2007-09-30) ==
 * Edward <are.you.cursed@gmail.com> discovered that the db/mysql4_ddl.sql file
   in 1.2.2 had not been updated since 1.2.1 and was causing problems. This has
