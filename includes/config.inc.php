@@ -176,6 +176,9 @@ switch($_SERVER['RELEASE_MODE'])
 
 } // end release mode switch
 
+// PEAR::DB gets very angry when it cannot include files in external_libs/DB/.
+ini_set('include_path',ini_get('include_path').':./external_lib/');
+
 /**
  * These are mission-critical libraries. Nothing else will function 
  * correctly without these. APHP needs to come before any other classes,
