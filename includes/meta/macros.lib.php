@@ -183,7 +183,7 @@ function clean_xhtml($raw_xhtml,$newline_to_p=true)
 
     if(get_magic_quotes_gpc() == 1) { $raw_xhtml = stripslashes($raw_xhtml); }
     
-    require_once('HTMLPurifier/HTMLPurifier.auto.php');
+    require_once('external_lib/HTMLPurifier/HTMLPurifier.auto.php');
     
     $config = HTMLPurifier_Config::createDefault();
     if($APP_CONFIG['htmlpurifier_cachedir'] == null)

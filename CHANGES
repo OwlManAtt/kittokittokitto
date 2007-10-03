@@ -1,3 +1,17 @@
+== 1.2.2.2 (2007-10-03) ==
+* System check script added. This file allows a user to know if their server is
+  capable of running Kitto.
+
+* The include_path ini_set in the config file has been removed, and all 
+  requires()s involving libraries in the external_libs folder now point
+  directly to external_libs. This should make installation easier for people
+  who have PHP setup to ignore ini_set directives.
+
+* The RELEASE_MODE has been set to 'DEV' in the config file, and the blank PROD
+  case has been removed from the switch. Some Apache setups do not allow you to 
+  set environment variables in .htaccess, so this should make Kitto easier to
+  install on those kinds of setups.
+
 == 1.2.2.1 (2007-09-30) ==
 * Edward <are.you.cursed@gmail.com> discovered that the db/mysql4_ddl.sql file
   in 1.2.2 had not been updated since 1.2.1 and was causing problems. This has

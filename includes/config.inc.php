@@ -38,8 +38,9 @@
  **/
 require('includes/meta/debug.php');
 
-// See the README for info...
-// $_SERVER['RELEASE_MODE'] = 'DEV';
+// Comment this out to try and pull in the RELEASE_MODE from the
+// .htaccess file. It may not work, depending on Apache's setup.
+$_SERVER['RELEASE_MODE'] = 'DEV';
 
 switch($_SERVER['RELEASE_MODE'])
 {
@@ -166,27 +167,6 @@ switch($_SERVER['RELEASE_MODE'])
 		break;
 	} // end dev
 	
-	case 'PROD':
-	{
-        set_exception_handler('production_exception_handler');
-        
-		$APP_CONFIG = array(
-			'db_dsn' => array(
-				'phptype' => '',
-				'username' => '',
-				'password' => '',
-				'hostspec' => '',
-				'database' => '',
-			),
-			'base_path' => '',
-			'template_path' => '',
-			'public_dir' => '',
-			'cookie_prefix' => 'kkk_',
-		);
-	
-		break;
-	} // end prod
-
 	default:
 	{
 		die("RELEASE_MODE '{$_SERVER['RELEASE_MODE']}' unrecognized; CANNOT PROCEED.");
@@ -197,20 +177,13 @@ switch($_SERVER['RELEASE_MODE'])
 } // end release mode switch
 
 /**
- * Add the /external_lib/ folder to PHP's include path so everything 
- * external should Just Work. Feel free to use your system's PEAR install,
- * a shared Smarty install, etc. This directory is just for convinience.
- **/
-ini_set('include_path',ini_get('include_path').":{$APP_CONFIG['base_path']}/external_lib");
-
-/**
  * These are mission-critical libraries. Nothing else will function 
  * correctly without these. APHP needs to come before any other classes,
  * otherwise they will cause a fatal error because their parent class is
  * undefined.
  **/
-require_once('DB.php');
-require_once('aphp/aphp.php');
+require_once('external_lib/DB.php');
+require_once('external_lib/aphp/aphp.php');
 
 /**
  * KKK library files.

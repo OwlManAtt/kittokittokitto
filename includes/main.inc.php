@@ -37,7 +37,7 @@ require('includes/config.inc.php');
 /**
  * Non-critical third-party libraries (Rendering-related, pretty much).
  **/
-require_once('Smarty/Smarty.class.php');
+require_once('external_lib/Smarty/Smarty.class.php');
 
 /*
 * == ADDITIONAL INCLUDE ==

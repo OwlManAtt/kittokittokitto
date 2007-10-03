@@ -1,3 +1,9 @@
+== 1.2.2.1, 1.2.2.2 ==
+Both of these releases contained insignificant updates. 1.2.2.1 corrected
+an error in the db/mysql4_ddl.sql file, and 1.2.2.2 was targetted towards
+making installation easier.
+
+== 1.2.1 to 1.2.2.0 ==
 To upgrade from Kitto 1.2.1 to 1.2.2, run the following SQL:
 
     -- Create the new table required.
