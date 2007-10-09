@@ -63,7 +63,7 @@ else
             {
                 $ERRORS[] = 'Internal CAPTCHA error. Please report this if it persists.';
             }
-            elseif($FORGOT['code'] != $_SESSION['security_code'])
+            elseif(strtolower($FORGOT['code']) != strtolower($_SESSION['security_code']))
             {
                 $ERRORS[] = "Incorrect security code specified.";
             }

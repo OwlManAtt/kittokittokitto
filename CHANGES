@@ -1,3 +1,8 @@
+== 1.2.2.3 (2007-10-09) ==
+* Fixed the CAPTCHA image generator to fall-back to a non-TTF. Patra discovered
+  that the Kitto system check reported all-OK despite TTF support not being
+  enabled on their server, causing the CAPTCHA to fail.
+
 == 1.2.2.2 (2007-10-03) ==
 * System check script added. This file allows a user to know if their server is
   capable of running Kitto.

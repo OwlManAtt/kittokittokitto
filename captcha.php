@@ -50,7 +50,7 @@ class CaptchaSecurityImages {
    }
 
     function CaptchaSecurityImages($width='120',$height='40',$characters='6',$font) {
-        global $font,$font_ballback;
+        global $font,$font_fallback;
         $code = $this->generateCode($characters);
 
         /* font size will be 75% of the image height */
@@ -72,20 +72,20 @@ class CaptchaSecurityImages {
         }
         $x = 4;
         $y = 5;
-        if (@imagettfbbox($font_size, 0, $font, $code)) {
+
+        if(function_exists('imagettfbbox') == true)
+        {
+            imagettfbbox($font_size, 0, $font, $code);
             $textbox = imagettfbbox($font_size, 0, $font, $code);
             $x = ($width - $textbox[4])/2;
             $y = ($height - $textbox[5])/2;
             imagettftext($image, $font_size, 0, $x, $y, $text_color, $font, $code);
-        } else {
-            imagestring($image, $font_ballback, $x, $y, $code, $text_color);
+        } 
+        else 
+        {
+            imagestring($image, $font_fallback, $x, $y, $code, $text_color);
         }
-        /* create textbox and add text
-        $textbox = imagettfbbox($font_size, 0, $font, $code) or die('Error in imagettfbbox function');
-        $x = ($width - $textbox[4])/2;
-        $y = ($height - $textbox[5])/2;
-        imagettftext($image, $font_size, 0, $x, $y, $text_color, $font, $code) or die('Error in imagettftext function');
-        output captcha image to browser */
+        
         header('Content-Type: image/jpeg');
         imagejpeg($image);
         imagedestroy($image);

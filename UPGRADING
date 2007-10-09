@@ -1,3 +1,10 @@
+== 1.2.2.1 or 1.2.2.2 to 1.2.2.3 ==
+To upgrade an earlier 1.2.2 release to 1.2.2.3, update the following files:
+
+    * captcha.php
+    * scripts/user/register.php (line 64 modified).
+    * scripts/user/forgot_password.php (line 66 modified).
+
 == 1.2.2.1, 1.2.2.2 ==
 Both of these releases contained insignificant updates. 1.2.2.1 corrected
 an error in the db/mysql4_ddl.sql file, and 1.2.2.2 was targetted towards
