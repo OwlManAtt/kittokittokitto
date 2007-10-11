@@ -60,12 +60,8 @@ class UserOnline extends ActiveTable
      **/
     static public function totalOnline($db)
     {
-        $result = $db->getOne('SELECT count(*) FROM user_online');
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo);
-        } // end sql erro
+        $result = new UserOnline($db);
+        $result = $result->findBy(array(),null,true);
 
         return $result;
     } // end totalOnline
@@ -73,19 +69,19 @@ class UserOnline extends ActiveTable
     /**
      * Count the number of unhidden users online. 
      * 
-     * @rdbms-specific The INNER JOIN may not work with some 
-     *                 versions of Oracle.
      * @param object $db PEAR::DB connector
      * @return integer 
      **/
     static public function totalUnhiddenUsers($db)
     {
-        $result = $db->getOne("SELECT count(*) FROM user_online INNER JOIN user ON user_online.user_id = user.user_id WHERE user.show_online_status = 'Y'");
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo);
-        } // end sql erro
+        $result = new UserOnline($db);
+        $result = $result->findBy(array(
+            array(
+                'table' => 'user',
+                'column' => 'show_online_status',
+                'value' => 'Y',
+            ),
+        ),null,true);
 
         return $result;
     } // end totalUnhiddenUsers
@@ -93,19 +89,19 @@ class UserOnline extends ActiveTable
     /**
      * Count the number of hidden users online. 
      * 
-     * @rdbms-specific The INNER JOIN may not work with some 
-     *                 versions of Oracle.
      * @param object $db PEAR::DB connector
      * @return integer 
      **/
     static public function totalHidden($db)
     {
-        $result = $db->getOne("SELECT count(*) FROM user_online INNER JOIN user ON user_online.user_id = user.user_id WHERE user.show_online_status = 'N'");
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo);
-        } // end sql erro
+        $result = new UserOnline($db);
+        $result = $result->findBy(array(
+            array(
+                'table' => 'user',
+                'column' => 'show_online_status',
+                'value' => 'N',
+            ),
+        ),null,true);
 
         return $result;
     } // end totalHidden
@@ -113,23 +109,30 @@ class UserOnline extends ActiveTable
     /**
      * Count the number of guest clients online. 
      * 
-     * @rdbms-specific The INNER JOIN may not work with some 
-     *                 versions of Oracle.
      * @param object $db PEAR::DB connector
      * @return integer 
      **/
     static public function totalGuests($db)
     {
-        $result = $db->getOne("SELECT count(*) FROM user_online WHERE user_type = 'guest'");
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo);
-        } // end sql erro
+        $result = new UserOnline($db);
+        $result = $result->findBy(array('user_type' => 'guest'),null,true);
 
         return $result;
     } // end totalUGuests
 
+    /**
+     * Count the number of users online. 
+     * 
+     * @param object $db PEAR::DB connector
+     * @return integer 
+     **/
+    static public function totalUsers($db)
+    {
+        $result = new UserOnline($db);
+        $result = $result->findBy(array('user_type' => 'user'),null,true);
+
+        return $result;
+    } // end totalUsers
 
     static public function findOnlineUsers($start,$end,$db)
     {

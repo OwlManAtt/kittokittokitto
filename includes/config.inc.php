@@ -186,6 +186,7 @@ ini_set('include_path',ini_get('include_path').':./external_lib/');
  * undefined.
  **/
 require_once('external_lib/DB.php');
+require_once('external_lib/Log.php');
 require_once('external_lib/aphp/aphp.php');
 
 /**

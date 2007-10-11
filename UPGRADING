@@ -1,3 +1,15 @@
+== 1.2.2.x to 1.2.2.4 ==
+To upgrade an earlier 1.2.2.x release to 1.2.2.4, update the following files or
+manually merge the changes:
+
+    * index.php (line 143 changed)
+    * includes/config.inc.php (line 189, the require for Log.php)
+    * includes/classes/user/user_online.class.php (all static methods 
+      changed to use #findBy()'s new counting abilities instead of running
+      queries manually, one method added)
+    * scripts/meta/search.php (lines 51-53 changed)
+    * external_lib/aphp (whole folder)
+
 == 1.2.2.1 or 1.2.2.2 to 1.2.2.3 ==
 To upgrade an earlier 1.2.2 release to 1.2.2.3, update the following files:
 

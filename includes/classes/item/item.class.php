@@ -58,7 +58,7 @@ class Item extends ItemType
             'join_type' => 'inner',
         ),
     );
-
+    
     /**
      * Return an instance of the correct *_Item class.
      *

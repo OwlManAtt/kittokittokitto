@@ -48,9 +48,9 @@ switch($_REQUEST['state'])
     case 'passthrough':
     {
         $SEARCH = array(
-            'term' => stripinput($_REQUEST['keyword']),
-            'search' => stripinput($_REQUEST['search']),
-            'precision' => stripinput($_REQUEST['match']),
+            'term' => urlencode(stripinput($_REQUEST['keyword'])),
+            'search' => urlencode(stripinput($_REQUEST['search'])),
+            'precision' => urlencode(stripinput($_REQUEST['match'])),
         );
         
         redirect(null,null,"search/{$SEARCH['search']}/{$SEARCH['term']}/{$SEARCH['precision']}/1"); 

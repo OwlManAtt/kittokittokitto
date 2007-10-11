@@ -1,3 +1,29 @@
+== 1.2.2.4 (2007-10-10) ==
+* The users online count in the footer now only counts logged-in users. 
+  Previously, all users and guests were counted. However, guests online is not
+  a particularly interesting (and some would say it is downright misleading) 
+  statistic. 
+
+* The search page would break if you attempted to search for a user/pet with
+  a special character in it. This bug has been fixed.
+
+* Added the require for external_lib/Log.php. This has been mistakenly omitted
+  since 1.0.0. Oops.
+
+* ActivePHP updated. The new version is focused on optimizing ActiveTable. 
+  Previously, one or more DESCRIBE table; queries would be executed on the
+  primary table and any LOOKUP'd tables every time an object was instantiated.
+  Caching for the query results has been implemented.
+
+  The method of caching that will be done depends on your environment. If APC
+  is detected, it will be used to cache table structures, eliminating all of
+  the overhead involved in the DESCRIBEs - the queries are run once and cached
+  until the server reboots or the cache is otherwise cleared. 
+
+  In lieu of APC being installed, $GLOBALS will be used. This ensures DESCRIBEs
+  are only one once per pageload, no matter how many classes are instantiated.
+  A single table will only be described once when a user hits a page.
+
 == 1.2.2.3 (2007-10-09) ==
 * Fixed the CAPTCHA image generator to fall-back to a non-TTF. Patra discovered
   that the Kitto system check reported all-OK despite TTF support not being
