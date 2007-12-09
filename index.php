@@ -94,11 +94,21 @@ else
     
     if($jump_page->getIncludeTinymce() == 'Y')
     {
-        if($User->getTextareaPreference() == 'tinymce')
+        // If the client is a logged-in user, use their preference.
+        if(is_object($User) == true)
         {
+            if($User->getTextareaPreference() == 'tinymce')
+            {
+                $renderer->assign('include_tinymce',true);
+                $renderer->assign('tinymce_theme','advanced');
+            }
+        } // end user is logged in
+        else
+        {
+            // The user is not logged in - try using TinyMCE.
             $renderer->assign('include_tinymce',true);
             $renderer->assign('tinymce_theme','advanced');
-        }
+        } // end not logged in
     } // end include tinyMCE
     
     if(is_object($User) == true)

@@ -35,6 +35,11 @@
 require('getter.class.php');
 
 /**
+ * Inflectors.
+ **/
+require('inflectors/english.class.php');
+
+/**
  * User-related classes.
  **/
 require('user/user.class.php');
@@ -76,6 +81,7 @@ require('shop/shop_restock.class.php');
 /**
  * Board-related classes.
  **/
+require('board/board_category.class.php');
 require('board/board.class.php');
 require('board/board_thread.class.php');
 require('board/board_post.class.php');
