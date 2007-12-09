@@ -45,8 +45,21 @@ class Board extends ActiveTable
     protected $primary_key = 'board_id';
     protected $LOOKUPS = array(
         array(
+            'local_key' => 'board_category_id',
+            'foreign_table' => 'board_category',
+            'foreign_key' => 'board_category_id',
+            'join_type' => 'inner',
+        ),
+        array(
             'local_key' => 'required_permission_id',
             'foreign_table' => 'staff_permission',
+            'foreign_key' => 'staff_permission_id',
+            'join_type' => 'left',
+        ),
+        array(
+            'local_key' => 'required_permission_id',
+            'foreign_table' => 'staff_permission',
+            'foreign_table_alias' => 'category_permission',
             'foreign_key' => 'staff_permission_id',
             'join_type' => 'left',
         ),
@@ -68,6 +81,14 @@ class Board extends ActiveTable
     public function hasAccess(User $user)
     {
         // If there is a required permission on this this, check it. 
+        if($this->get('api_name','category_permission') != null)
+        {
+            if($user->hasPermission($this->get('api_name','category_permission')) == false)
+            {
+                return false;
+            }
+        } // end category has perm
+        
         if($this->getApiName() == null)
         {
             return true;

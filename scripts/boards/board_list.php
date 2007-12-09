@@ -30,26 +30,40 @@
  **/
 
 $BOARD_LIST = array();
-$boards = new Board($db);
-$boards = $boards->findBy(array(),'ORDER BY order_by');
+$categories = new BoardCategory($db);
+$categories = $categories->findBy(array(),'ORDER BY board_category.order_by');
 
-foreach($boards as $board)
+foreach($categories as $category)
 {
-     $BOARD = array(
-        'id' => $board->getBoardId(),
-        'name' => $board->getBoardName(),
-        'description' => $board->getBoardDescr(),
-        'last_poster' => $board->getLastPosterUsername(), 
-        'total_posts' => $board->grabPostCount(),
-        'locked' => $board->getBoardLocked($User),
-    );
-   
-    // If there is a required permission on this board, check it. 
-    if($board->hasAccess($User) == true)
-    {
-        $BOARD_LIST[] = $BOARD; 
-    }
-} // end board loop
+    if($category->hasAccess($User) == true)
+    {   
+        $CATEGORY = array(
+            'name' => $category->getCategoryName(),
+            'boards' => array(),
+        );
+        
+        $boards = $category->grabBoards('ORDER BY board.order_by');
+        foreach($boards as $board)
+        {
+             $BOARD = array(
+                'id' => $board->getBoardId(),
+                'name' => $board->getBoardName(),
+                'description' => $board->getBoardDescr(),
+                'last_poster' => $board->getLastPosterUsername(), 
+                'total_posts' => $board->grabPostCount(),
+                'locked' => $board->getBoardLocked($User),
+            );
+           
+            // If there is a required permission on this board, check it. 
+            if($board->hasAccess($User) == true)
+            {
+                $CATEGORY['boards'][] = $BOARD; 
+            }
+        } // end board loop
+
+        $BOARD_LIST[] = $CATEGORY;
+    } // end user has access to category
+} // end category loop
 
 $renderer->assign('boards',$BOARD_LIST);
 $renderer->display('boards/board_list.tpl');

@@ -58,6 +58,7 @@ else
         default:
         {
             $BOARD_DATA = array(
+                'category' => $board->getCategoryName(),
                 'id' => $board->getBoardId(),
                 'name' => $board->getBoardName(),
             );        

@@ -1,4 +1,4 @@
-<div id='breadcrumb-trail'>{kkkurl link_text='Boards' slug='boards'} &raquo; {kkkurl link_text=$board.name slug='threads' args=$board.id} &raquo; Create Thread</div> 
+<div id='breadcrumb-trail'>{kkkurl link_text='Boards' slug='boards'} &raquo; {$board.category} &raquo; {kkkurl link_text=$board.name slug='threads' args=$board.id} &raquo; Create Thread</div> 
 
 <div align='center'>
     <div class='quick-reply'>

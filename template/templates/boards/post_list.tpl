@@ -1,4 +1,4 @@
-<div id='breadcrumb-trail'>{kkkurl link_text='Boards' slug='boards'} &raquo; {kkkurl link_text=$board.name slug='threads' args=$board.id} &raquo; {if $thread.sticky == 1}Sticky: {/if}{$thread.name}{if $thread.can_edit == 1} <span style='color: gray;'>({kkkurl link_text='Change Topic' slug='edit-thread' args=`$thread.id`/`$page`})</span>{/if}</div>
+<div id='breadcrumb-trail'>{kkkurl link_text='Boards' slug='boards'} &raquo; {$board.category} &raquo; {kkkurl link_text=$board.name slug='threads' args=$board.id} &raquo; {if $thread.sticky == 1}Sticky: {/if}{$thread.name}{if $thread.can_edit == 1} <span style='color: gray;'>({kkkurl link_text='Change Topic' slug='edit-thread' args=`$thread.id`/`$page`})</span>{/if}</div>
 
 {if $board_notice != ''}<p id='forum_notice' class='{$fat} notice-box'>{$board_notice}</p>{/if}
 

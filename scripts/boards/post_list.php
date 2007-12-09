@@ -79,6 +79,7 @@ if(sizeof($ERRORS) > 0)
 else
 {
     $BOARD_DATA = array(
+        'category' => $board->getCategoryName(),
         'id' => $board->getBoardId(),
         'name' => $board->getBoardName(),
         'locked' => $board->getBoardLocked($User),

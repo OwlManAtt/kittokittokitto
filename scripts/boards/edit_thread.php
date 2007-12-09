@@ -73,6 +73,7 @@ else
         default:
         {
             $BOARD = array(
+                'category' => $board->getCategoryName(),
                 'id' => $board->getBoardId(),
                 'name' => $board->getBoardName(),
             );
