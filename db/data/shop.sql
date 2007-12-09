@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `shop` DISABLE KEYS */;
 LOCK TABLES `shop` WRITE;
-INSERT INTO `shop` (`shop_id`, `shop_name`, `shop_image`, `welcome_text`) VALUES (1,'General Store','colonel.png','Welcome to the general store. We can supply you with anything you might need.');
+INSERT INTO `shop` (`shop_id`, `shop_name`, `shop_image`, `welcome_text`) VALUES (1,'General Store','general_store.png','Welcome to the general store. We can supply you with anything you might need.');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `shop` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

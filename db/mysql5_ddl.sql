@@ -36,6 +36,7 @@ CREATE TABLE `avatar` (
 DROP TABLE IF EXISTS `board`;
 CREATE TABLE `board` (
   `board_id` smallint(3) NOT NULL auto_increment,
+  `board_category_id` int(11) NOT NULL,
   `board_name` varchar(100) NOT NULL,
   `board_descr` varchar(255) NOT NULL,
   `board_locked` enum('N','Y') NOT NULL default 'N',
@@ -43,6 +44,21 @@ CREATE TABLE `board` (
   `required_permission_id` int(11) NOT NULL,
   `order_by` tinyint(2) NOT NULL,
   PRIMARY KEY  (`board_id`),
+  KEY `required_permission_id` (`required_permission_id`),
+  KEY `board_category_id` (`board_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `board_category`
+--
+
+DROP TABLE IF EXISTS `board_category`;
+CREATE TABLE `board_category` (
+  `board_category_id` int(11) NOT NULL auto_increment,
+  `category_name` varchar(50) NOT NULL,
+  `order_by` tinyint(4) NOT NULL default '0',
+  `required_permission_id` int(11) NOT NULL,
+  PRIMARY KEY  (`board_category_id`),
   KEY `required_permission_id` (`required_permission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -118,6 +134,7 @@ CREATE TABLE `item_class` (
   `class_descr` varchar(30) NOT NULL,
   `relative_image_dir` varchar(50) NOT NULL,
   `verb` varchar(30) NOT NULL,
+  `one_per_use` enum('N','Y') NOT NULL default 'N',
   PRIMARY KEY  (`item_class_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -356,6 +373,7 @@ CREATE TABLE `user_item` (
   `user_item_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `item_type_id` int(11) NOT NULL,
+  `quantity` int(10) unsigned NOT NULL default '1',
   PRIMARY KEY  (`user_item_id`),
   KEY `user_id` (`user_id`),
   KEY `item_type_id` (`item_type_id`)

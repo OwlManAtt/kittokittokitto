@@ -9,8 +9,11 @@ The /external_lib/ folder contains a variety of libraries, from APHP to Smarty.
 These libraries all have their own licenses specified, and as such, the above
 statement *does not apply* to these packages. 
 
-Adobe's Spry library (all javascript) is found in /resources/script/spry. It is under a 
-BSD license. See the files for specifics.
+Adobe's Spry library (all javascript) is found in /resources/script/spry. It is
+under a BSD license. See the files for specifics.
+
+The /includes/classes/inflector.class.php library is from CakePHP and is 
+distributed under the MIT license.
 
 == License URLs ==
 <http://www.gnu.org/licenses/gpl-2.0.txt>
@@ -18,5 +21,6 @@ BSD license. See the files for specifics.
 <http://creativecommons.org/licenses/by-sa/2.5/legalcode>
 <http://creativecommons.org/licenses/by-sa/3.0/legalcode>
 <http://www.opensource.org/licenses/bsd-license.php>
+<http://www.opensource.org/licenses/mit-license.php>
 
 See the docs/licenses folder for fulltexts of these licenses.

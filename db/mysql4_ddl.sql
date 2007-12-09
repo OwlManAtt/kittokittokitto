@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Oct 03, 2007 at 06:45 PM
+-- Generation Time: Dec 09, 2007 at 06:34 PM
 -- Server version: 5.0.22
 -- PHP Version: 5.1.2
 -- 
@@ -24,7 +24,7 @@ CREATE TABLE `avatar` (
   `active` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`avatar_id`),
   UNIQUE KEY `avatar_image` (`avatar_image`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -35,6 +35,7 @@ CREATE TABLE `avatar` (
 DROP TABLE IF EXISTS `board`;
 CREATE TABLE `board` (
   `board_id` smallint(3) NOT NULL auto_increment,
+  `board_category_id` int(11) NOT NULL,
   `board_name` varchar(100) NOT NULL,
   `board_descr` varchar(255) NOT NULL,
   `board_locked` enum('N','Y') NOT NULL default 'N',
@@ -42,8 +43,25 @@ CREATE TABLE `board` (
   `required_permission_id` int(11) NOT NULL,
   `order_by` tinyint(2) NOT NULL,
   PRIMARY KEY  (`board_id`),
+  KEY `required_permission_id` (`required_permission_id`),
+  KEY `board_category_id` (`board_category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 ;
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `board_category`
+-- 
+
+DROP TABLE IF EXISTS `board_category`;
+CREATE TABLE `board_category` (
+  `board_category_id` int(11) NOT NULL auto_increment,
+  `category_name` varchar(50) NOT NULL,
+  `order_by` tinyint(4) NOT NULL default '0',
+  `required_permission_id` int(11) NOT NULL,
+  PRIMARY KEY  (`board_category_id`),
   KEY `required_permission_id` (`required_permission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +82,7 @@ CREATE TABLE `board_thread` (
   PRIMARY KEY  (`board_thread_id`),
   KEY `board_id` (`board_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=267 ;
+) ENGINE=InnoDB AUTO_INCREMENT=267 ;
 
 -- --------------------------------------------------------
 
@@ -82,7 +100,7 @@ CREATE TABLE `board_thread_post` (
   PRIMARY KEY  (`board_thread_post_id`),
   KEY `board_thread_id` (`board_thread_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=324 ;
+) ENGINE=InnoDB AUTO_INCREMENT=324 ;
 
 -- --------------------------------------------------------
 
@@ -98,7 +116,7 @@ CREATE TABLE `cron_tab` (
   `unixtime_next_run` bigint(11) unsigned NOT NULL,
   `enabled` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`cron_tab_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -112,7 +130,7 @@ CREATE TABLE `datetime_format` (
   `datetime_format_name` varchar(30) NOT NULL,
   `datetime_format` text NOT NULL,
   PRIMARY KEY  (`datetime_format_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -127,8 +145,9 @@ CREATE TABLE `item_class` (
   `class_descr` varchar(30) NOT NULL,
   `relative_image_dir` varchar(50) NOT NULL,
   `verb` varchar(30) NOT NULL,
+  `one_per_use` enum('N','Y') NOT NULL default 'N',
   PRIMARY KEY  (`item_class_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -149,7 +168,7 @@ CREATE TABLE `item_type` (
   PRIMARY KEY  (`item_type_id`),
   KEY `item_class_id` (`item_class_id`),
   KEY `pet_specie_color_id` (`pet_specie_color_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
@@ -171,7 +190,7 @@ CREATE TABLE `jump_page` (
   `active` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`jump_page_id`),
   UNIQUE KEY `page_slug` (`page_slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=72 ;
+) ENGINE=InnoDB AUTO_INCREMENT=72 ;
 
 -- --------------------------------------------------------
 
@@ -189,7 +208,7 @@ CREATE TABLE `pet_specie` (
   `max_happiness` tinyint(3) unsigned NOT NULL,
   `available` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`pet_specie_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -204,7 +223,7 @@ CREATE TABLE `pet_specie_color` (
   `color_img` varchar(200) NOT NULL,
   `base_color` enum('N','Y') NOT NULL default 'N',
   PRIMARY KEY  (`pet_specie_color_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -219,7 +238,7 @@ CREATE TABLE `pet_specie_pet_specie_color` (
   `pet_specie_color_id` int(11) NOT NULL,
   PRIMARY KEY  (`pet_specie_pet_specie_color_id`),
   UNIQUE KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Links a color to a specie. Without entry, specie cannot beco' AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB COMMENT='Links a color to a specie. Without entry, specie cannot beco' AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
@@ -234,7 +253,7 @@ CREATE TABLE `shop` (
   `shop_image` varchar(200) NOT NULL,
   `welcome_text` text NOT NULL,
   PRIMARY KEY  (`shop_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -252,7 +271,7 @@ CREATE TABLE `shop_inventory` (
   PRIMARY KEY  (`shop_inventory_id`),
   KEY `item_type_id` (`item_type_id`),
   KEY `shop_id` (`shop_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB AUTO_INCREMENT=14 ;
 
 -- --------------------------------------------------------
 
@@ -274,7 +293,7 @@ CREATE TABLE `shop_restock` (
   `store_quantity_cap` smallint(3) unsigned NOT NULL,
   PRIMARY KEY  (`shop_restock_id`),
   KEY `shop_id` (`shop_id`,`item_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -290,7 +309,7 @@ CREATE TABLE `staff_group` (
   `show_staff_group` enum('Y','N') NOT NULL default 'Y',
   `order_by` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`staff_group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -305,7 +324,7 @@ CREATE TABLE `staff_group_staff_permission` (
   `staff_permission_id` int(11) NOT NULL,
   PRIMARY KEY  (`staff_group_staff_permission`),
   UNIQUE KEY `staff_group_id` (`staff_group_id`,`staff_permission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=23 ;
+) ENGINE=InnoDB AUTO_INCREMENT=24 ;
 
 -- --------------------------------------------------------
 
@@ -319,7 +338,7 @@ CREATE TABLE `staff_permission` (
   `api_name` varchar(50) NOT NULL,
   `permission_name` varchar(50) NOT NULL,
   PRIMARY KEY  (`staff_permission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+) ENGINE=InnoDB AUTO_INCREMENT=14 ;
 
 -- --------------------------------------------------------
 
@@ -336,7 +355,7 @@ CREATE TABLE `timezone` (
   `timezone_offset` float(3,1) NOT NULL,
   `order_by` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`timezone_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=60 ;
+) ENGINE=InnoDB AUTO_INCREMENT=60 ;
 
 -- --------------------------------------------------------
 
@@ -380,7 +399,7 @@ CREATE TABLE `user` (
   KEY `avatar_id` (`avatar_id`),
   KEY `timezone_id` (`timezone_id`),
   KEY `datetime_format_id` (`datetime_format_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -393,10 +412,11 @@ CREATE TABLE `user_item` (
   `user_item_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `item_type_id` int(11) NOT NULL,
+  `quantity` int(10) unsigned NOT NULL default '1',
   PRIMARY KEY  (`user_item_id`),
   KEY `user_id` (`user_id`),
   KEY `item_type_id` (`item_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=163 ;
+) ENGINE=InnoDB AUTO_INCREMENT=11 ;
 
 -- --------------------------------------------------------
 
@@ -417,7 +437,7 @@ CREATE TABLE `user_message` (
   PRIMARY KEY  (`user_message_id`),
   KEY `sender_user_id` (`sender_user_id`),
   KEY `recipient_user_id` (`recipient_user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=127 ;
+) ENGINE=InnoDB AUTO_INCREMENT=127 ;
 
 -- --------------------------------------------------------
 
@@ -434,7 +454,7 @@ CREATE TABLE `user_notification` (
   `notification_datetime` datetime NOT NULL,
   PRIMARY KEY  (`user_notification_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=28 ;
+) ENGINE=InnoDB AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -453,7 +473,7 @@ CREATE TABLE `user_online` (
   PRIMARY KEY  (`user_online_id`),
   KEY `user_id` (`user_id`),
   KEY `client_ip` (`client_ip`)
-) ENGINE=MEMORY DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=MEMORY AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
@@ -476,7 +496,7 @@ CREATE TABLE `user_pet` (
   PRIMARY KEY  (`user_pet_id`),
   KEY `user_id` (`user_id`),
   KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Pets = specie + user + color.' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB COMMENT='Pets = specie + user + color.' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -491,4 +511,4 @@ CREATE TABLE `user_staff_group` (
   `staff_group_id` int(11) NOT NULL,
   PRIMARY KEY  (`user_staff_group_id`),
   UNIQUE KEY `user_id` (`user_id`,`staff_group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB AUTO_INCREMENT=9 ;

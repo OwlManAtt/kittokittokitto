@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `item_type` DISABLE KEYS */;
 LOCK TABLES `item_type` WRITE;
-INSERT INTO `item_type` (`item_type_id`, `item_name`, `item_descr`, `item_class_id`, `happiness_bonus`, `hunger_bonus`, `pet_specie_color_id`, `item_image`) VALUES (1,'Apple','A delicious, healthy red apple.',1,0,3,0,'apple.png'),(5,'Rozen Paintbrush','<p>The Rozen paintbrush is delicious paint. You must use it~desu!</p>',3,0,0,3,'rozen.png');
+INSERT INTO `item_type` (`item_type_id`, `item_name`, `item_descr`, `item_class_id`, `happiness_bonus`, `hunger_bonus`, `pet_specie_color_id`, `item_image`) VALUES (1,'Red Apple','A delicious, healthy red apple.',1,0,3,0,'apple.png'),(5,'Rozen Paintbrush','<p>The Rozen paintbrush is delicious paint. You must use it~desu!</p>',3,0,0,3,'rozen.png'),(6,'Grubby Bowl','This is an old wooden bowl. Since there is nothing else, your pet will have to amuse itself with this.',2,1,0,0,'bowl.png'),(7,'Red Paintbrush','This will turn your pet red.',3,0,0,1,'red.png'),(8,'Blue Paintbrush','This will turn your pet blue.',3,0,0,1,'blue.png');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `item_type` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

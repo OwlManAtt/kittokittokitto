@@ -47,13 +47,13 @@ $MODULES = array(
 // Warnings.
 $WARNING = array(
     'register_globals' => array(
-                            'value' => ( ini_get('register_globals') == false ? true : false ),
-                            'help' => "Register_globals being turned on is considered bad practice. You <em>should</em> add ini_set('register_globals','Off'); to your Kitto config file after you successfully complete the installation.",
-                        ),
+        'value' => ( ini_get('register_globals') == false ? true : false ),
+        'help' => "Register_globals being turned on is considered bad practice. You <em>should</em> add ini_set('register_globals','Off'); to your Kitto config file after you successfully complete the installation.",
+    ),
     'display_errors' => array(
-                            'value' => ini_get('display_errors'),
-                            'help' => "PHP errors will not be sent to the screen - only to an error_log somewhere on your server. This may be a major inconvenience to you as your set Kitto up. If you have problems with a blank white screen, you are probably getting PHP errors, and they are being surpressed. Add ini_set('display_errors','On'); to your Kitto config file to address this.",
-                        ),
+        'value' => ini_get('display_errors'),
+        'help' => "PHP errors will not be sent to the screen - only to an error_log somewhere on your server. This may be a major inconvenience to you as your set Kitto up. If you have problems with a blank white screen, you are probably getting PHP errors, and they are being surpressed. Add ini_set('display_errors','On'); to your Kitto config file to address this.",
+    ),
 );
 
 $INFO = array(

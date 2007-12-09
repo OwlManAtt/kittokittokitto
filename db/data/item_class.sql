@@ -22,7 +22,7 @@
 
 /*!40000 ALTER TABLE `item_class` DISABLE KEYS */;
 LOCK TABLES `item_class` WRITE;
-INSERT INTO `item_class` (`item_class_id`, `php_class`, `class_descr`, `relative_image_dir`, `verb`) VALUES (1,'Food_Item','Food','food','feed'),(2,'Toy_Item','Toy','toys','play with'),(3,'Paint_Item','Paint','paints','paint');
+INSERT INTO `item_class` (`item_class_id`, `php_class`, `class_descr`, `relative_image_dir`, `verb`, `one_per_use`) VALUES (1,'Food_Item','Food','food','feed','N'),(2,'Toy_Item','Toy','toys','play with','N'),(3,'Paint_Item','Paint','paints','paint','Y');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `item_class` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

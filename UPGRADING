@@ -1,3 +1,70 @@
+== 1.2.2.4 to 1.3.0 ==
+To upgrade from Kitto 1.2.2.4 to 1.3.0, run the following SQL:
+
+    ALTER TABLE `user_item` ADD `quantity` INT UNSIGNED DEFAULT '1' NOT NULL ;
+    ALTER TABLE `item_class` ADD `one_per_use` ENUM( 'N', 'Y' ) DEFAULT 'N' NOT NULL AFTER `verb` ;
+
+    CREATE TABLE `board_category` (
+      `board_category_id` INT NOT NULL AUTO_INCREMENT ,
+      `category_name` VARCHAR( 50 ) NOT NULL ,
+      `order_by` TINYINT DEFAULT '0' NOT NULL ,
+      `required_permission_id` INT NOT NULL ,
+      PRIMARY KEY ( `board_category_id` ) ,
+      INDEX ( `required_permission_id` )
+    ) TYPE = innodb;
+
+    ALTER TABLE `board` ADD `board_category_id` INT NOT NULL AFTER `board_id` ;
+    ALTER TABLE `board` ADD INDEX ( `board_category_id` ) ;
+
+Then, upload the following changed/new files. If you have customized a file in 
+this list, you will need to merge the changes. If you have not customized a 
+file, it is recommended that you overwrite it with the updated version.
+
+    -- New Art
+    * resources/items/toys (created folder)
+    * resources/items/paints (created folder)
+    * resources/shopkeepers (created folder)
+    
+    -- Item stacking
+    * includes/classes/inflectors (added folder with one file)
+    * scripts/items/list.php (lines 65-66)
+    * scripts/items/detail.php (large number of changes; advised to upload new 
+      version)
+    * scripts/shops/shop.php (lines 140-174)
+    * includes/classes/item/item.class.php (modified #giveItem(), added: 
+      #getInflectedName(), #makeActionText())
+    * includes/classes/item/food_item.class.php (modified #feedTo())
+    * includes/classes/item/toy_item.class.php (modified #playWith())
+    * includes/classes/item/paint_item.class.php (modified #paint())
+    * template/templates/items/details.tpl (quantity stuff added)
+    * template/templates/items/list.tpl (quantity stuff added)
+    * template/templates/items/give_form.tpl (quantity stuff added)
+    * template/templates/items/use_form.tpl (quantity stuff added)
+
+    -- Board Categories
+    * includes/classes/board/board_category.class.php (new file)
+    * includes/classes/board/board.class.php (added 47-52, added 59-65, 
+      added 67-73. Modified #hasAccess())
+    * scripts/boards/create_thread.php (added line 61)
+    * scripts/boards/edit_post.php (added line 86)
+    * scripts/boards/edit_thread.php (added line 76)
+    * scripts/boards/post_list.php (added line 82)
+    * scripts/boards/board_list.php (large change, advised to upload new copy) 
+    * scripts/boards/thread_list.php (added line 84)
+    * template/templates/boards/board_list.tpl (breadcrumb line)
+    * template/templates/boards/thread_list.tpl (breadcrumb line)
+    * template/templates/boards/edit_post.tpl (breadcrumb line)
+    * template/templates/boards/edit_thread.tpl (breadcrumb line)
+    * template/templates/boards/post_list.tpl (breadcrumb line)
+    * template/templates/boards/new_thread.tpl (breadcrumb line)
+
+    -- General
+    * index.php (lines 97-111 modified)
+    * includes/classes/classes.config.php (37-40 added, 84 added)
+
+After that, check your boards. Each one must now be underneath a board_category.
+Sample categories can be found in the db/data/board_category.sql file.
+
 == 1.2.2.x to 1.2.2.4 ==
 To upgrade an earlier 1.2.2.x release to 1.2.2.4, update the following files or
 manually merge the changes:
