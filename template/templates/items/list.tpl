@@ -4,7 +4,7 @@
 <div class='item-box'>
     <div align='center'>
         <p><img src='{$item.image}' border='0' alt='{$item.name}' /></p>
-        <p style='font-weight: bold;'>{kkkurl link_text=$item.name slug='item' args="?item[id]=`$item.id`"}</p>
+        <p style='font-weight: bold;'>{kkkurl link_text="`$item.quantity` `$item.name`" slug='item' args="?item[id]=`$item.id`"}</p>
     </div>
 </div>
 {sectionelse}

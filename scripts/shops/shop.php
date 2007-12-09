@@ -142,15 +142,23 @@ else
                 $total = $stock->getPrice() * $quantity;
                 $User->subtractCurrency($total);
                 
-                // Add the items to the user. 
-                for($i=0;$i<$quantity;$i++)
+                // Try and find a stack of this item in the user's inventory.
+                $item = new Item($db);
+                $item = $item->findOneBy(array(
+                    'user_id' => $User->getUserId(),
+                    'item_type_id' => $stock->getItemTypeId(),
+                ));
+
+                // If the user has none, create a new stack.
+                if($item == null)
                 {
                     $item = new Item($db);
-                    $item->create(array(
-                        'user_id' => $User->getUserId(),
-                        'item_type_id' => $stock->getItemTypeId(),
-                    ));
-                } // end add item loop
+                    $item->setUserId($User->getUserId());
+                    $item->setItemTypeId($stock->getItemTypeId());
+                } // end make new stack
+                
+                $item->setQuantity(($item->getQuantity() + $quantity));
+                $item->save();
                 
                 // Remove the stock from the shope.
                 $item_name = $stock->getItemName(); // store this for later.

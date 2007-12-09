@@ -49,13 +49,28 @@ class Food_Item extends Item
      * @param Pet $pet 
      * @return string The success message. 
      **/
-    public function feedTo(Pet $pet)
+    public function feedTo(Pet $pet,$quantity)
     {
-        $pet->consume($this->getHungerBonus());
-        $name = $this->getItemName();
-        $this->destroy();
+        if($quantity > $this->getQuantity())
+        {
+            throw new ArgumentError("This stack does not have $quantity items.");
+        }
+        
+        // Do it before destroying the object.
+        $pet->consume(($this->getHungerBonus() * $quantity));
+        $text = "You have fed {$pet->getPetName()} {$this->makeActionText($quantity)}.";
+        
+        if($quantity == $this->getQuantity())
+        {
+            $this->destroy();
+        }
+        else
+        {
+            $this->setQuantity(($this->getQuantity() - $quantity));
+            $this->save();
+        }
          
-        return "You have fed {$pet->getPetName()} the <strong>$name</strong>.";
+        return $text;
     } // end feedTo
 
     public function listAttributes()

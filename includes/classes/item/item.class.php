@@ -92,10 +92,16 @@ class Item extends ItemType
      * Transfer ownership of an item to a different user.
      * 
      * @param User $new_user
+     * @param integer $quantity
      * @return bool
      **/
-    public function giveItem(User $new_user)
+    public function giveItem(User $new_user,$quantity)
     {
+        if($quantity > $this->getQuantity())
+        {
+            throw new ArgumentError("Argument quantity = $quantity exceeds maximum of {$this->getQuantity()}.");
+        }
+                
         $old_user = new User($this->db);
         $old_user = $old_user->findOneByUserId($this->getUserId());
 
@@ -104,12 +110,96 @@ class Item extends ItemType
         {
             $old_username = $old_user->getUserName();
         }
-        
-        $this->setUserId($new_user->getUserId());
-        $new_user->notify("{$old_username} has given you <strong>{$this->getItemName()}</strong>.",'items');
+    
+        $given_item = new Item($this->db);
+        $given_item = $given_item->findOneBy(array(
+            'user_id'  => $new_user->getUserId(),
+            'item_type_id' => $this->getItemTypeId(),
+        ));
 
-        return $this->save();
+        // Spawn a new one...
+        if($given_item == null)
+        {
+            $given_item = new Item($this->db);
+            $given_item->setUserId($new_user->getUserId());
+            $given_item->setItemTypeId($this->getItemTypeId());
+        }
+    
+        $given_item->setQuantity(($given_item->getQuantity() + $quantity));
+        $given_item->save();
+        
+        $word = $given_item->getItemName();
+        if($quantity > 1)
+        {
+            $word = English_Inflector::pluralize($word); 
+        }
+        
+        $new_user->notify("{$old_username} has given you <strong>{$quantity} {$word}</strong>.",'items');
+
+        if($quantity == $this->getQuantity())
+        {
+            $this->destroy();
+        }
+        else
+        {
+            $this->setQuantity(($this->getQuantity() - $quantity));
+            $this->save();
+        }
+        
+        return true;
     } // end giveItem
+
+    public function getInflectedItemName()
+    {
+        if($this->getQuantity() == 1)
+        {
+            return $this->getItemName();
+        }
+
+        return English_Inflector::pluralize($this->getItemName());
+    } // end getInflectedItemName
+
+    /**
+     * Turns a quantity for the item into appropriately-pluralized text.
+     *
+     * 20 apples in total, using 1 => the apple
+     * 20 apples in total, using 2 => 20 apples
+     * 20 apples in total, using 20 => all 20 apples
+     * 2 apple in total, using 1 => your apple
+     * 
+     * @param mixed $quantity 
+     * @return string 
+     **/
+    public function makeActionText($quantity)
+    {
+        $word = '';
+        if($quantity == $this->getQuantity())
+        {
+            // Figure it out here so you have the methods available.
+            if($quantity > 1)
+            {
+                $word = "all <strong>$quantity {$this->getInflectedItemName()}</strong>"; 
+            }
+            else
+            {
+                $word = "your <strong>{$this->getItemName()}</strong>"; 
+            }
+        } // end destroy stack
+        else
+        {
+            if($quantity > 1)
+            {
+                $plural = English_Inflector::pluralize($this->getItemName());
+                $word = "<strong>$quantity $plural</strong>"; 
+            }
+            else
+            {
+                $word = "the <strong>{$this->getItemName()}</strong>"; 
+            }
+        } // end not all 
+        
+        return $word;
+    } // end makeActionText
 } // end Item
 
 ?>

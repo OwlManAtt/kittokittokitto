@@ -1,5 +1,5 @@
 <div align='center'>
-    <p>Who would you like to give your <strong>{$item_name}</strong> to?</p>
+    <p>You have <strong>{$quantity.max} {$item_name}</strong>. Who would you like to give {if $quantity.max == 1}a{else}some of your{/if} {$item_name} to?</p>
 
     <form action='{$display_settings.public_dir}/item' method='post'>
         <input type='hidden' name='state' value='give_process' />
@@ -16,7 +16,15 @@
                 </td>
             </tr>
             <tr>
-                <td colspan='2' class='inputTableRowAlt' style='text-align: right;'>
+                <td class='inputTableRowAlt inputTableSubhead'>
+                    <label for='quantity'>Quantity</label>
+                </td>
+                <td class='inputTableRowAlt' id='quantity_td'>
+                    <input type='text' name='give[quantity]' id='quantity' size='4' value='{$quantity.default}' /><br />
+                </td>
+            </tr>
+            <tr>
+                <td colspan='2' class='inputTableRow' style='text-align: right;'>
                     <input type='submit' value='Give' />
                 </td>
             </tr>
@@ -27,5 +35,7 @@
 {literal}
 <script type='text/javascript'>
     var user_name = new Spry.Widget.ValidationTextField("username_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var quantity = new Spry.Widget.ValidationTextField("quantity_td", "integer", {useCharacterMasking:true, validateOn:['change','blur'], allowNegative: false, minValue: 1, maxValue: {/literal}{$quantity.max}{literal}});    
+    
 </script>
 {/literal}

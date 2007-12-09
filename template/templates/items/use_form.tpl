@@ -1,5 +1,5 @@
 <div align='center'>
-    <p>Which pet would you like to {$use_verb} using the <strong>{$item.name}</strong>?</p>
+    <p>You have <strong>{$quantity.max} {$item.name}</strong>. Which pet would you like to {$use_verb}?</p>
 
     <form action='{$display_settings.public_dir}/item' method='post'>
         <input type='hidden' name='state' value='use_item' />
@@ -15,8 +15,17 @@
                 </td>
             </tr>
             <tr>
-                <td class='inputTableRowAlt'>&nbsp;</td>
-                <td class='inputTableRowAlt' align='right'>
+                <td class='inputTableRowAlt inputTableSubhead'>
+                    <label for='quantity'>Quantity</label>
+                </td>
+                <td class='inputTableRowAlt' id='quantity_td'>
+                    {if $item.force_one == 'Y'}1{else}
+                    <input type='text' name='use[quantity]' id='quantity' size='4' value='{$quantity.default}' />
+                    {/if}
+                </td>
+            </tr>
+            <tr>
+                <td class='inputTableRow' colspan='2' style='text-align: right;'>
                     <input type='submit' value='{$use_verb|capitalize}' />
                 </td>
             </tr>
@@ -27,5 +36,11 @@
 {literal}
 <script type='text/javascript'>
     var pet = new Spry.Widget.ValidationSelect('pet_td',{validateOn:['change','blur']});
+
+    {/literal}
+    {if $item.force_one == 'N'}
+    {literal}
+    var quantity = new Spry.Widget.ValidationTextField("quantity_td", "integer", {useCharacterMasking:true, validateOn:['change','blur'], allowNegative: false, minValue: 1, maxValue: {/literal}{$quantity.max}{literal}});    
+    {/literal}
+    {/if}
 </script>
-{/literal}

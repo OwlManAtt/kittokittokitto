@@ -47,13 +47,28 @@ class Toy_Item extends Item
      * Increases the pet's happiness level and destroys the item. 
      * 
      * @param Pet $pet 
+     * @param integer $quantity
      * @return string The success message.
      **/
-    public function playWith(Pet $pet)
+    public function playWith(Pet $pet,$quantity)
     {
-        $pet->play($this->getHappinessBonus());
-        $this->destroy();
+        if($quantity > $this->getQuantity())
+        {
+            throw new ArgumentError("This stack does not have $quantity items.");
+        }
+
+        $pet->play(($this->getHappinessBonus() * $quantity));
         
+        if($quantity == $this->getQuantity())
+        {
+            $this->destroy();
+        }
+        else
+        {
+            $this->setQuantity(($this->getQuantity() - $quantity));
+            $this->save();
+        }
+         
         return "{$pet->getPetName()} is happier now.";
     } // end playWith
 

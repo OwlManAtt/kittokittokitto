@@ -65,13 +65,25 @@ class Paint_Item extends Item
         // that species (ie, nobody fucking drew it). Handle that.
         if($color == null)
         {
-            return "You put the brush down, realizing that {$pet->getPetName()} is not available for your pet.";
+            return "You put the brush down, realizing that this color is not available for your pet.";
+        }
+        elseif($pet->getPetSpecieColorId() == $color->getPetSpecieColorId())
+        {
+            return "You frown and notice that {$pet->getPetName()} is already painted in {$color->getColorName()}.";
         }
         
         $pet->setPetSpecieColorId($color->getPetSpecieColorId());
         $pet->save();
 
-        $this->destroy();
+        if($this->getQuantity() == 1)
+        {
+            $this->destroy();
+        }
+        else
+        {
+            $this->setQuantity(($this->getQuantity() - 1));
+            $this->save();
+        }
 
         return "{$pet->getPetName()} looks snazzy in <strong>{$color->getColorName()}</strong>!";
     } // end paint

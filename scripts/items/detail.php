@@ -47,6 +47,13 @@ switch($_REQUEST['state'])
             {
                 $ERRORS[] = 'This is not your item.';
             }
+
+            if($item->getQuantity() <= 0)
+            {
+                $item->destroy();
+                
+                $ERRORS[] = 'You do not have any of this item.';
+            }
         } // end item exists
 
         if(sizeof($ERRORS) > 0)
@@ -57,7 +64,8 @@ switch($_REQUEST['state'])
         {
             $DISPLAY = array(
                 'id' => $item->getUserItemId(),
-                'name' => $item->getItemName(),
+                'name' => $item->getInflectedItemName(),
+                'quantity' => $item->getQuantity(),
                 'description' => $item->getItemDescr(),
                 'image' => $item->getImageUrl(),
                 'actions' => array(
@@ -79,6 +87,7 @@ switch($_REQUEST['state'])
     {
         $ERRORS = array();
         $id = stripinput($_REQUEST['action']['item_id']);
+        $quantity = stripinput($_REQUEST['action']['quantity']);
 
         $item = Item::factory($id,$db);
         if($item == null)
@@ -90,6 +99,18 @@ switch($_REQUEST['state'])
             if($item->getUserId() != $User->getUserId())
             {
                 $ERRORS[] = 'This is not your item.';
+            }
+
+            if($quantity > $item->getQuantity())
+            {
+                $ERRORS[] = "You do not have $quantity of this item.";
+            }
+
+            if($item->getQuantity() <= 0)
+            {
+                $item->destroy();
+                
+                $ERRORS[] = 'You do not have any of this item.';
             }
         } // end item exists
 
@@ -104,7 +125,13 @@ switch($_REQUEST['state'])
             {
                 case 'give':
                 {
-                    $renderer->assign('item_name',$item->getItemName());
+                    $QUANTITY = array(
+                        'max' => $item->getQuantity(),
+                        'default' => $quantity, 
+                    );
+                    
+                    $renderer->assign('item_name',$item->getInflectedItemName());
+                    $renderer->assign('quantity',$QUANTITY);
                     $renderer->assign('item_id',$item->getUserItemId());
                     $renderer->display('items/give_form.tpl');
                 
@@ -113,8 +140,18 @@ switch($_REQUEST['state'])
                 
                 case 'destroy':
                 {
-                    $item->destroy();
-                    $_SESSION['item_notice'] = "You have destroyed <strong>{$item->getItemName()}</strong>.";
+                    $word = $item->makeActionText($quantity);
+                    if($quantity == $item->getQuantity())
+                    {
+                        $item->destroy();
+                    } // end destroy stack
+                    else
+                    {
+                        $item->setQuantity(($item->getQuantity() - $quantity));
+                        $item->save();
+                    } // end destroy some
+                    
+                    $_SESSION['item_notice'] = "You have destroyed $word.";
 
                     redirect('items');
 
@@ -126,7 +163,13 @@ switch($_REQUEST['state'])
                     $PET_LIST = array();
                     $ITEM = array(
                         'id' => $item->getUserItemId(),
-                        'name' => $item->getItemName(),
+                        'name' => $item->getInflectedItemName(),
+                        'force_one' => $item->getOnePerUse(),
+                    );
+
+                    $QUANTITY = array(
+                        'max' => $item->getQuantity(),
+                        'default' => $quantity,
                     );
                     
                     $pets = $User->grabPets();
@@ -144,6 +187,7 @@ switch($_REQUEST['state'])
                         $renderer->assign('use_verb',$item->getVerb()); 
                         $renderer->assign('pets',$PET_LIST);
                         $renderer->assign('item',$ITEM);
+                        $renderer->assign('quantity',$QUANTITY);
                         $renderer->display('items/use_form.tpl');
                     }
 
@@ -168,6 +212,7 @@ switch($_REQUEST['state'])
         $ERRORS = array();
         $id = stripinput($_POST['use']['item_id']);
         $pet_id = stripinput($_POST['use']['pet_id']);
+        $quantity = stripinput($_POST['use']['quantity']);
 
         $item = Item::factory($id,$db);
         if($item == null)
@@ -176,9 +221,26 @@ switch($_REQUEST['state'])
         }
         else
         {
+            if($item->getOnePerUse() == 'Y')
+            {
+                $quantity = 1;
+            }
+            
             if($item->getUserId() != $User->getUserId())
             {
                 $ERRORS[] = 'This is not your item.';
+            }
+
+            if($quantity > $item->getQuantity())
+            {
+                $ERRORS[] = "You do not have $quantity of this item.";
+            }
+
+            if($item->getQuantity() <= 0)
+            {
+                $item->destroy();
+                
+                $ERRORS[] = 'You do not have any of this item.';
             }
         } // end item exists
 
@@ -212,7 +274,7 @@ switch($_REQUEST['state'])
             {
                 case 'Food_Item':
                 {
-                    $_SESSION['item_notice'] = $item->feedTo($pet); 
+                    $_SESSION['item_notice'] = $item->feedTo($pet,$quantity); 
                     redirect('items');
                     
                     break;
@@ -220,7 +282,7 @@ switch($_REQUEST['state'])
 
                 case 'Toy_Item':
                 {
-                    $_SESSION['item_notice'] = $item->playWith($pet); 
+                    $_SESSION['item_notice'] = $item->playWith($pet,$quantity); 
                     redirect('items');
 
                     break;
@@ -252,6 +314,7 @@ switch($_REQUEST['state'])
         $ERRORS = array();
         $id = stripinput($_REQUEST['give']['item_id']);
         $other_user_name = stripinput($_REQUEST['give']['username']);
+        $quantity = stripinput($_REQUEST['give']['quantity']);
 
         $item = Item::factory($id,$db);
         if($item == null)
@@ -263,6 +326,18 @@ switch($_REQUEST['state'])
             if($item->getUserId() != $User->getUserId())
             {
                 $ERRORS[] = 'This is not your item.';
+            }
+
+            if($quantity > $item->getQuantity())
+            {
+                $ERRORS[] = "You do not have $quantity of this item.";
+            }
+
+            if($item->getQuantity() <= 0)
+            {
+                $item->destroy();
+                
+                $ERRORS[] = 'You do not have any of this item.';
             }
         } // end item exists
 
@@ -285,8 +360,15 @@ switch($_REQUEST['state'])
         } 
         else
         {
-            $item->giveItem($other_user);
-            $_SESSION['item_notice'] = "You have given <strong>{$item->getItemName()}</strong> to {$other_user->getUserName()}.";
+            $word = $item->getItemName();
+            $item->giveItem($other_user,$quantity);
+
+            if($quantity > 1)
+            {
+                $word = English_Inflector::pluralize($word);
+            }
+
+            $_SESSION['item_notice'] = "You have given <strong>$quantity {$word}</strong> to {$other_user->getUserName()}.";
             
             redirect('items');
         } // end DO IT

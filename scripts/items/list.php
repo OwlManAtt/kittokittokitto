@@ -62,7 +62,8 @@ foreach($ITEMS as $item)
     $DISPLAY_ITEMS[] = array(
         'id' => $item->getUserItemId(),
         'image' => $item->getImageUrl(),
-        'name' => $item->getItemName(),
+        'name' => $item->getInflectedItemName(),
+        'quantity' => number_format($item->getQuantity()),
     );
 } // end items loop
 
