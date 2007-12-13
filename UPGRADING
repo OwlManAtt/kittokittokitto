@@ -1,3 +1,9 @@
+== 1.3.0 to 1.3.0.1 ==
+
+Apply the following patches from the root of your Kitto install:
+
+* patches/users_online-1.3.0.1.patch
+
 == 1.2.2.4 to 1.3.0 ==
 To upgrade from Kitto 1.2.2.4 to 1.3.0, run the following SQL:
 

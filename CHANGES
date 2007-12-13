@@ -1,3 +1,9 @@
+== 1.3.0.1 (2007-12-13) ==
+* Fixed a small bug reported by Haywire. The user object would be made 
+  unavailable to Smarty on the users online list because $user would be
+  overwritten with an online user array. This would only ever be an issue if
+  you wished to show user information in the footer.
+
 == 1.3.0 (2007-12-09) ==
 * A minor bug reported by Haywire has been fixed. If a non-logged-in client
   attempted to view a forum post, instead of being asked to log in, a parse
