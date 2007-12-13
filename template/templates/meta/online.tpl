@@ -10,11 +10,11 @@
             <td class='inputTableSubhead inputTableRowAlt' style='text-align: center;'>Last Active</td>
         </tr>
         {section name=index loop=$users}
-        {assign var=user value=$users[index]}
+        {assign var=u value=$users[index]}
         {cycle values='inputTableRow,inputTableRowAlt' assign=class}
         <tr>
-            <td class='{$class}'>{kkkurl link_text=$user.name slug='profile' args=$user.id}</td>
-            <td class='{$class}'>{$user.last_active|timediff}</td>
+            <td class='{$class}'>{kkkurl link_text=$u.name slug='profile' args=$u.id}</td>
+            <td class='{$class}'>{$u.last_active|timediff}</td>
         </tr> 
         {sectionelse}
         <tr>
