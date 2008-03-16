@@ -1,0 +1,133 @@
+From 61df9d3cc95319d6e624e09e75a05182e313301c Mon Sep 17 00:00:00 2001
+From: Nicholas 'OwlManAtt' Evans <owlmanatt@gmail.com>
+Date: Sun, 16 Mar 2008 18:30:16 -0400
+Subject: [PATCH] * Refactored mail code to work with ActiveTable's new slicing functionality.
+ * Refactored the notification code to be quicker. Only one notification will be pulled
+   on every page instead of the entire notice set when checking to see if the user has
+   notices.
+
+---
+ includes/classes/user/user.class.php |   53 ++++------------------------------
+ index.php                            |    4 +--
+ scripts/messages/list.php            |    4 +-
+ scripts/user/notices.php             |    2 +-
+ 4 files changed, 10 insertions(+), 53 deletions(-)
+
+diff --git a/includes/classes/user/user.class.php b/includes/classes/user/user.class.php
+index 25e83de..2ba3693 100644
+--- a/includes/classes/user/user.class.php
++++ b/includes/classes/user/user.class.php
+@@ -94,6 +94,12 @@ class User extends ActiveTable
+             'local_key' => 'user_id',
+             'foreign_key' => 'user_id',
+         ),
++        'notification' => array( // Use with an ORDER BY to get only one. Used for index.
++            'class' => 'Notification',
++            'local_key' => 'user_id',
++            'foreign_key' => 'user_id',
++            'one' => true,
++        ),
+         'messages' => array(
+             'class' => 'Message',
+             'local_key' => 'user_id',
+@@ -412,53 +418,6 @@ class User extends ActiveTable
+     } // end clearNotifications
+ 
+     /**
+-     * Return the total number of messages a user has. 
+-     *
+-     * Useful for pagination. 
+-     * 
+-     * @return integer 
+-     **/
+-    public function grabMessagesSize()
+-    {
+-        $result = $this->db->getOne("
+-            SELECT 
+-                count(*) 
+-            FROM user_message
+-            WHERE recipient_user_id = ?
+-        ",array($this->getUserId()));
+-
+-        if(PEAR::isError($result))
+-        {
+-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+-        }
+-        
+-        return $result;
+-    } // end grabMessagesSize
+-    
+-    /**
+-     * Grab all of the user's messages, or a slice of their messages. 
+-     * 
+-     * @param integer $start 
+-     * @param integer $end 
+-     * @return array An array of Message instances.
+-     **/
+-    public function grabMessages($start=null,$end=null)
+-    {
+-        if(($start === null && $end === null) == false && 
+-            ($start !== null && $end !== null) == false
+-        )
+-        {
+-            throw ArgumentError('Must specify either no arguments or both arguments.');
+-        } // end problem w/ args.
+-        
+-        // Translate into start,# to fetch.
+-        $total = $end - $start;
+-        $limit = "LIMIT $start,$total";
+-        
+-        return $this->grab('messages','ORDER BY user_message.sent_at DESC',$limit);
+-    } // end grabMessages
+-
+-    /**
+      * Return the URL to the image.
+      * 
+      * @return null|string  
+diff --git a/index.php b/index.php
+index 8ddefd2..883e719 100644
+--- a/index.php
++++ b/index.php
+@@ -113,9 +113,7 @@ else
+     
+     if(is_object($User) == true)
+     {
+-        $notice = $User->grabNotifications('ORDER BY notification_datetime DESC','LIMIT 1');
+-        $notice = $notice[0];
+-
++        $notice = $User->grabNotification('ORDER BY notification_datetime DESC');
+         if($notice != null)
+         {
+             $NOTICE = array(
+diff --git a/scripts/messages/list.php b/scripts/messages/list.php
+index 8b8f475..0f60242 100644
+--- a/scripts/messages/list.php
++++ b/scripts/messages/list.php
+@@ -48,9 +48,9 @@ switch($_REQUEST['state'])
+         $end = (($page_id - 1) * $max_messages_per_page) + $max_messages_per_page;
+ 
+         // Generate the pagination. 
+-        $pagination = pagination('messages',$User->grabMessagesSize(),$max_messages_per_page,$page_id);
++        $pagination = pagination('messages',$User->grabMessages(null,true),$max_messages_per_page,$page_id);
+ 
+-        $messages = $User->grabMessages($start,$end);
++        $messages = $User->grabMessages(null,false,$start,$end);
+ 
+         $MESSAGES = array();
+         foreach($messages as $message)
+diff --git a/scripts/user/notices.php b/scripts/user/notices.php
+index 110c0ce..f9ab7cf 100644
+--- a/scripts/user/notices.php
++++ b/scripts/user/notices.php
+@@ -34,7 +34,7 @@ switch($_REQUEST['state'])
+     default:
+     {
+         $NOTICE_LIST = array();
+-        $notices = $User->grabNotifications('ORDER BY notification_datetime DESC',null,true);
++        $notices = $User->grabNotifications('ORDER BY notification_datetime DESC',null,null,null,true);
+ 
+         foreach($notices as $notice)
+         {
+-- 
+1.5.3.6
+

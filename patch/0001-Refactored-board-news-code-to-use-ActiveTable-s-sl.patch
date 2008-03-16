@@ -1,0 +1,298 @@
+From 65e9d89479848a028bad920d50bf9c6cb0b3c3a0 Mon Sep 17 00:00:00 2001
+From: Nicholas 'OwlManAtt' Evans <owlmanatt@gmail.com>
+Date: Sun, 16 Mar 2008 17:28:01 -0400
+Subject: [PATCH] * Refactored board/news code to use ActiveTable's slicing support.
+
+---
+ includes/classes/board/board.class.php        |   52 -----------------------
+ includes/classes/board/board_thread.class.php |   55 -------------------------
+ includes/classes/news.class.php               |   31 ++++++--------
+ scripts/boards/post_list.php                  |    7 +--
+ scripts/boards/thread_list.php                |   11 ++---
+ scripts/news/list.php                         |    5 +-
+ 6 files changed, 23 insertions(+), 138 deletions(-)
+
+diff --git a/includes/classes/board/board.class.php b/includes/classes/board/board.class.php
+index 1b607aa..ba32e86 100644
+--- a/includes/classes/board/board.class.php
++++ b/includes/classes/board/board.class.php
+@@ -118,58 +118,6 @@ class Board extends ActiveTable
+     } // end getLocked
+ 
+     /**
+-     * Return the total number of threads under this board.
+-     *
+-     * Useful for pagination. Also, that query should work across
+-     * all major RDBMSes.  
+-     * 
+-     * @return integer 
+-     **/
+-    public function grabThreadsSize()
+-    {
+-        $result = $this->db->getOne('
+-            SELECT 
+-                count(*) AS threads 
+-            FROM board_thread
+-            WHERE board_thread.board_id = ?
+-        ',array($this->getBoardId()));
+-
+-        if(PEAR::isError($result))
+-        {
+-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+-        }
+-     
+-        return $result;
+-    } // end grabThreadsSize
+-
+-    /**
+-     * Grab the threads for the board.
+-     *
+-     * The arguments allow you to only grab a slice, if they
+-     * are specified. That's good for pagination.
+-     * 
+-     * @param integet|null $start The beginning of a set slice.
+-     * @param integer|null $end The end of a set slice.
+-     * @return array An array of BoardThread instances.
+-     **/
+-    public function grabThreads($start=null,$end=null)
+-    {
+-        if(($start === null && $end === null) == false && 
+-            ($start !== null && $end !== null) == false
+-        )
+-        {
+-            throw ArgumentError('Must specify either no arguments or both arguments.');
+-        } // end problem w/ args.
+-        
+-        // Translate into start,# to fetch.
+-        $total = $end - $start;
+-        $limit = "LIMIT $start,$total";
+-        $threads = $this->grab('threads','ORDER BY board_thread.stickied, board_thread.thread_last_posted_datetime DESC',$limit);
+-
+-        return $threads;
+-    } // end grabThreads
+-
+-    /**
+      * Returns the number of post that exist under this board.
+      * 
+      * @rdbms-specific MySQL / Oracle 9i (maybe?) & 10g
+diff --git a/includes/classes/board/board_thread.class.php b/includes/classes/board/board_thread.class.php
+index 26686ae..cd13290 100644
+--- a/includes/classes/board/board_thread.class.php
++++ b/includes/classes/board/board_thread.class.php
+@@ -108,61 +108,6 @@ class BoardThread extends ActiveTable
+     } // end setStickied
+ 
+     /**
+-     * Return the total number of posts under this thread.
+-     *
+-     * Useful for pagination. Also, that query should work across
+-     * all major RDBMSes.  
+-     * 
+-     * @return integer 
+-     **/
+-    public function grabPostsSize()
+-    {
+-        $result = $this->db->getOne('
+-            SELECT 
+-                count(*) AS posts
+-            FROM board_thread_post
+-            WHERE board_thread_post.board_thread_id = ?
+-        ',array($this->getBoardThreadId()));
+-
+-        if(PEAR::isError($result))
+-        {
+-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+-        }
+-     
+-        return $result;
+-    } // end grabPostsSize
+-
+-    /**
+-     * Grab the posts for the thread.
+-     *
+-     * The arguments allow you to only grab a slice, if they
+-     * are specified. That's good for pagination.
+-     * 
+-     * @param integet|null $start The beginning of a set slice.
+-     * @param integer|null $end The end of a set slice.
+-     * @return array An array of BoardPost instances.
+-     **/
+-    public function grabPosts($start=null,$end=null)
+-    {
+-        if(($start === null && $end === null) == false && 
+-            ($start !== null && $end !== null) == false
+-        )
+-        {
+-            throw ArgumentError('Must specify either no arguments or both arguments.');
+-        } // end problem w/ args.
+-        
+-        // Translate into start,# to fetch.
+-        if($start !== null)
+-        {
+-            $total = $end - $start;
+-            $limit = "LIMIT $start,$total";
+-        }
+-        $posts = $this->grab('posts','ORDER BY board_thread_post.posted_datetime ASC',$limit);
+-
+-        return $posts;
+-    } // end grabPosts
+-
+-    /**
+      * Delete a thread and its associated posts.
+      * 
+      * @return bool 
+diff --git a/includes/classes/news.class.php b/includes/classes/news.class.php
+index 52e16d2..e372253 100644
+--- a/includes/classes/news.class.php
++++ b/includes/classes/news.class.php
+@@ -83,24 +83,20 @@ class News extends Getter
+     /**
+      * Total number of news posts. 
+      * 
+-     * @rdbms-specific MySQL 4/5, Oracle 9i (maybe?) / 10g.
+      * @param object $db 
+      * @return integer
+      **/
+     static public function grabNewsSize($db)
+     {
+-        $result = $db->getOne('
+-            SELECT 
+-                count(*) AS threads 
+-            FROM board_thread 
+-            INNER JOIN board ON board_thread.board_id = board.board_id
+-            WHERE board.news_source = ?
+-        ',array('Y'));
+-
+-        if(PEAR::isError($result))
+-        {
+-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+-        }
++        $result = new BoardThread($db);
++        $result= $result->findBy(array(
++                array(
++                    'table' => 'board',
++                    'column' => 'news_source',
++                    'value' => 'Y',
++                ),
++            ),
++        '',true);
+ 
+         return $result;
+     } // end grabNewsSize
+@@ -118,9 +114,6 @@ class News extends Getter
+      **/
+     static public function grabNews($start,$end,$db)
+     {
+-        $length = $end - $start;
+-        $limit = "LIMIT $start,$length";
+-        
+         $threads = new BoardThread($db);
+         $threads = $threads->findBy(array(
+                 array(
+@@ -129,7 +122,9 @@ class News extends Getter
+                     'value' => 'Y',
+                 ),
+             ),
+-            "ORDER BY board_thread.thread_created_datetime DESC {$limit}"
++            "ORDER BY board_thread.thread_created_datetime DESC",
++            false,
++            $start,$end
+         );
+ 
+         $NEWS = array();
+@@ -141,7 +136,7 @@ class News extends Getter
+             // The opposite of this should never occur...but handle it anyway.
+             if($post != null)
+             {
+-                $item = new News($post->getPostedDatetime(),$thread->getBoardThreadId(),$post->getPostText(),$post->getUserName(),$post->getUserId(),($thread->grabPostsSize() - 1),$thread->getThreadName()); 
++                $item = new News($post->getPostedDatetime(),$thread->getBoardThreadId(),$post->getPostText(),$post->getUserName(),$post->getUserId(),($thread->grabPosts(null,true) - 1),$thread->getThreadName()); 
+                 $NEWS[] = $item;
+             }
+         } // end thread loop
+diff --git a/scripts/boards/post_list.php b/scripts/boards/post_list.php
+index 41a49db..ac71269 100644
+--- a/scripts/boards/post_list.php
++++ b/scripts/boards/post_list.php
+@@ -39,8 +39,7 @@ if($page_id == null || $page_id <= 0)
+     $page_id = 1;
+ }
+ 
+-// Where do we slice the record set? (Note: Don't worry about
+-// LIMIT X,Y starting from zero - that'll be abstracted away).
++// Where do we slice the record set?
+ $start = (($page_id - 1) * $max_items_per_page);
+ $end = (($page_id - 1) * $max_items_per_page) + $max_items_per_page;
+ 
+@@ -94,10 +93,10 @@ else
+     );
+     
+     // Generate the pagination. 
+-    $pagination = pagination("thread/{$thread->getBoardThreadId()}",$thread->grabPostsSize(),$max_items_per_page,$page_id);
++    $pagination = pagination("thread/{$thread->getBoardThreadId()}",$thread->grabPosts(null,true),$max_items_per_page,$page_id);
+     
+     $POST_LIST = array();
+-    $posts = $thread->grabPosts($start,$end);
++    $posts = $thread->grabPosts('ORDER BY board_thread_post.posted_datetime ASC',false,$start,$end);
+ 
+     foreach($posts as $post)
+     {
+diff --git a/scripts/boards/thread_list.php b/scripts/boards/thread_list.php
+index da42ef9..2bdc486 100644
+--- a/scripts/boards/thread_list.php
++++ b/scripts/boards/thread_list.php
+@@ -52,8 +52,7 @@ if($page_id == null || $page_id <= 0)
+     $page_id = 1;
+ }
+ 
+-// Where do we slice the record set? (Note: Don't worry about
+-// LIMIT X,Y starting from zero - that'll be abstracted away).
++// Where do we slice the record set?
+ $start = (($page_id - 1) * $max_threads_per_page);
+ $end = (($page_id - 1) * $max_threads_per_page) + $max_threads_per_page;
+ 
+@@ -88,22 +87,22 @@ else
+     );
+     
+     // Generate the pagination. 
+-    $pagination = pagination("threads/{$board->getBoardId()}",$board->grabThreadsSize(),$max_threads_per_page,$page_id);
++    $pagination = pagination("threads/{$board->getBoardId()}",$board->grabThreads(null,true),$max_threads_per_page,$page_id);
+     
+     $THREAD_LIST = array();
+-    $threads = $board->grabThreads($start,$end);
++    $threads = $board->grabThreads('ORDER BY board_thread.thread_last_posted_datetime DESC',false,$start,$end);
+ 
+     foreach($threads as $thread)
+     {
+         $THREAD_LIST[] = array(
+             'id' => $thread->getBoardThreadId(),
+             'topic' => $thread->getThreadName(),
+-            'posts' => $thread->grabPostsSize() - 1,
++            'posts' => $thread->grabPosts(null,true) - 1,
+             'created_at' => $User->formatDate($thread->getThreadCreatedDatetime()),
+             'poster_username' => $thread->getUserName(),
+             'poster_id' => $thread->getUserId(),
+             'last_post_at' => $User->formatDate($thread->getThreadLastPostedDatetime()),
+-            'last_page' => ceil($thread->grabPostsSize() / $max_posts_per_page),
++            'last_page' => ceil($thread->grabPosts(null,true) / $max_posts_per_page),
+             'sticky' => $thread->getStickied(),
+             'locked' => $thread->getLocked(),
+         );
+diff --git a/scripts/news/list.php b/scripts/news/list.php
+index d5d12a1..78ff6d9 100644
+--- a/scripts/news/list.php
++++ b/scripts/news/list.php
+@@ -46,9 +46,8 @@ if($page_id == null || $page_id <= 0)
+     $page_id = 1;
+ }
+ 
+-// Where do we slice the record set? (Note: Don't worry about
+-// LIMIT X,Y starting from zero - that'll be abstracted away).
+-$start = (($page_id - 1) * $max_items_per_page);
++// Where do we slice the record set?
++$start = (($page_id - 1) * $max_items_per_page); // start from 1, not 0.
+ $end = (($page_id - 1) * $max_items_per_page) + $max_items_per_page;
+ 
+ // Generate the pagination. 
+-- 
+1.5.3.6
+

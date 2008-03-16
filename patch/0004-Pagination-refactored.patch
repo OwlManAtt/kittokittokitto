@@ -1,0 +1,34 @@
+From f016d20ccd6ac3845258c4dfd978ae9815d06eeb Mon Sep 17 00:00:00 2001
+From: Nicholas 'OwlManAtt' Evans <owlmanatt@gmail.com>
+Date: Sun, 16 Mar 2008 19:45:30 -0400
+Subject: [PATCH] * Pagination refactored.
+
+---
+ scripts/meta/search.php |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/meta/search.php b/scripts/meta/search.php
+index 82cc899..cb6ea56 100644
+--- a/scripts/meta/search.php
++++ b/scripts/meta/search.php
+@@ -120,7 +120,7 @@ switch($_REQUEST['state'])
+                     $pagination = pagination("search/{$SEARCH['search']}/{$SEARCH['term']}/{$SEARCH['precision']}",$total,$max_items_per_page,$page_id);
+ 
+                     $users = new User($db);
+-                    $users = $users->findBy($search_terms,"ORDER BY user.user_name ASC LIMIT $start,$max_items_per_page");
++                    $users = $users->findBy($search_terms,"ORDER BY user.user_name ASC",false,$start,$end);
+                     
+                     foreach($users as $user)
+                     {
+@@ -151,7 +151,7 @@ switch($_REQUEST['state'])
+                     $pagination = pagination("search/{$SEARCH['search']}/{$SEARCH['term']}/{$SEARCH['precision']}",$total,$max_items_per_page,$page_id);
+ 
+                     $pets = new Pet($db);
+-                    $pets = $pets->findBy($search_terms,"ORDER BY user_pet.pet_name ASC LIMIT $start,$max_items_per_page");
++                    $pets = $pets->findBy($search_terms,"ORDER BY user_pet.pet_name ASC",false,$start,$end);
+                     
+                     foreach($pets as $pet)
+                     {
+-- 
+1.5.3.6
+

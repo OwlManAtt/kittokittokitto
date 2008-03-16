@@ -1,0 +1,89 @@
+From ae6f393160c06fb58efc33c006ff274114885e43 Mon Sep 17 00:00:00 2001
+From: Nicholas 'OwlManAtt' Evans <owlmanatt@gmail.com>
+Date: Sun, 16 Mar 2008 17:38:26 -0400
+Subject: [PATCH] * Refactored pagination in the inventory to use the new ActiveTable slicing functionality.
+
+---
+ includes/classes/user/user.class.php |   36 ++++++++++++---------------------
+ scripts/items/list.php               |    3 +-
+ 2 files changed, 14 insertions(+), 25 deletions(-)
+
+diff --git a/includes/classes/user/user.class.php b/includes/classes/user/user.class.php
+index 146416c..25e83de 100644
+--- a/includes/classes/user/user.class.php
++++ b/includes/classes/user/user.class.php
+@@ -327,12 +327,8 @@ class User extends ActiveTable
+             throw ArgumentError('Must specify either no arguments or both arguments.');
+         } // end problem w/ args.
+         
+-        // Translate into start,# to fetch.
+-        $total = $end - $start;
+-        $limit = "LIMIT $start,$total";
+-        
+         $PROPER_INVENTORY = array();
+-        $inventory = $this->grab('inventory','ORDER BY user_item_id',$limit);
++        $inventory = $this->grab('inventory','ORDER BY user_item_id',false,$start,$end);
+         
+         foreach($inventory as $item)
+         {
+@@ -344,24 +340,8 @@ class User extends ActiveTable
+ 
+     public function grabInventorySize()
+     {
+-        // Some aliases to try and keep the query from looking like total
+-        // shit.
+-        $l_key = $this->RELATED['inventory']['local_key'];
+-        $f_table = $this->RELATED['inventory']['foreign_table'];
+-        $f_fk = $this->RELATED['inventory']['foreign_key'];
+-        
+-        $result = $this->db->getOne("
+-            SELECT 
+-                count(*) 
+-            FROM $f_table 
+-            INNER JOIN {$this->table_name} ON {$f_table}.{$f_fk} = {$this->table_name}.{$l_key}
+-            WHERE {$this->table_name}.user_id = ?
+-        ",array($this->getUserId()));
+-
+-        if(PEAR::isError($result))
+-        {
+-            throw new SQLError($result->getDebugInfo(),$result->userinfo,101);
+-        }
++        $result = new Item($this->db);
++        $result = $result->findByUserId($this->getUserId(),null,true);
+         
+         return $result;
+     } // end grabInventorySize
+@@ -519,6 +499,16 @@ class User extends ActiveTable
+         return $REAL;
+     } // end grabGroups
+ 
++    /**
++     * Update group permissions for the user. 
++     *
++     * This will delete all of the existing group mappings and re-add everything from
++     * scratch. 
++     * 
++     * @rdbms-specific 'INSERT IGNORE INTO' probably doesn't run on Oracle stuff.
++     * @param array $group_ids The array of staff_group_ids to put this user into.
++     * @return bool 
++     **/
+     public function updateGroups($group_ids)
+     {
+         // Delete all is a little different.
+diff --git a/scripts/items/list.php b/scripts/items/list.php
+index e5b3fb7..ef7d516 100644
+--- a/scripts/items/list.php
++++ b/scripts/items/list.php
+@@ -46,8 +46,7 @@ if($page_id == null || $page_id <= 0)
+     $page_id = 1;
+ }
+ 
+-// Where do we slice the record set? (Note: Don't worry about
+-// LIMIT X,Y starting from zero - that'll be abstracted away).
++// Where do we slice the record set?
+ $start = (($page_id - 1) * $max_items_per_page);
+ $end = (($page_id - 1) * $max_items_per_page) + $max_items_per_page;
+ 
+-- 
+1.5.3.6
+
