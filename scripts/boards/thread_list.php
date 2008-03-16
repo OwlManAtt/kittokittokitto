@@ -52,8 +52,7 @@ if($page_id == null || $page_id <= 0)
     $page_id = 1;
 }
 
-// Where do we slice the record set? (Note: Don't worry about
-// LIMIT X,Y starting from zero - that'll be abstracted away).
+// Where do we slice the record set?
 $start = (($page_id - 1) * $max_threads_per_page);
 $end = (($page_id - 1) * $max_threads_per_page) + $max_threads_per_page;
 
@@ -88,22 +87,22 @@ else
     );
     
     // Generate the pagination. 
-    $pagination = pagination("threads/{$board->getBoardId()}",$board->grabThreadsSize(),$max_threads_per_page,$page_id);
+    $pagination = pagination("threads/{$board->getBoardId()}",$board->grabThreads(null,true),$max_threads_per_page,$page_id);
     
     $THREAD_LIST = array();
-    $threads = $board->grabThreads($start,$end);
+    $threads = $board->grabThreads('ORDER BY board_thread.thread_last_posted_datetime DESC',false,$start,$end);
 
     foreach($threads as $thread)
     {
         $THREAD_LIST[] = array(
             'id' => $thread->getBoardThreadId(),
             'topic' => $thread->getThreadName(),
-            'posts' => $thread->grabPostsSize() - 1,
+            'posts' => $thread->grabPosts(null,true) - 1,
             'created_at' => $User->formatDate($thread->getThreadCreatedDatetime()),
             'poster_username' => $thread->getUserName(),
             'poster_id' => $thread->getUserId(),
             'last_post_at' => $User->formatDate($thread->getThreadLastPostedDatetime()),
-            'last_page' => ceil($thread->grabPostsSize() / $max_posts_per_page),
+            'last_page' => ceil($thread->grabPosts(null,true) / $max_posts_per_page),
             'sticky' => $thread->getStickied(),
             'locked' => $thread->getLocked(),
         );

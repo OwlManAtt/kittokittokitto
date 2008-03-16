@@ -108,61 +108,6 @@ class BoardThread extends ActiveTable
     } // end setStickied
 
     /**
-     * Return the total number of posts under this thread.
-     *
-     * Useful for pagination. Also, that query should work across
-     * all major RDBMSes.  
-     * 
-     * @return integer 
-     **/
-    public function grabPostsSize()
-    {
-        $result = $this->db->getOne('
-            SELECT 
-                count(*) AS posts
-            FROM board_thread_post
-            WHERE board_thread_post.board_thread_id = ?
-        ',array($this->getBoardThreadId()));
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
-        }
-     
-        return $result;
-    } // end grabPostsSize
-
-    /**
-     * Grab the posts for the thread.
-     *
-     * The arguments allow you to only grab a slice, if they
-     * are specified. That's good for pagination.
-     * 
-     * @param integet|null $start The beginning of a set slice.
-     * @param integer|null $end The end of a set slice.
-     * @return array An array of BoardPost instances.
-     **/
-    public function grabPosts($start=null,$end=null)
-    {
-        if(($start === null && $end === null) == false && 
-            ($start !== null && $end !== null) == false
-        )
-        {
-            throw ArgumentError('Must specify either no arguments or both arguments.');
-        } // end problem w/ args.
-        
-        // Translate into start,# to fetch.
-        if($start !== null)
-        {
-            $total = $end - $start;
-            $limit = "LIMIT $start,$total";
-        }
-        $posts = $this->grab('posts','ORDER BY board_thread_post.posted_datetime ASC',$limit);
-
-        return $posts;
-    } // end grabPosts
-
-    /**
      * Delete a thread and its associated posts.
      * 
      * @return bool 

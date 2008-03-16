@@ -39,8 +39,7 @@ if($page_id == null || $page_id <= 0)
     $page_id = 1;
 }
 
-// Where do we slice the record set? (Note: Don't worry about
-// LIMIT X,Y starting from zero - that'll be abstracted away).
+// Where do we slice the record set?
 $start = (($page_id - 1) * $max_items_per_page);
 $end = (($page_id - 1) * $max_items_per_page) + $max_items_per_page;
 
@@ -94,10 +93,10 @@ else
     );
     
     // Generate the pagination. 
-    $pagination = pagination("thread/{$thread->getBoardThreadId()}",$thread->grabPostsSize(),$max_items_per_page,$page_id);
+    $pagination = pagination("thread/{$thread->getBoardThreadId()}",$thread->grabPosts(null,true),$max_items_per_page,$page_id);
     
     $POST_LIST = array();
-    $posts = $thread->grabPosts($start,$end);
+    $posts = $thread->grabPosts('ORDER BY board_thread_post.posted_datetime ASC',false,$start,$end);
 
     foreach($posts as $post)
     {

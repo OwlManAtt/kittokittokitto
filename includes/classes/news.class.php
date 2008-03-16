@@ -83,24 +83,20 @@ class News extends Getter
     /**
      * Total number of news posts. 
      * 
-     * @rdbms-specific MySQL 4/5, Oracle 9i (maybe?) / 10g.
      * @param object $db 
      * @return integer
      **/
     static public function grabNewsSize($db)
     {
-        $result = $db->getOne('
-            SELECT 
-                count(*) AS threads 
-            FROM board_thread 
-            INNER JOIN board ON board_thread.board_id = board.board_id
-            WHERE board.news_source = ?
-        ',array('Y'));
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
-        }
+        $result = new BoardThread($db);
+        $result= $result->findBy(array(
+                array(
+                    'table' => 'board',
+                    'column' => 'news_source',
+                    'value' => 'Y',
+                ),
+            ),
+        '',true);
 
         return $result;
     } // end grabNewsSize
@@ -118,9 +114,6 @@ class News extends Getter
      **/
     static public function grabNews($start,$end,$db)
     {
-        $length = $end - $start;
-        $limit = "LIMIT $start,$length";
-        
         $threads = new BoardThread($db);
         $threads = $threads->findBy(array(
                 array(
@@ -129,7 +122,9 @@ class News extends Getter
                     'value' => 'Y',
                 ),
             ),
-            "ORDER BY board_thread.thread_created_datetime DESC {$limit}"
+            "ORDER BY board_thread.thread_created_datetime DESC",
+            false,
+            $start,$end
         );
 
         $NEWS = array();
@@ -141,7 +136,7 @@ class News extends Getter
             // The opposite of this should never occur...but handle it anyway.
             if($post != null)
             {
-                $item = new News($post->getPostedDatetime(),$thread->getBoardThreadId(),$post->getPostText(),$post->getUserName(),$post->getUserId(),($thread->grabPostsSize() - 1),$thread->getThreadName()); 
+                $item = new News($post->getPostedDatetime(),$thread->getBoardThreadId(),$post->getPostText(),$post->getUserName(),$post->getUserId(),($thread->grabPosts(null,true) - 1),$thread->getThreadName()); 
                 $NEWS[] = $item;
             }
         } // end thread loop
