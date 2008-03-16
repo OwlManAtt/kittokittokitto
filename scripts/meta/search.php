@@ -120,7 +120,7 @@ switch($_REQUEST['state'])
                     $pagination = pagination("search/{$SEARCH['search']}/{$SEARCH['term']}/{$SEARCH['precision']}",$total,$max_items_per_page,$page_id);
 
                     $users = new User($db);
-                    $users = $users->findBy($search_terms,"ORDER BY user.user_name ASC LIMIT $start,$max_items_per_page");
+                    $users = $users->findBy($search_terms,"ORDER BY user.user_name ASC",false,$start,$end);
                     
                     foreach($users as $user)
                     {
@@ -151,7 +151,7 @@ switch($_REQUEST['state'])
                     $pagination = pagination("search/{$SEARCH['search']}/{$SEARCH['term']}/{$SEARCH['precision']}",$total,$max_items_per_page,$page_id);
 
                     $pets = new Pet($db);
-                    $pets = $pets->findBy($search_terms,"ORDER BY user_pet.pet_name ASC LIMIT $start,$max_items_per_page");
+                    $pets = $pets->findBy($search_terms,"ORDER BY user_pet.pet_name ASC",false,$start,$end);
                     
                     foreach($pets as $pet)
                     {
