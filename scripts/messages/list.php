@@ -48,9 +48,9 @@ switch($_REQUEST['state'])
         $end = (($page_id - 1) * $max_messages_per_page) + $max_messages_per_page;
 
         // Generate the pagination. 
-        $pagination = pagination('messages',$User->grabMessagesSize(),$max_messages_per_page,$page_id);
+        $pagination = pagination('messages',$User->grabMessages(null,true),$max_messages_per_page,$page_id);
 
-        $messages = $User->grabMessages($start,$end);
+        $messages = $User->grabMessages(null,false,$start,$end);
 
         $MESSAGES = array();
         foreach($messages as $message)

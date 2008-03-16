@@ -94,6 +94,12 @@ class User extends ActiveTable
             'local_key' => 'user_id',
             'foreign_key' => 'user_id',
         ),
+        'notification' => array( // Use with an ORDER BY to get only one. Used for index.
+            'class' => 'Notification',
+            'local_key' => 'user_id',
+            'foreign_key' => 'user_id',
+            'one' => true,
+        ),
         'messages' => array(
             'class' => 'Message',
             'local_key' => 'user_id',
@@ -410,53 +416,6 @@ class User extends ActiveTable
 
         return true;
     } // end clearNotifications
-
-    /**
-     * Return the total number of messages a user has. 
-     *
-     * Useful for pagination. 
-     * 
-     * @return integer 
-     **/
-    public function grabMessagesSize()
-    {
-        $result = $this->db->getOne("
-            SELECT 
-                count(*) 
-            FROM user_message
-            WHERE recipient_user_id = ?
-        ",array($this->getUserId()));
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
-        }
-        
-        return $result;
-    } // end grabMessagesSize
-    
-    /**
-     * Grab all of the user's messages, or a slice of their messages. 
-     * 
-     * @param integer $start 
-     * @param integer $end 
-     * @return array An array of Message instances.
-     **/
-    public function grabMessages($start=null,$end=null)
-    {
-        if(($start === null && $end === null) == false && 
-            ($start !== null && $end !== null) == false
-        )
-        {
-            throw ArgumentError('Must specify either no arguments or both arguments.');
-        } // end problem w/ args.
-        
-        // Translate into start,# to fetch.
-        $total = $end - $start;
-        $limit = "LIMIT $start,$total";
-        
-        return $this->grab('messages','ORDER BY user_message.sent_at DESC',$limit);
-    } // end grabMessages
 
     /**
      * Return the URL to the image.

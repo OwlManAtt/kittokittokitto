@@ -34,7 +34,7 @@ switch($_REQUEST['state'])
     default:
     {
         $NOTICE_LIST = array();
-        $notices = $User->grabNotifications('ORDER BY notification_datetime DESC',null,true);
+        $notices = $User->grabNotifications('ORDER BY notification_datetime DESC',null,null,null,true);
 
         foreach($notices as $notice)
         {

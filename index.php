@@ -113,9 +113,7 @@ else
     
     if(is_object($User) == true)
     {
-        $notice = $User->grabNotifications('ORDER BY notification_datetime DESC','LIMIT 1');
-        $notice = $notice[0];
-
+        $notice = $User->grabNotification('ORDER BY notification_datetime DESC');
         if($notice != null)
         {
             $NOTICE = array(
