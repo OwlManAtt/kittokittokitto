@@ -327,12 +327,8 @@ class User extends ActiveTable
             throw ArgumentError('Must specify either no arguments or both arguments.');
         } // end problem w/ args.
         
-        // Translate into start,# to fetch.
-        $total = $end - $start;
-        $limit = "LIMIT $start,$total";
-        
         $PROPER_INVENTORY = array();
-        $inventory = $this->grab('inventory','ORDER BY user_item_id',$limit);
+        $inventory = $this->grab('inventory','ORDER BY user_item_id',false,$start,$end);
         
         foreach($inventory as $item)
         {
@@ -344,24 +340,8 @@ class User extends ActiveTable
 
     public function grabInventorySize()
     {
-        // Some aliases to try and keep the query from looking like total
-        // shit.
-        $l_key = $this->RELATED['inventory']['local_key'];
-        $f_table = $this->RELATED['inventory']['foreign_table'];
-        $f_fk = $this->RELATED['inventory']['foreign_key'];
-        
-        $result = $this->db->getOne("
-            SELECT 
-                count(*) 
-            FROM $f_table 
-            INNER JOIN {$this->table_name} ON {$f_table}.{$f_fk} = {$this->table_name}.{$l_key}
-            WHERE {$this->table_name}.user_id = ?
-        ",array($this->getUserId()));
-
-        if(PEAR::isError($result))
-        {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo,101);
-        }
+        $result = new Item($this->db);
+        $result = $result->findByUserId($this->getUserId(),null,true);
         
         return $result;
     } // end grabInventorySize
@@ -519,6 +499,16 @@ class User extends ActiveTable
         return $REAL;
     } // end grabGroups
 
+    /**
+     * Update group permissions for the user. 
+     *
+     * This will delete all of the existing group mappings and re-add everything from
+     * scratch. 
+     * 
+     * @rdbms-specific 'INSERT IGNORE INTO' probably doesn't run on Oracle stuff.
+     * @param array $group_ids The array of staff_group_ids to put this user into.
+     * @return bool 
+     **/
     public function updateGroups($group_ids)
     {
         // Delete all is a little different.

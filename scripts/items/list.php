@@ -46,8 +46,7 @@ if($page_id == null || $page_id <= 0)
     $page_id = 1;
 }
 
-// Where do we slice the record set? (Note: Don't worry about
-// LIMIT X,Y starting from zero - that'll be abstracted away).
+// Where do we slice the record set?
 $start = (($page_id - 1) * $max_items_per_page);
 $end = (($page_id - 1) * $max_items_per_page) + $max_items_per_page;
 
