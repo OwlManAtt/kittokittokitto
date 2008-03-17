@@ -1,3 +1,14 @@
+== 1.3.1 (2008-03-16) ==
+* Updated to ActivePHP to 2.3.4.
+    * CSVIO now has the 'O'utput ability that its name implies it has.
+    * ActiveTable bugfixes related to magic PKs.
+    * Resul set slices can be pulled from #findBy() and #grab().
+    * Fixed a bug in the APC Cacher where it would not always prepend the database
+      name to the cachekeys. 
+* Refactored several pages/classes to use ActiveTable's new result set slicing
+  functionality. This reduces the amount of redundent pagination code in Kitto
+  and ties it to MySQL a bit less.
+
 == 1.3.0.1 (2007-12-13) ==
 * Fixed a small bug reported by Haywire. The user object would be made 
   unavailable to Smarty on the users online list because $user would be
