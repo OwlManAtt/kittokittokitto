@@ -1,6 +1,6 @@
 [submodule "external_lib/aphp"]
 	path = external_lib/aphp
-	url = ssh://bubo.owl.ys/resource/ysgit/libraries/aphp/.git
+	url = git://github.com/OwlManAtt/activephp.git 
 [submodule "external_lib/Smarty"]
 	path = external_lib/Smarty
-	url = ssh://bubo.owl.ys/resource/ysgit/libraries/Smarty/.git
+	url = git://github.com/OwlManAtt/smarty-ys.git
