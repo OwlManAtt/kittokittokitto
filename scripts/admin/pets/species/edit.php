@@ -30,7 +30,7 @@
  **/
 
 $ERRORS = array();
-$specie_id = stripinput($_REQUEST['specie']['id']);
+$specie_id = (int)stripinput($_REQUEST['specie']['id']);
 
 $specie = new PetSpecie($db);
 $specie = $specie->findOneByPetSpecieId($specie_id);

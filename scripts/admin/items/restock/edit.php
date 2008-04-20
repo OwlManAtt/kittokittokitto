@@ -30,8 +30,8 @@
  **/
 
 $ERRORS = array();
-$item_type_id = stripinput($_REQUEST['item']['id']);
-$restock_id = stripinput($_REQUEST['restock']['id']);
+$item_type_id = (int)stripinput($_REQUEST['item']['id']);
+$restock_id = (int)stripinput($_REQUEST['restock']['id']);
 
 // The item is required.
 $item = new ItemType($db);

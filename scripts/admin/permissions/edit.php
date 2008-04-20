@@ -31,7 +31,7 @@
 
 $ERRORS = array();
 $Y_N = array('Y' => 'Yes','N' => 'No');
-$group_id = stripinput($_REQUEST['group']['id']);
+$group_id = (int)stripinput($_REQUEST['group']['id']);
 
 $group = new StaffGroup($db);
 $group = $group->findOneByStaffGroupId($group_id);

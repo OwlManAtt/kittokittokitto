@@ -30,7 +30,7 @@
  **/
 
 $ERRORS = array();
-$board_id = stripinput($_REQUEST['board']['id']);
+$board_id = (int)stripinput($_REQUEST['board']['id']);
 
 $Y_N = array('N' => 'No','Y' => 'Yes');
 

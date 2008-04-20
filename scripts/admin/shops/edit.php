@@ -30,7 +30,7 @@
  **/
 
 $ERRORS = array();
-$shop_id = stripinput($_REQUEST['shop']['id']);
+$shop_id = (int)stripinput($_REQUEST['shop']['id']);
 
 $shop = new Shop($db);
 $shop = $shop->findOneByShopId($shop_id);

@@ -30,7 +30,7 @@
  **/
 
 $ERRORS = array();
-$color_id = stripinput($_REQUEST['color']['id']);
+$color_id = (int)stripinput($_REQUEST['color']['id']);
 
 $color = new PetSpecieColor($db);
 $color = $color->findOneByPetSpecieColorId($color_id);

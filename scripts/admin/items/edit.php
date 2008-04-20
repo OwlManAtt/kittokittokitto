@@ -30,7 +30,7 @@
  **/
 
 $ERRORS = array();
-$item_id = stripinput($_REQUEST['item']['id']);
+$item_id = (int)stripinput($_REQUEST['item']['id']);
 $item = new ItemType($db);
 $item = $item->findOneByItemTypeId($item_id);
 
