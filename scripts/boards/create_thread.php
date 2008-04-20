@@ -127,7 +127,7 @@ else
                     'user_id' => $User->getUserId(),
                     'thread_created_datetime' => $thread->sysdate(),
                     'thread_last_posted_datetime' => $thread->sysdate(),
-                    'stickied' => 0,
+                    'stickied' => 1,
                     'locked' => 'N',
                 ));
 
