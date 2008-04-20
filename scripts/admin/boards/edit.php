@@ -51,6 +51,7 @@ else
             {
                 $BOARD = array(
                     'id' => $board->getBoardId(),
+                    'board_category_id' => $board->getBoardCategoryId(),
                     'name' => $board->getBoardName(),
                     'description' => $board->getBoardDescr(),
                     'locked' => $board->get('board_locked'), // see getBoardLocked for why
@@ -67,10 +68,27 @@ else
             {
                 $PERMISSIONS[$permission->getStaffPermissionId()] = $permission->getPermissionName();
             } // end permission reformat
-            
+
+            $CATEGORIES = array('' => 'Select one...');
+            $categories = new BoardCategory($db);
+            $categories = $categories->findBy(array(),array(
+                'direction' => 'ASC',
+                'columns' => array(
+                    array(
+                        'table' => 'board_category',
+                        'column' => 'category_name',
+                    ),
+                ),
+            ));
+            foreach($categories as $category)
+            {
+                $CATEGORIES[$category->getBoardCategoryId()] = $category->getCategoryName();
+            }
+             
             array_unshift($Y_N,'Select one...');
             $renderer->assign('y_n',$Y_N);
             $renderer->assign('permissions',$PERMISSIONS);
+            $renderer->assign('categories',$CATEGORIES);
             $renderer->assign('board',$BOARD);
 
             if($board != null)
@@ -94,6 +112,7 @@ else
                 'news_source' => trim(stripinput($_POST['board']['news_source'])),
                 'order_by' => trim(stripinput($_POST['board']['order_by'])),
                 'required_permission_id' => trim(stripinput($_POST['board']['required_permission_id'])),
+                'board_category_id' => (int)trim(stripinput($_POST['board']['board_category_id'])),
             );
             
             // If the group could not be loaded, start making a new one.
@@ -138,6 +157,13 @@ else
                 $ERRORS[] = 'Invalid news source status specified.';
             }
 
+            $category = new BoardCategory($db);
+            $category = $category->findOneByBoardCategoryId($BOARD['board_category_id']);
+            if($category == null)
+            {
+                $ERRORS[] = 'No category specified for board.';    
+            }
+
             $permission_id = 0; // for saving
             if($BOARD['required_permission_id'] != null)
             {
@@ -166,6 +192,7 @@ else
                 $board->setNewsSource($BOARD['news_source']);
                 $board->setOrderBy($BOARD['order_by']);
                 $board->setRequiredPermissionId($permission_id);
+                $board->setBoardCategoryId($category->getBoardCategoryId());
                 $board->save();
 
                 $_SESSION['board_notice'] = "You have saved <strong>{$board->getBoardName()}</strong>.";

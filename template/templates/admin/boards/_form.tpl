@@ -22,6 +22,14 @@
         </tr>
         <tr>
             <td class='inputTableRow inputTableSubhead'>
+                <label for='category'>Category</label>
+            </td>
+            <td class='inputTableRow inputTableSubhead' id='category_td'>
+                {html_options id='category' name='board[board_category_id]' options=$categories selected=$board.board_category_id}<br />
+            </td>
+        </tr>
+        <tr>
+            <td class='inputTableRow inputTableSubhead'>
                 <label for='locked'>Locked</label>
             </td>
             <td class='inputTableRow inputTableSubhead' id='locked_td'>
@@ -70,6 +78,7 @@
     var order = new Spry.Widget.ValidationTextField("order_by_td", "integer", {useCharacterMasking:true, validateOn:['change','blur']});    
     var locked = new Spry.Widget.ValidationSelect('locked_td',{validateOn:['blur','change'], invalidValue: '0'});
     var permission = new Spry.Widget.ValidationSelect('permission_td',{validateOn:['blur','change'], isRequired: false});
+    var permission = new Spry.Widget.ValidationSelect('category_td',{validateOn:['blur','change'], invalidValue: '0'});
     var news_source = new Spry.Widget.ValidationSelect('news_source_td',{validateOn:['blur','change'], invalidValue: '0'});
 </script>
 {/literal}
