@@ -137,6 +137,8 @@ switch($_REQUEST['state'])
 			$new_user->setUserName($USER['user_name']);
 			$new_user->setRegisteredIpAddr($_SERVER['REMOTE_ADDR']);
 			$new_user->setPassword($USER['password']);
+            $new_user->setCurrentSaltExpiration($new_user->sysdate());
+            $new_user->setLastActivity($new_user->sysdate());
 			$new_user->setAccessLevel('user');
             $new_user->setEmail($USER['email']);
             $new_user->setAge($USER['age']);
@@ -146,6 +148,8 @@ switch($_REQUEST['state'])
             $new_user->setUserTitle('User');
             $new_user->setTextareaPreference('tinymce');
             $new_user->setDatetimeCreated($new_user->sysdate());
+            $new_user->setDatetimeLastPost($new_user->sysdate());
+            $new_user->setPasswordResetRequested($new_user->sysdate());
             $new_user->setTimezoneId(54); // 54 = UTC
             $new_user->setDatetimeFormatId(1); // Y-m-d H:i:s
             $new_user->setShowOnlineStatus('Y');
