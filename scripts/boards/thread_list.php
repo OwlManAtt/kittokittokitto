@@ -90,7 +90,7 @@ else
     $pagination = pagination("threads/{$board->getBoardId()}",$board->grabThreads(null,true),$max_threads_per_page,$page_id);
     
     $THREAD_LIST = array();
-    $threads = $board->grabThreads('ORDER BY board_thread.thread_last_posted_datetime DESC',false,$start,$end);
+    $threads = $board->grabThreads('ORDER BY board_thread.stickied, board_thread.thread_last_posted_datetime DESC',false,$start,$end);
 
     foreach($threads as $thread)
     {
