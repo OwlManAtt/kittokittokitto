@@ -53,7 +53,7 @@ else
         'last_active' => $profile->getLastActivity(),
         'gender' => $profile->getGender(),
         'age' => $profile->getAge(),
-        'last_post' => ($profile->getDatetimeLastPost() == '0000-00-00 00:00:00') ? 0 : $profile->getDatetimeLastPost(),
+        'last_post' => (($profile->getDatetimeLastPost() == '0000-00-00 00:00:00') || $profile->getDatetimeLastPost() == $profile->getDatetimeCreated()) ? 0 : $profile->getDatetimeLastPost(),
         'profile' => $profile->getProfile(),
         'title' => $profile->getUserTitle(),
         'posts' => $profile->getPostCount(),

@@ -147,7 +147,7 @@ else
                     if((strtotime($user->getPasswordResetRequested()) + $six_hours) < time()  )
                     {
                         $user->setPasswordResetConfirm('');
-                        $user->setPasswordResetRequested(0);
+                        $user->setPasswordResetRequested($user->sysdate());
                         $user->save();
                         
                         $ERRORS[] = 'Password reset confirmation code expired.';
@@ -189,7 +189,7 @@ else
                         {
                             $user->setPassword($_REQUEST['password']['a']);
                             $user->setPasswordResetConfirm('');
-                            $user->setPasswordResetRequested(0);
+                            $user->setPasswordResetRequested($user->sysdate());
                             $user->save();
                             
                             $user->login();

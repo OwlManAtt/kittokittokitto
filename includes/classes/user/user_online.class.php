@@ -136,8 +136,6 @@ class UserOnline extends ActiveTable
 
     static public function findOnlineUsers($start,$end,$db)
     {
-        $difference = $end - $start;
-        
         $users = new UserOnline($db);
         $users = $users->findBy(array(
                 'user_type' => 'user',
@@ -147,7 +145,15 @@ class UserOnline extends ActiveTable
                     'value' => 'Y',
                 ),
             ),
-            "ORDER BY user.user_name LIMIT $start,$difference");
+            array(
+                'direction' => 'ASC',
+                'columns' => array(
+                    array(
+                        'table' => 'user',
+                        'column' => 'user_name',
+                    ),
+                ),
+            ),false,$start,$end);
         
         return $users;
     } // end findOnlineUsers
