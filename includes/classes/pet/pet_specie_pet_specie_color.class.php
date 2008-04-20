@@ -65,7 +65,7 @@ class PetSpecie_PetSpecieColor extends ActiveTable
      * but it is not a specific instance of a pet, so it has no
      * color. It's for showcasing...
      * 
-     * @rdbms-specific MySQL 4/5
+     * @rdbms-specific
      * @param int $specie_id 
      * @param object $db PEAR::DB connector.
      * @return PetSpecie_PetSpecieColorId Random color instance.
@@ -74,9 +74,35 @@ class PetSpecie_PetSpecieColor extends ActiveTable
     {
         $colors = new PetSpecie_PetSpecieColor($db);
 
-        // RDBMS Note: For Oracle, change ORDER BY RAND() to:
-        // ORDER BY mod(DBMS_RANDOM.random,50)+50
-        $colors = $colors->findOneByPetSpecieId($specie_id,'ORDER BY RAND()');
+        switch($db->phptype)
+        {
+            case 'mysqli':
+            case 'mysql':
+            {
+                $order_by = 'ORDER BY RAND()';
+
+                break;
+            } // end mysql
+
+            case 'oci8':
+            {
+                $order_by = 'ORDER BY mod(DBMS_RANDOM.random,50)+50';
+
+                break;
+            } // end oci8
+
+            case 'pgsql':
+            {
+                // This does not scale well when you're dealing with 1,000+ rows. That shouldn't
+                // be a big deal for this table, though.
+                // http://people.planetpostgresql.org/greg/index.php?/archives/40-Getting-random-rows-from-a-database-table.html
+                $order_by = 'ORDER BY RANDOM()';
+
+                break;
+            } // end pgsql
+        } // end dbtype switch
+        
+        $colors = $colors->findOneByPetSpecieId($specie_id,$order_by);
         
         return $colors;
     } // end randomColor

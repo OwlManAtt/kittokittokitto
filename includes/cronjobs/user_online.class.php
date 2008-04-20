@@ -49,9 +49,38 @@ class Job_UserOnline implements Job
         $this->db = $db;
     } // end __construct
 
+    /**
+     * performJob 
+     * 
+     * @rdbms-specific
+     * @return void
+     **/
     public function performJob()
     {
-        $result = $this->db->query("DELETE FROM user_online WHERE (UNIX_TIMESTAMP(datetime_last_active) + (60 * 5)) < UNIX_TIMESTAMP(NOW())");
+        switch($this->db->phptype)
+        {
+            case 'oci8':
+            {
+                throw new ArgumentError('Not implemented for oci8.');
+
+                break;
+            } // end oci8
+
+            case 'pgsql':
+            {
+                $result = $this->db->query("DELETE FROM user_online WHERE datetime_last_active + interval '5 minutes' < NOW()");
+
+                break;
+            } // end pgsql
+
+            case 'mysql':
+            case 'mysqli':
+            {
+                $result = $this->db->query("DELETE FROM user_online WHERE (UNIX_TIMESTAMP(datetime_last_active) + (60 * 5)) < UNIX_TIMESTAMP(NOW())");
+
+                break;
+            } // end mysql
+        } // end rdbms type switch
         
         if(PEAR::isError($result))
         {

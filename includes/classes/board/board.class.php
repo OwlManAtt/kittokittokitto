@@ -144,21 +144,53 @@ class Board extends ActiveTable
     /**
      * getLastPosterUserName 
      * 
-     * @rdbms-specific MySQL / Oracle 9i (maybe?) & 10g
+     * @rdbms-specific
      * @return void
      **/
     public function getLastPosterUserName()
     {
-        $result = $this->db->getOne('
-            SELECT
-                user.user_name
-            FROM board_thread_post
-            INNER JOIN board_thread ON board_thread.board_thread_id = board_thread_post.board_thread_id
-            INNER JOIN user ON board_thread_post.user_id = user.user_id
-            WHERE board_thread.board_id = ?
-            ORDER BY board_thread_post.posted_datetime DESC
-            LIMIT 1
-        ',array($this->getBoardId()));
+        switch($this->db->phptype)
+        {
+            case 'mysql':
+            case 'mysqli':
+            {
+                $result = $this->db->getOne('
+                    SELECT
+                        user.user_name
+                    FROM board_thread_post
+                    INNER JOIN board_thread ON board_thread.board_thread_id = board_thread_post.board_thread_id
+                    INNER JOIN user ON board_thread_post.user_id = user.user_id
+                    WHERE board_thread.board_id = ?
+                    ORDER BY board_thread_post.posted_datetime DESC
+                    LIMIT 1
+                ',array($this->getBoardId()));
+
+                break;
+            } // end mysql
+
+            case 'pgsql':
+            {
+                $result = $this->db->getOne('
+                    SELECT
+                        "user"."user_name"
+                    FROM board_thread_post
+                    INNER JOIN board_thread ON board_thread.board_thread_id = board_thread_post.board_thread_id
+                    INNER JOIN "user" ON board_thread_post.user_id = "user".user_id
+                    WHERE board_thread.board_id = ?
+                    ORDER BY board_thread_post.posted_datetime DESC
+                    LIMIT 1
+                ',array($this->getBoardId()));
+
+                break;
+            } // end pgsql
+
+            default:
+            {
+                throw new ArgumentError('Query not implmented for RDBMS.');
+
+                break;
+            } // end default
+        } // end rdbms switch
 
         if(PEAR::isError($result))
         {
