@@ -51,6 +51,7 @@ require('user/timezone.class.php');
 require('user/user_staff_group.class.php');
 require('user/staff_group.class.php');
 require('user/staff_permission.class.php');
+require('user/staff_group_staff_permission.class.php');
 require('user/user_online.class.php');
 
 /**

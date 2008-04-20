@@ -500,7 +500,7 @@ class User extends ActiveTable
      * This will delete all of the existing group mappings and re-add everything from
      * scratch. 
      * 
-     * @rdbms-specific 'INSERT IGNORE INTO' probably doesn't run on Oracle stuff.
+     * @rdbms-specific 
      * @param array $group_ids The array of staff_group_ids to put this user into.
      * @return bool 
      **/
@@ -533,22 +533,67 @@ class User extends ActiveTable
         {
             throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
         }
-        
-        $result = $this->db->query("
-            INSERT IGNORE INTO user_staff_group 
-            (staff_group_id,user_id) 
-            SELECT 
-                staff_group_id, 
-                ? AS user_id 
-            FROM staff_group
-            WHERE staff_group_id IN ($holders)
-        ",array_merge(array($this->getUserId()),$group_ids));
 
-        if(PEAR::isError($result))
+        /*
+        * There doesn't seem to be an efficient way to do this in Postgres without
+        * using some horrible nested transaction thing that ties us to Postgres 8.x.
+        * 
+        * So, MySQL does a fast INSERT IGNORE, but for Pgsql I'll do it group by group.
+        */
+        switch($this->db->phptype)
         {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
-        }
-        
+            case 'mysql':
+            case 'mysqli':
+            {
+                $result = $this->db->query("
+                    INSERT IGNORE INTO user_staff_group 
+                    (staff_group_id,user_id) 
+                    SELECT 
+                        staff_group_id, 
+                        ? AS user_id 
+                    FROM staff_group
+                    WHERE staff_group_id IN ($holders)
+                ",array_merge(array($this->getUserId()),$group_ids));
+
+                if(PEAR::isError($result))
+                {
+                    throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+                }
+
+                break;
+            } // end mysql
+
+            case 'pgsql':
+            {
+                foreach($group_ids AS $group_id)
+                {
+                    $ARGS = array(
+                        'user_id' => $this->getUserId(),
+                        'staff_group_id' => $group_id,
+                    );
+
+                    $mapping = new User_StaffGroup($this->db);
+                    $mapping = $mapping->findOneBy($ARGS); 
+
+                    if($mapping == null)
+                    {
+                        $mapping = new User_StaffGroup($this->db);
+                        $mapping->create($ARGS); 
+                    }
+                } // end loop
+                
+                break;
+            } // end pgsql
+
+            default:
+            case 'oci8':
+            {
+                throw new ArgumentError('Query not implemented for RDBMS.');
+
+                break;
+            } // end default
+         } // end rdbms switch
+
         return true;
     } // end updateGroups
 } // end User 

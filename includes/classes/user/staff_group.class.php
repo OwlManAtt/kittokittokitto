@@ -96,22 +96,67 @@ class StaffGroup extends ActiveTable
         {
             throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
         }
-        
-        $result = $this->db->query("
-            INSERT IGNORE INTO staff_group_staff_permission 
-            (staff_permission_id,staff_group_id) 
-            SELECT 
-                staff_permission_id, 
-                ? AS group_id 
-            FROM staff_permission 
-            WHERE staff_permission_id IN ($holders)
-        ",array_merge(array($this->getStaffGroupId()),$permission_ids));
-
-        if(PEAR::isError($result))
+     
+        /*
+        * There doesn't seem to be an efficient way to do this in Postgres without
+        * using some horrible nested transaction thing that ties us to Postgres 8.x.
+        * 
+        * So, MySQL does a fast INSERT IGNORE, but for Pgsql I'll do it group by group.
+        */
+        switch($this->db->phptype)
         {
-            throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
-        }
-        
+            case 'mysql':
+            case 'mysqli':
+            {
+                $result = $this->db->query("
+                    INSERT IGNORE INTO staff_group_staff_permission 
+                    (staff_permission_id,staff_group_id) 
+                    SELECT 
+                        staff_permission_id, 
+                        ? AS group_id 
+                    FROM staff_permission 
+                    WHERE staff_permission_id IN ($holders)
+                ",array_merge(array($this->getStaffGroupId()),$permission_ids));
+
+                if(PEAR::isError($result))
+                {
+                    throw new SQLError($result->getDebugInfo(),$result->userinfo,10);
+                }
+
+                break;
+            } // end mysql
+
+            case 'pgsql':
+            {
+                foreach($permission_ids AS $permission_id)
+                {
+                    $ARGS = array(
+                        'staff_group_id' => $this->getStaffGroupId(),
+                        'staff_permission_id' => $permission_id,
+                    );
+
+                    $mapping = new StaffGroup_StaffPermission($this->db);
+                    $mapping = $mapping->findOneBy($ARGS); 
+
+                    if($mapping == null)
+                    {
+                        $mapping = new StaffGroup_StaffPermission($this->db);
+                        $mapping->create($ARGS); 
+                    }
+                } // end loop
+                
+                break;
+            } // end pgsql
+
+            default:
+            case 'oci8':
+            {
+                throw new ArgumentError('Query not implemented for RDBMS.');
+
+                break;
+            } // end default
+         } // end rdbms switch
+
         return true;
     } // end updatePermissions
 
