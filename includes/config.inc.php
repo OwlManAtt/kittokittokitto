@@ -69,11 +69,11 @@ switch($_SERVER['RELEASE_MODE'])
              * @var array
              **/
 			'db_dsn' => array(
-				'phptype' => 'mysql', // This can also be run on Oracle (oci).
-				'username' => 'kkk',
-				'password' => 'lolkkk',
+				'phptype' => 'pgsql', // Oracle = oci, Postgres = pgsql.
+				'username' => 'kitto',
+				'password' => 'k1tt0',
 				'hostspec' => 'localhost',
-				'database' => 'kkk',
+				'database' => 'kitto',
 			),
             
             /**
@@ -91,27 +91,27 @@ switch($_SERVER['RELEASE_MODE'])
              * it in your browser. Look for the 'SCRIPT_FILENAME' field.
              * The base path is everything *except* for the filename.
              **/
-			'base_path' => '/var/www/kittokittokitto',
+			'base_path' => '/var/www/kitto',
             
             /**
              * The path to the root of your Smarty template directory.
              * The templates/, templates_c/, cache/, and configs/ folders
              * live in here.
              **/
-			'template_path' => '/var/www/kittokittokitto/template',
+			'template_path' => '/var/www/kitto/template',
 
             /**
              * The HTMLPurifier cache must be writable by the webserver's user.
              * Set this to null to disable the cache (but you *want* the cache
              * for performance reasons!). Oh, and no trailing slash.
              **/
-            'htmlpurifier_cachedir' => '/var/www/kittokittokitto/cache',
+            'htmlpurifier_cachedir' => '/var/www/kitto/cache',
 
             /*
              * The full URL (no trailing slash) to your site.
              * ie, 'http://demo.kittokittokitto.yasashiisyndicate.org'
              **/
-			'public_dir' => 'http://bell.owl.ys/kittokittokitto',
+			'public_dir' => 'http://bell.owl.ys/kitto',
             
             /**
              * If you have many sites at this domain, a cookie prefix
