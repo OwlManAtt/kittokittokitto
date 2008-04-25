@@ -48,7 +48,7 @@
  *               and used directly.
  * @return void
  **/
-function redirect($slug,$params,$raw=null)
+function redirect($slug,$params=null,$raw=null)
 {
 	global $APP_CONFIG;
 	
