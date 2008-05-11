@@ -132,7 +132,7 @@ else
         }
         else
         {
-            $ADMIN_ACTIONS['lock'] = 'Unock Thread'; 
+            $ADMIN_ACTIONS['lock'] = 'Unlock Thread'; 
         }
          
         if($thread->getStickied() == 0)
