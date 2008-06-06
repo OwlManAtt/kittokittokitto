@@ -92,7 +92,7 @@ else
         case 'delete_post':
         {
 
-            if($thread->grabPostsSize() == 1)
+            if($thread->grabPosts(null,true) == 1)
             {
                 $_SESSION['board_notice'] = 'You have deleted the thread.';
 
