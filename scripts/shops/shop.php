@@ -143,23 +143,9 @@ else
                 $User->subtractCurrency($total);
                 
                 // Try and find a stack of this item in the user's inventory.
-                $item = new Item($db);
-                $item = $item->findOneBy(array(
-                    'user_id' => $User->getUserId(),
-                    'item_type_id' => $stock->getItemTypeId(),
-                ));
+                $item = Item::stackFactory($User->getUserId(),$stock->getItemTypeId(),$db);
+                $item->updateQuantity(($item->getQuantity() + $quantity));
 
-                // If the user has none, create a new stack.
-                if($item == null)
-                {
-                    $item = new Item($db);
-                    $item->setUserId($User->getUserId());
-                    $item->setItemTypeId($stock->getItemTypeId());
-                } // end make new stack
-                
-                $item->setQuantity(($item->getQuantity() + $quantity));
-                $item->save();
-                
                 // Remove the stock from the shope.
                 $item_name = $stock->getItemName(); // store this for later.
                 $stock->sell($quantity);

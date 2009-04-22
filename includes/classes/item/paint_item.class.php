@@ -75,15 +75,7 @@ class Paint_Item extends Item
         $pet->setPetSpecieColorId($color->getPetSpecieColorId());
         $pet->save();
 
-        if($this->getQuantity() == 1)
-        {
-            $this->destroy();
-        }
-        else
-        {
-            $this->setQuantity(($this->getQuantity() - 1));
-            $this->save();
-        }
+        $this->updateQuantity(($this->getQuantity() - 1));
 
         return "{$pet->getPetName()} looks snazzy in <strong>{$color->getColorName()}</strong>!";
     } // end paint

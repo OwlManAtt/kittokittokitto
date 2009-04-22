@@ -141,16 +141,8 @@ switch($_REQUEST['state'])
                 case 'destroy':
                 {
                     $word = $item->makeActionText($quantity);
-                    if($quantity == $item->getQuantity())
-                    {
-                        $item->destroy();
-                    } // end destroy stack
-                    else
-                    {
-                        $item->setQuantity(($item->getQuantity() - $quantity));
-                        $item->save();
-                    } // end destroy some
-                    
+                    $item->updateQuantity(($item->getQuantity() - $quantity));
+                                        
                     $_SESSION['item_notice'] = "You have destroyed $word.";
 
                     redirect('items');

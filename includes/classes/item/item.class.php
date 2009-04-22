@@ -60,6 +60,49 @@ class Item extends ItemType
     );
     
     /**
+     * Load a user-owned item stack.
+     *
+     * This method will look for a stack of $item_id owned by $user_id.
+     * If the stack does not exist, an empty (uncreated) object of
+     * the correct type will be returned.
+     * 
+     * @param int $user_id The user ID. 
+     * @param int $item_id The item ID.
+     * @param obkect $db DB connector.
+     * @return object 
+     **/
+    static public function stackFactory($user_id,$item_id,$db)
+    {
+        $basic = new Item($db);
+        $basic = $basic->findOneBy(array(
+            'user_id' => $user_id,
+            'item_type_id' => $item_id,
+        ));
+
+        // This stack exists. Let that crazy factory handle the details.
+        if($basic != null)
+        {
+            return Item::factory($basic->getUserItemId(),$db);
+        }
+
+        // The stack does not exist. Prep a new object and give that back. 
+        $type = new ItemType($db);
+        $type = $type->findOneByItemTypeId($item_id);
+
+        if($type == null)
+        {
+            throw new ArgumentError('Could not find item type that should exist.');
+        }
+    
+        eval('$item = new '.$type->getPhpClass().'($db);');
+        $item->setUserId($user_id);
+        $item->setItemTypeId($item_id);
+        $item->setQuantity(0);
+        
+        return $item;
+    } // end stackFactory
+    
+    /**
      * Return an instance of the correct *_Item class.
      *
      * Different items have their functionality implemented
@@ -89,6 +132,47 @@ class Item extends ItemType
     } // end factory
 
     /**
+     * Updates the stack quantity, destroying the row if <=0.
+     *
+     * This will either DESTROY or UPDATE the row, depending on
+     * whether or not the new quantity requires the user_item
+     * row to be deleted or merely updated.
+     * 
+     * At the end of this function, the object it was called on
+     * will be an effectively 'new' and clean instance of Item,
+     * or it will be the updated stack of one or more items.
+     * 
+     * @param int $quantity The new quantity. 
+     * @return bool 
+     **/
+    public function updateQuantity($quantity)
+    {
+        if($quantity <= 0)
+        {
+            // Save some stuff so we can respawn the object as blank.
+            $user_id = $this->getUserId();
+            $item_id = $this->getItemId();
+            $db = $this->db;
+
+            // Burn.
+            $this->destroy();
+
+            // Respawn.
+            $this->db = $db;
+            $this->setUserId($user_id);
+            $this->setItemTypeId($item_id);
+            $this->setQuantity(0);
+        }
+        else
+        {
+            $this->setQuantity($quantity);
+            $this->save();
+        }
+
+        return true;
+    } // end quantity
+
+    /**
      * Transfer ownership of an item to a different user.
      * 
      * @param User $new_user
@@ -110,23 +194,9 @@ class Item extends ItemType
         {
             $old_username = $old_user->getUserName();
         }
-    
-        $given_item = new Item($this->db);
-        $given_item = $given_item->findOneBy(array(
-            'user_id'  => $new_user->getUserId(),
-            'item_type_id' => $this->getItemTypeId(),
-        ));
-
-        // Spawn a new one...
-        if($given_item == null)
-        {
-            $given_item = new Item($this->db);
-            $given_item->setUserId($new_user->getUserId());
-            $given_item->setItemTypeId($this->getItemTypeId());
-        }
-    
-        $given_item->setQuantity(($given_item->getQuantity() + $quantity));
-        $given_item->save();
+   
+        $given_item = Item::stackFactory($new_user->getUserId(),$this->getItemTypeId(),$this->db);
+        $given_item->updateQuantity(($given_item->getQuantity() + $quantity));
         
         $word = $given_item->getItemName();
         if($quantity > 1)
@@ -135,16 +205,7 @@ class Item extends ItemType
         }
         
         $new_user->notify("{$old_username} has given you <strong>{$quantity} {$word}</strong>.",'items');
-
-        if($quantity == $this->getQuantity())
-        {
-            $this->destroy();
-        }
-        else
-        {
-            $this->setQuantity(($this->getQuantity() - $quantity));
-            $this->save();
-        }
+        $this->updateQuantity(($this->getQuantity() - $quantity));
         
         return true;
     } // end giveItem

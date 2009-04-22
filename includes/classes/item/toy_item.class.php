@@ -58,17 +58,8 @@ class Toy_Item extends Item
         }
 
         $pet->play(($this->getHappinessBonus() * $quantity));
+        $this->updateQuantity(($this->getQuantity() - $quantity));
         
-        if($quantity == $this->getQuantity())
-        {
-            $this->destroy();
-        }
-        else
-        {
-            $this->setQuantity(($this->getQuantity() - $quantity));
-            $this->save();
-        }
-         
         return "{$pet->getPetName()} is happier now.";
     } // end playWith
 

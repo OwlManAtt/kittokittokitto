@@ -60,15 +60,7 @@ class Food_Item extends Item
         $pet->consume(($this->getHungerBonus() * $quantity));
         $text = "You have fed {$pet->getPetName()} {$this->makeActionText($quantity)}.";
         
-        if($quantity == $this->getQuantity())
-        {
-            $this->destroy();
-        }
-        else
-        {
-            $this->setQuantity(($this->getQuantity() - $quantity));
-            $this->save();
-        }
+        $this->updateQuantity(($this->getQuantity() - $quantity));
          
         return $text;
     } // end feedTo
