@@ -482,13 +482,19 @@ Spry.Widget.ValidationTextarea.prototype.reset = function() {
 };
 
 Spry.Widget.ValidationTextarea.prototype.validate = function(){
+
+    if(tinyMCE != undefined)
+    {
+        tinyMCE.triggerSave(); 
+    }
+
 	if (this.input.disabled == true || this.input.readOnly == true){
-			return true;	
+        return true;	
 	}
 
-  if (this.validateOn & Spry.Widget.ValidationTextarea.ONSUBMIT) {
-    this.removeHint();
-  }
+    if (this.validateOn & Spry.Widget.ValidationTextarea.ONSUBMIT) {
+      this.removeHint();
+    }
   
 	var val = this.input.value;
 	this.validateMinRequired(val);
