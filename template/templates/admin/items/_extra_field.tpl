@@ -17,4 +17,6 @@
     var field = new Spry.Widget.ValidationSelect({/literal}"{$field.name}_td"{literal},{ validateOn:['change','blur'], invalidValue: '0'});
 </script>
 {/literal}
+{elseif $field.type == 'item'}
+{include file='_widgets/item_search.tpl' name="extra[`$field.name`]" value="`$value`" id="`$field.name`"}
 {/if}

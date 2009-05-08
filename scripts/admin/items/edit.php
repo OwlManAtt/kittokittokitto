@@ -52,6 +52,7 @@ else
             if($item != null)
             {
                 $ITEM = array(
+                    'show_edit_materials' => $item->hasMaterials(),
                     'id' => $item->getItemTypeId(),
                     'type' => $item->getClassDescr(),
                     'name' => $item->getItemName(),
@@ -63,8 +64,25 @@ else
             $fields = $item->listAttributes();
             foreach($fields as $field)
             {
+                // This prepopulates the item name in the search field.
+                $item_tmp = null;
+                if($field['type'] == 'item') 
+                {
+                    $item_tmp = new ItemType($db);
+                    $item_tmp = $item_tmp->findOneByItemTypeId($item->get($field['name']));
+                    
+                    $value = array($item->get($field['name']),); 
+                    if($item_tmp != null)
+                    {
+                        $value[] = $item_tmp->getItemName(); 
+                    }
+                    
+                    $ITEM[$field['name']] = $value;
+                    continue;
+                } // end item specific
+
                 $ITEM[$field['name']] = $item->get($field['name']);
-            }
+            } // end extra field loop
             
             $renderer->assign('extra_fields',$fields);
             $renderer->assign('item',$ITEM);
@@ -132,7 +150,6 @@ else
                 $item->setItemName($ITEM['name']);
                 $item->setItemImage($ITEM['image']);
                 $item->setItemDescr($ITEM['description']);
-                
                 // Do the extra fields.
                 foreach($EXTRA as $column => $value)
                 {

@@ -2,7 +2,7 @@
     <table class='inputTable'>
         <tr>
             <td class='inputTableRow inputTableSubhead'>Type</td>
-            <td class='inputTableRow'>{$item.type}</td>
+            <td class='inputTableRow'>{$item.type}{if $item.show_edit_materials == 1} {kkkurl slug='admin-recipe' link_text='(Manage Materials)' args="?item[id]=`$item.id`"}{/if}</td>
         </tr>
         <tr>
             <td class='inputTableRowAlt inputTableSubhead'>

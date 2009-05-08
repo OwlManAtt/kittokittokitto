@@ -71,6 +71,9 @@ require('item/item.class.php');
 require('item/food_item.class.php');
 require('item/toy_item.class.php');
 require('item/paint_item.class.php');
+require('item/item_recipe_type.class.php');
+require('item/recipe_item.class.php');
+require('item/recipe_material.class.php');
 
 /**
  * Shop-related classes.
@@ -89,7 +92,7 @@ require('board/board_post.class.php');
 require('news.class.php');
 
 /**
- * The ghettocron subsystem.
+ * The cron subsystem.
  **/
 require('cronjob.class.php');
 
