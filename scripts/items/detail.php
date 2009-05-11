@@ -62,18 +62,23 @@ switch($_REQUEST['state'])
         } 
         else
         {
+            $ACTIONS = array(
+                 '' => 'Select one...',
+                'use' => 'Use',
+            );
+            if($item->getTransferableItem() == 'Y')
+            {
+                $ACTIONS['give'] = 'Give';
+            }
+            $ACTIONS['destroy'] = 'Destroy';
+
             $DISPLAY = array(
                 'id' => $item->getUserItemId(),
                 'name' => $item->getInflectedItemName(),
                 'quantity' => $item->getQuantity(),
                 'description' => $item->getItemDescr(),
                 'image' => $item->getImageUrl(),
-                'actions' => array(
-                    '' => 'Select one...',
-                    'use' => 'Use',
-                    'give' => 'Give',
-                    'destroy' => 'Destroy',
-                ),
+                'actions' => $ACTIONS,
             );
 
             $renderer->assign('item',$DISPLAY);
@@ -125,15 +130,27 @@ switch($_REQUEST['state'])
             {
                 case 'give':
                 {
-                    $QUANTITY = array(
-                        'max' => $item->getQuantity(),
-                        'default' => $quantity, 
-                    );
-                    
-                    $renderer->assign('item_name',$item->getInflectedItemName());
-                    $renderer->assign('quantity',$QUANTITY);
-                    $renderer->assign('item_id',$item->getUserItemId());
-                    $renderer->display('items/give_form.tpl');
+                    if($item->getTransferableItem() == 'N')
+                    {
+                        $ERRORS[] = 'You cannot give this item away.';
+                    }
+
+                    if(sizeof($ERRORS) > 0)
+                    {
+                        draw_errors($ERRORS);
+                    }
+                    else
+                    {
+                        $QUANTITY = array(
+                            'max' => $item->getQuantity(),
+                            'default' => $quantity, 
+                        );
+                        
+                        $renderer->assign('item_name',$item->getInflectedItemName());
+                        $renderer->assign('quantity',$QUANTITY);
+                        $renderer->assign('item_id',$item->getUserItemId());
+                        $renderer->display('items/give_form.tpl');
+                    } // end no error
                 
                     break;
                 } // end give
@@ -320,6 +337,11 @@ switch($_REQUEST['state'])
                 $ERRORS[] = 'This is not your item.';
             }
 
+            if($item->getTransferableItem() == 'N')
+            {
+                $ERRORS[] = 'You cannot give this item away.';
+            }
+
             if($quantity > $item->getQuantity())
             {
                 $ERRORS[] = "You do not have $quantity of this item.";
@@ -345,6 +367,22 @@ switch($_REQUEST['state'])
         {
             $ERRORS[] = 'You cannot give an item to yourself.';
         }
+
+        if($item != null && $other_user != null)
+        {
+            if($item->getUniqueItem() == 'Y')
+            {
+                if($other_user->hasItem($item->getItemTypeId()) == true)
+                {
+                    $ERRORS[] = 'That user already has this unique item!';
+                }
+                elseif($quantity > 1)
+                {
+                    // This case should never come up...
+                    $ERRORS[] = 'This is a unique item; you cannot give the user two!';
+                }
+            }
+        } // end item and user exist
 
         if(sizeof($ERRORS) > 0)
         {

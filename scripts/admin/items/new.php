@@ -75,6 +75,8 @@ switch($_REQUEST['state'])
         {
             $item = new ItemType($db);
             $item->setItemClassId($class->getItemClassId());
+            $item->setUniqueItem('N');
+            $item->setTransferableItem('Y');
             $item->save();
             
             redirect(null,null,"admin-items-edit/?item[id]={$item->getItemTypeId()}");

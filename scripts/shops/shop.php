@@ -121,16 +121,28 @@ else
                     $stock->destroy();
                     $ERRORS[] = 'That item is not in stock.';
                 } // end odd case
-            } // end stock entry exists
 
-            if($stock->getQuantity() < $quantity)
-            {
-                $ERRORS[] = "The shop does not have that many <strong>{$stock->getItemName()}</strong> in stock.";
-            }
-            elseif(($stock->getPrice() * $quantity) > $User->getCurrency())
-            {
-                $ERRORS[] = 'You cannot afford that purchase.';
-            }
+                if($stock->getQuantity() < $quantity)
+                {
+                    $ERRORS[] = "The shop does not have that many <strong>{$stock->getItemName()}</strong> in stock.";
+                }
+                elseif(($stock->getPrice() * $quantity) > $User->getCurrency())
+                {
+                    $ERRORS[] = 'You cannot afford that purchase.';
+                }
+                
+                if($stock->getUniqueItem() == 'Y')
+                {
+                    if($User->hasItem($stock->getItemTypeId()) == true)
+                    {
+                        $ERRORS[] = 'This is a unique item that you already have.';
+                    }
+                    elseif($quantity > 1)
+                    {
+                        $ERRORS[] = 'You can only have one of this item.';
+                    }
+                } // end unique item checks
+            } // end stock entry exists
 
             if(sizeof($ERRORS) > 0)
             {

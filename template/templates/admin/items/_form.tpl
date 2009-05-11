@@ -31,6 +31,22 @@
                 <span class='validate textfieldRequiredMsg'>You must enter an image.</span>
             </td>
         </tr>
+        <tr>
+            <td class='inputTableRow inputTableSubhead'>
+                <label for='item_unique'>Unique?</label>
+            </td>
+            <td class='inputTableRow' id='item_unique_td'>
+                {html_options name='item_unique' id='item_unique' selected=$item.unique options=$yes_no}
+            </td>
+        </tr>
+        <tr>
+            <td class='inputTableRow inputTableSubhead'>
+                <label for='item_transferable'>Transferable?</label>
+            </td>
+            <td class='inputTableRow' id='item_transferable_td'>
+                {html_options name='item_transferable' id='item_transferable' selected=$item.transferable options=$yes_no}
+            </td>
+        </tr>
         {section name=index loop=$extra_fields}
         {cycle values='inputTableRow,inputTableRowAlt' assign=class}
         {assign var='field' value=$extra_fields[index]}
@@ -56,5 +72,7 @@
     var name = new Spry.Widget.ValidationTextField("item_name_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
     var descr = new Spry.Widget.ValidationTextarea('item_description_td');
     var image = new Spry.Widget.ValidationTextField("item_image_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
+    var unique = new Spry.Widget.ValidationSelect('item_unique_td',{validateOn:['blur','change'], invalidValue: ''});
+    var transferable = new Spry.Widget.ValidationSelect('item_transferable_td',{validateOn:['blur','change'], invalidValue: ''});
 </script>
 {/literal}

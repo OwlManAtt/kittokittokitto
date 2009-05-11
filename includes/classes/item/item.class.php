@@ -147,6 +147,25 @@ class Item extends ItemType
      **/
     public function updateQuantity($quantity)
     {
+        // This may not be a loaded user_item row. If it's still
+        // in the process of being created, it won't have the item_type
+        // data loaded.
+        $item = new ItemType($this->db);
+        $item = $item->findOneByItemTypeId($this->getItemTypeId());
+        if($item == null)
+        {
+            throw new ArgumentError('Invalid item type ID set when calling #updateQuantity().');
+        }
+
+        if($item->getUniqueItem() == 'Y')
+        {
+            $total = ($this->getQuantity() + $quantity);
+            if($total > 1)
+            {
+                throw new ArgumentError('User cannot have more than one of a unique item.');
+            }
+        } // end unique checks
+
         if($quantity <= 0)
         {
             // Save some stuff so we can respawn the object as blank.

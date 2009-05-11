@@ -596,6 +596,31 @@ class User extends ActiveTable
 
         return true;
     } // end updateGroups
+
+    /**
+     * Determines whether or not the user has an item.
+     *
+     * This is used mainly to tell if they should be able
+     * to receive a unique item. 
+     * 
+     * @param int $item_type_id 
+     * @return bool 
+     **/
+    public function hasItem($item_type_id)
+    {
+        $item = new Item($this->db);
+        $item = $item->findOneBy(array(
+            'user_id' => $this->getUserId(),
+            'item_type_id' => $item_type_id,
+        ));
+        
+        if($item == null)
+        {
+            return false;
+        }
+
+        return true;
+    } // end hasItem
 } // end User 
 
 ?>
