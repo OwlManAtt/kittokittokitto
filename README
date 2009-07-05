@@ -45,9 +45,10 @@ Kitto's goals are simple:
       is willing. 
 
 == Installation ==
-See the KittoKittoWiki for installation instructions.
+The Kitto wiki is gone, but you can find install directions in ModularGaming's
+wiki. This old revision of their install document is what you want:
 
-<http://kittokittokitto.yasashiisyndicate.org/wiki/Main_Page>
+<http://modulargaming.com/projects/modulargaming/wiki/MgInstall?version=13>
 
 == Post-Installation ==
 My tips to you at this point:
@@ -63,8 +64,8 @@ My tips to you at this point:
       Kitto in (literally) five days. 
 
       There's some documentation for the library at 
-      <http://aphp.yasashiisyndicate.org>. It's not complete, but it's not 
-      exactly sparse, either. 
+      <http://elsa.godless-internets.org/aphp/index.php/ActiveTable>. It's not complete, 
+      but it's not exactly sparse, either. 
       
       Writing and debugging SQL is a bitch. It's error-prone. It's a timesink. 
       Why not have most of your SQL written for you by ActiveTable? ;-)
