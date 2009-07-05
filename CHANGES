@@ -1,3 +1,12 @@
+== 1.5.0 (2009-07-05) ==
+* Bugfix in moderation panel.
+* Fixed a typo in the moderation panel.
+* Second parameter of the redirect() function was made optional, as it 
+  has been intended to be.
+
+Note that all of these fixes have been available in Git for a long time,
+but I am tagging them as 1.5.0 now.
+
 == 1.4.0 (2008-04-20) ==
 * Updated ActivePHP to 2.4.
     * PostgreSQL support now included.
