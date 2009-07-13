@@ -1,3 +1,5 @@
+<p class='page-subnav'>Inventory | {kkkurl link_text='Crafting' slug='crafting'}</p>
+
 {if $notice != ''}<div id='item-notice' class='{$fat} notice-box'>{$notice}</div>{/if}
 {section name=item_index loop=$inventory}
 {assign var='item' value=$inventory[item_index]}

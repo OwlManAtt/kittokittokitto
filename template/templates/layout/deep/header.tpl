@@ -15,6 +15,9 @@
         
         <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/fat.js'></script>
         <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/yasashii.js'></script>
+        <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/jquery.min.js'></script>
+        <script type='text/javascript' src='{$display_settings.public_dir}/resources/script/autocomplete/jquery.autocomplete.min.js'></script>
+        <link href="{$display_settings.public_dir}/resources/script/autocomplete/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
         
         {foreach from=$spry.js item=js_file}
         <script type="text/javascript" src="{$display_settings.public_dir}/resources/script/spry/widgets/{$js_file}"></script>

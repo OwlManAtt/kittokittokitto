@@ -366,12 +366,20 @@ class User extends ActiveTable
             ($start !== null && $end !== null) == false
         )
         {
-            throw ArgumentError('Must specify either no arguments or both arguments.');
+            throw new ArgumentError('Must specify either no arguments or both arguments.');
         } // end problem w/ args.
         
-        $PROPER_INVENTORY = array();
-        $inventory = $this->grab('inventory','ORDER BY user_item_id',false,$start,$end);
+        $inventory = new Item($this->db);
+        $inventory = $inventory->findBy(array(
+            'user_id' => $this->getUserId(),
+            array(
+                'table' => 'item_class',
+                'column' => 'normal_inventory_display',
+                'value' => 'Y',
+            ),
+        ),'ORDER BY item_type.item_name',false,$start,$end); 
         
+        $PROPER_INVENTORY = array();
         foreach($inventory as $item)
         {
             $PROPER_INVENTORY[] = Item::factory($item->getUserItemId(),$this->db);
@@ -383,10 +391,54 @@ class User extends ActiveTable
     public function grabInventorySize()
     {
         $result = new Item($this->db);
-        $result = $result->findByUserId($this->getUserId(),null,true);
+        $result = $result->findBy(array(
+            'user_id' => $this->getUserId(),
+            array(
+                'table' => 'item_class',
+                'column' => 'normal_inventory_display',
+                'value' => 'Y',
+            ),
+        ),null,true);
         
         return $result;
     } // end grabInventorySize
+    
+    public function grabRecipes($start=null,$end=null)
+    {
+        if(($start === null && $end === null) == false && 
+            ($start !== null && $end !== null) == false
+        )
+        {
+            throw new ArgumentError('Must specify either no arguments or both arguments.');
+        } // end problem w/ args.
+        
+        $inventory = new Recipe_Item($this->db);
+        $inventory = $inventory->findBy(array(
+            'user_id' => $this->getUserId(),
+            array(
+                'table' => 'item_class',
+                'column' => 'item_class_id',
+                'value' => 4,
+            ),
+        ),'ORDER BY item_type.item_name',false,$start,$end); 
+        
+        return $inventory;
+    } // end grabRecipies
+
+    public function grabRecipeSize()
+    {
+        $result = new Recipe_Item($this->db);
+        $result = $result->findBy(array(
+            'user_id' => $this->getUserId(),
+            array(
+                'table' => 'item_class',
+                'column' => 'item_class_id',
+                'value' => 4,
+            ),
+        ),null,true);
+        
+        return $result;
+    } // end grabRecipieSize
 
     /**
      * Add some money to the user. 

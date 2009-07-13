@@ -374,3 +374,17 @@ h3 {
     display: inline;
     padding-left: 1em;
 }
+
+.page-subnav {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.recipe-desc {
+    vertical-align: top;
+}
+.recipe-name {
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}

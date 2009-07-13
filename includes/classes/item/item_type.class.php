@@ -52,6 +52,16 @@ class ItemType extends ActiveTable
         ),
     );
 
+    public function hasMaterials()
+    {
+        if($this->getItemClassId() == 4)
+        {
+            return true;
+        }
+
+        return false;
+    } // end hasMaterials
+
     /**
      * Return the full URL to the item's image.
      * 

@@ -2,7 +2,7 @@
 # SetEnv RELEASE_MODE DEV
 
 RewriteEngine On
-RewriteBase /kittokittokitto
+RewriteBase /kitto
 
 # These are the real folders.
 RewriteRule ^resources/(.*)$ resources/$1 [L]
@@ -18,6 +18,7 @@ RewriteRule ^notice/([0-9]+) index.php?page_slug=notice&state=jump&notification_
 # Pagination for /items/ - /items is still handled by the catch-all, etc.
 RewriteRule ^items/([0-9]+) index.php?page_slug=items&page=$1 [NC,L]
 RewriteRule ^news/([0-9]+) index.php?page_slug=news&page=$1 [NC,L]
+RewriteRule ^crafting/([0-9]+) index.php?page_slug=crafting&page=$1 [NC,L]
 
 # Messages - first pagination. Then we have two URLs mapped to our write-new
 # slug - /write-new-message/ and /write-message-reply/. -new accepts a user ID,
@@ -36,6 +37,9 @@ RewriteRule ^edit-thread/([0-9]+)(/([0-9]+))? index.php?page_slug=edit-thread&th
 
 # Search page rules.
 RewriteRule ^search/([a-z0-9]+)(((/([^/]+))(/(exact|contains)?)(/([0-9])+)?))? index.php?page_slug=search&state=search&search=$1&term=$5&page=$9&precision=$7 [NC,L]
+
+# Craft things.
+RewriteRule ^craft/([0-9]+) index.php?page_slug=craft&id=$1 [NC,L]
 
 # Gotta catch 'em all! Don't put any rules below this one.
 RewriteRule ^([A-Z0-9-]+)(/(.*))?$ index.php?page_slug=$1 [QSA,NC,L]

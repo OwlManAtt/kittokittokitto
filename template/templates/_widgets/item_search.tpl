@@ -5,7 +5,7 @@
 <script type='text/javascript'>
 <!--
     $(document).ready(function(){
-        var data = '/item-search-ajax';
+        var data = '{/literal}{$display_settings.public_dir}{literal}/item-search-ajax';
         $("#{/literal}{$id}{literal}").autocomplete(data,{
             max: 10,
             mustMatch: true,
