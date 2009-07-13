@@ -69,7 +69,7 @@ switch($_SERVER['RELEASE_MODE'])
              * @var array
              **/
 			'db_dsn' => array(
-				'phptype' => 'pgsql', // Oracle = oci, Postgres = pgsql.
+				'phptype' => 'mysql', // MySQL = mysql, Oracle = oci, Postgres = pgsql.
 				'username' => 'kitto',
 				'password' => 'k1tt0',
 				'hostspec' => 'localhost',
@@ -86,10 +86,7 @@ switch($_SERVER['RELEASE_MODE'])
              * The absolute path (on the filesystem) to your app. On UNIX,
              * this should look like /something/something/something.
              *
-             * If you don't know what this should be, put a file calling
-             * phpinfo() into the folder you want KKK to live in and visit
-             * it in your browser. Look for the 'SCRIPT_FILENAME' field.
-             * The base path is everything *except* for the filename.
+             * Consult your system_check.php file for this path. 
              **/
 			'base_path' => '/var/www/kitto',
             
