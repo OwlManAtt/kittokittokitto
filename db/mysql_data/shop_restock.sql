@@ -1,8 +1,8 @@
--- MySQL dump 10.10
+-- MySQL dump 10.11
 --
--- Host: localhost    Database: kkk
+-- Host: localhost    Database: kitto
 -- ------------------------------------------------------
--- Server version	5.0.22-Debian_0ubuntu6.06.3-log
+-- Server version	5.0.51a-3ubuntu5.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -19,12 +19,11 @@
 -- Dumping data for table `shop_restock`
 --
 
-
-/*!40000 ALTER TABLE `shop_restock` DISABLE KEYS */;
 LOCK TABLES `shop_restock` WRITE;
-INSERT INTO `shop_restock` (`shop_restock_id`, `shop_id`, `item_type_id`, `restock_frequency_seconds`, `unixtime_next_restock`, `min_price`, `max_price`, `min_quantity`, `max_quantity`, `store_quantity_cap`) VALUES (1,1,1,3600,1197247012,1,15,5,10,30),(2,1,6,1200,1197244613,5,15,5,10,15),(3,1,8,2600,1197246121,50,100,2,5,10),(4,1,7,2600,1197246121,50,100,2,5,10),(5,1,5,2800,1197246636,1000,5000,1,2,2);
-UNLOCK TABLES;
+/*!40000 ALTER TABLE `shop_restock` DISABLE KEYS */;
+INSERT INTO `shop_restock` (`shop_restock_id`, `shop_id`, `item_type_id`, `restock_frequency_seconds`, `unixtime_next_restock`, `min_price`, `max_price`, `min_quantity`, `max_quantity`, `store_quantity_cap`) VALUES (1,1,1,3600,1247524172,1,15,5,10,30),(2,1,6,1200,1247521772,5,15,5,10,15),(3,1,8,2600,1247523173,50,100,2,5,10),(4,1,7,2600,1247523173,50,100,2,5,10),(5,1,5,2800,1247523373,1000,5000,1,2,2),(6,1,9,3600,1247524173,100,200,1,3,5);
 /*!40000 ALTER TABLE `shop_restock` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -35,3 +34,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+-- Dump completed on 2009-07-13 21:59:01

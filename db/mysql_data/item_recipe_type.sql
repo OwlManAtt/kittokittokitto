@@ -16,13 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `pet_specie_pet_specie_color`
+-- Dumping data for table `item_recipe_type`
 --
 
-LOCK TABLES `pet_specie_pet_specie_color` WRITE;
-/*!40000 ALTER TABLE `pet_specie_pet_specie_color` DISABLE KEYS */;
-INSERT INTO `pet_specie_pet_specie_color` (`pet_specie_pet_specie_color_id`, `pet_specie_id`, `pet_specie_color_id`) VALUES (9,1,1),(2,1,2),(3,1,3),(4,2,1),(5,2,2);
-/*!40000 ALTER TABLE `pet_specie_pet_specie_color` ENABLE KEYS */;
+LOCK TABLES `item_recipe_type` WRITE;
+/*!40000 ALTER TABLE `item_recipe_type` DISABLE KEYS */;
+INSERT INTO `item_recipe_type` (`item_recipe_type_id`, `recipe_type_description`) VALUES (1,'Recipe'),(2,'Blueprint');
+/*!40000 ALTER TABLE `item_recipe_type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

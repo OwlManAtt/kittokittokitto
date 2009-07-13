@@ -1,39 +1,38 @@
 -- phpMyAdmin SQL Dump
--- version 2.6.3-pl1
+-- version 2.11.4
 -- http://www.phpmyadmin.net
--- 
+--
 -- Host: localhost
--- Generation Time: Dec 09, 2007 at 06:34 PM
--- Server version: 5.0.22
--- PHP Version: 5.1.2
--- 
--- Database: `kkk`
--- 
+-- Generation Time: Jul 13, 2009 at 06:02 PM
+-- Server version: 5.0.51
+-- PHP Version: 5.2.4-2ubuntu5.1
+
+--
+-- Database: `kitto`
+--
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `avatar`
--- 
+--
 
-DROP TABLE IF EXISTS `avatar`;
-CREATE TABLE `avatar` (
+CREATE TABLE IF NOT EXISTS `avatar` (
   `avatar_id` int(11) NOT NULL auto_increment,
   `avatar_name` varchar(50) NOT NULL,
   `avatar_image` varchar(50) NOT NULL,
   `active` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`avatar_id`),
   UNIQUE KEY `avatar_image` (`avatar_image`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `board`
--- 
+--
 
-DROP TABLE IF EXISTS `board`;
-CREATE TABLE `board` (
+CREATE TABLE IF NOT EXISTS `board` (
   `board_id` smallint(3) NOT NULL auto_increment,
   `board_category_id` int(11) NOT NULL,
   `board_name` varchar(100) NOT NULL,
@@ -45,32 +44,30 @@ CREATE TABLE `board` (
   PRIMARY KEY  (`board_id`),
   KEY `required_permission_id` (`required_permission_id`),
   KEY `board_category_id` (`board_category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `board_category`
--- 
+--
 
-DROP TABLE IF EXISTS `board_category`;
-CREATE TABLE `board_category` (
+CREATE TABLE IF NOT EXISTS `board_category` (
   `board_category_id` int(11) NOT NULL auto_increment,
   `category_name` varchar(50) NOT NULL,
   `order_by` tinyint(4) NOT NULL default '0',
   `required_permission_id` int(11) NOT NULL,
   PRIMARY KEY  (`board_category_id`),
   KEY `required_permission_id` (`required_permission_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `board_thread`
--- 
+--
 
-DROP TABLE IF EXISTS `board_thread`;
-CREATE TABLE `board_thread` (
+CREATE TABLE IF NOT EXISTS `board_thread` (
   `board_thread_id` int(10) unsigned NOT NULL auto_increment,
   `board_id` smallint(3) NOT NULL,
   `thread_name` varchar(60) NOT NULL,
@@ -82,16 +79,15 @@ CREATE TABLE `board_thread` (
   PRIMARY KEY  (`board_thread_id`),
   KEY `board_id` (`board_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=267 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `board_thread_post`
--- 
+--
 
-DROP TABLE IF EXISTS `board_thread_post`;
-CREATE TABLE `board_thread_post` (
+CREATE TABLE IF NOT EXISTS `board_thread_post` (
   `board_thread_post_id` int(10) unsigned NOT NULL auto_increment,
   `board_thread_id` int(10) unsigned NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -100,63 +96,87 @@ CREATE TABLE `board_thread_post` (
   PRIMARY KEY  (`board_thread_post_id`),
   KEY `board_thread_id` (`board_thread_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=324 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `cron_tab`
--- 
+--
 
-DROP TABLE IF EXISTS `cron_tab`;
-CREATE TABLE `cron_tab` (
+CREATE TABLE IF NOT EXISTS `cron_tab` (
   `cron_tab_id` int(11) NOT NULL auto_increment,
   `cron_class` varchar(50) NOT NULL,
   `cron_frequency_seconds` int(10) unsigned NOT NULL,
   `unixtime_next_run` bigint(11) unsigned NOT NULL,
   `enabled` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`cron_tab_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `datetime_format`
--- 
+--
 
-DROP TABLE IF EXISTS `datetime_format`;
-CREATE TABLE `datetime_format` (
+CREATE TABLE IF NOT EXISTS `datetime_format` (
   `datetime_format_id` int(11) NOT NULL auto_increment,
   `datetime_format_name` varchar(30) NOT NULL,
   `datetime_format` text NOT NULL,
   PRIMARY KEY  (`datetime_format_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `item_class`
--- 
+--
 
-DROP TABLE IF EXISTS `item_class`;
-CREATE TABLE `item_class` (
+CREATE TABLE IF NOT EXISTS `item_class` (
   `item_class_id` int(11) NOT NULL auto_increment,
   `php_class` varchar(30) NOT NULL,
   `class_descr` varchar(30) NOT NULL,
   `relative_image_dir` varchar(50) NOT NULL,
   `verb` varchar(30) NOT NULL,
   `one_per_use` enum('N','Y') NOT NULL default 'N',
+  `normal_inventory_display` enum('Y','N') NOT NULL,
   PRIMARY KEY  (`item_class_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
--- Table structure for table `item_type`
--- 
+--
+-- Table structure for table `item_recipe_material`
+--
 
-DROP TABLE IF EXISTS `item_type`;
-CREATE TABLE `item_type` (
+CREATE TABLE IF NOT EXISTS `item_recipe_material` (
+  `item_recipe_material_id` int(11) NOT NULL auto_increment,
+  `recipe_item_type_id` int(11) NOT NULL,
+  `material_item_type_id` int(11) NOT NULL,
+  `material_quantity` int(11) NOT NULL default '1',
+  PRIMARY KEY  (`item_recipe_material_id`),
+  UNIQUE KEY `recipe_item_type_id` (`recipe_item_type_id`,`material_item_type_id`)
+) TYPE=InnoDB;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item_recipe_type`
+--
+
+CREATE TABLE IF NOT EXISTS `item_recipe_type` (
+  `item_recipe_type_id` int(11) NOT NULL auto_increment,
+  `recipe_type_description` varchar(20) NOT NULL,
+  PRIMARY KEY  (`item_recipe_type_id`)
+) TYPE=InnoDB;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item_type`
+--
+
+CREATE TABLE IF NOT EXISTS `item_type` (
   `item_type_id` int(11) NOT NULL auto_increment,
   `item_name` varchar(50) NOT NULL,
   `item_descr` text NOT NULL,
@@ -165,23 +185,30 @@ CREATE TABLE `item_type` (
   `hunger_bonus` tinyint(3) unsigned NOT NULL,
   `pet_specie_color_id` int(11) NOT NULL,
   `item_image` varchar(200) NOT NULL,
+  `item_recipe_type_id` int(11) NOT NULL,
+  `recipe_created_item_type_id` int(11) NOT NULL,
+  `recipe_batch_quantity` int(11) NOT NULL,
+  `unique_item` enum('N','Y') NOT NULL,
+  `transferable_item` enum('Y','N') NOT NULL,
   PRIMARY KEY  (`item_type_id`),
   KEY `item_class_id` (`item_class_id`),
-  KEY `pet_specie_color_id` (`pet_specie_color_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 ;
+  KEY `pet_specie_color_id` (`pet_specie_color_id`),
+  KEY `item_recipe_type_id` (`item_recipe_type_id`,`recipe_created_item_type_id`),
+  KEY `item_name` (`item_name`)
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `jump_page`
--- 
+--
 
-DROP TABLE IF EXISTS `jump_page`;
-CREATE TABLE `jump_page` (
+CREATE TABLE IF NOT EXISTS `jump_page` (
   `jump_page_id` int(10) unsigned NOT NULL auto_increment,
   `page_title` varchar(50) NOT NULL default '',
   `page_html_title` varchar(255) NOT NULL default '',
   `layout_type` enum('basic','deep') NOT NULL default 'deep',
+  `show_layout` enum('Y','N') NOT NULL default 'Y',
   `page_slug` varchar(25) NOT NULL default '',
   `access_level` enum('restricted','user','public') NOT NULL default 'user',
   `restricted_permission_api_name` varchar(35) NOT NULL,
@@ -190,16 +217,15 @@ CREATE TABLE `jump_page` (
   `active` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`jump_page_id`),
   UNIQUE KEY `page_slug` (`page_slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=72 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `pet_specie`
--- 
+--
 
-DROP TABLE IF EXISTS `pet_specie`;
-CREATE TABLE `pet_specie` (
+CREATE TABLE IF NOT EXISTS `pet_specie` (
   `pet_specie_id` int(11) NOT NULL auto_increment,
   `specie_name` varchar(50) NOT NULL,
   `specie_descr` text NOT NULL,
@@ -208,61 +234,57 @@ CREATE TABLE `pet_specie` (
   `max_happiness` tinyint(3) unsigned NOT NULL,
   `available` enum('Y','N') NOT NULL default 'Y',
   PRIMARY KEY  (`pet_specie_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `pet_specie_color`
--- 
+--
 
-DROP TABLE IF EXISTS `pet_specie_color`;
-CREATE TABLE `pet_specie_color` (
+CREATE TABLE IF NOT EXISTS `pet_specie_color` (
   `pet_specie_color_id` int(11) NOT NULL auto_increment,
   `color_name` varchar(30) NOT NULL,
   `color_img` varchar(200) NOT NULL,
   `base_color` enum('N','Y') NOT NULL default 'N',
   PRIMARY KEY  (`pet_specie_color_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `pet_specie_pet_specie_color`
--- 
+--
 
-DROP TABLE IF EXISTS `pet_specie_pet_specie_color`;
-CREATE TABLE `pet_specie_pet_specie_color` (
+CREATE TABLE IF NOT EXISTS `pet_specie_pet_specie_color` (
   `pet_specie_pet_specie_color_id` int(11) NOT NULL auto_increment,
   `pet_specie_id` int(11) NOT NULL,
   `pet_specie_color_id` int(11) NOT NULL,
   PRIMARY KEY  (`pet_specie_pet_specie_color_id`),
   UNIQUE KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
-) ENGINE=InnoDB COMMENT='Links a color to a specie. Without entry, specie cannot beco' AUTO_INCREMENT=10 ;
+) TYPE=InnoDB  COMMENT='Links a color to a specie. Without entry, specie cannot beco';
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `shop`
--- 
+--
 
-DROP TABLE IF EXISTS `shop`;
-CREATE TABLE `shop` (
+CREATE TABLE IF NOT EXISTS `shop` (
   `shop_id` int(11) NOT NULL auto_increment,
   `shop_name` varchar(30) NOT NULL,
   `shop_image` varchar(200) NOT NULL,
   `welcome_text` text NOT NULL,
   PRIMARY KEY  (`shop_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `shop_inventory`
--- 
+--
 
-DROP TABLE IF EXISTS `shop_inventory`;
-CREATE TABLE `shop_inventory` (
+CREATE TABLE IF NOT EXISTS `shop_inventory` (
   `shop_inventory_id` int(11) NOT NULL auto_increment,
   `item_type_id` int(11) NOT NULL,
   `shop_id` int(11) NOT NULL,
@@ -271,16 +293,15 @@ CREATE TABLE `shop_inventory` (
   PRIMARY KEY  (`shop_inventory_id`),
   KEY `item_type_id` (`item_type_id`),
   KEY `shop_id` (`shop_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `shop_restock`
--- 
+--
 
-DROP TABLE IF EXISTS `shop_restock`;
-CREATE TABLE `shop_restock` (
+CREATE TABLE IF NOT EXISTS `shop_restock` (
   `shop_restock_id` int(11) NOT NULL auto_increment,
   `shop_id` int(11) NOT NULL,
   `item_type_id` int(11) NOT NULL,
@@ -293,78 +314,73 @@ CREATE TABLE `shop_restock` (
   `store_quantity_cap` smallint(3) unsigned NOT NULL,
   PRIMARY KEY  (`shop_restock_id`),
   KEY `shop_id` (`shop_id`,`item_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `staff_group`
--- 
+--
 
-DROP TABLE IF EXISTS `staff_group`;
-CREATE TABLE `staff_group` (
+CREATE TABLE IF NOT EXISTS `staff_group` (
   `staff_group_id` int(11) NOT NULL auto_increment,
   `group_name` varchar(50) NOT NULL,
   `group_descr` text NOT NULL,
   `show_staff_group` enum('Y','N') NOT NULL default 'Y',
   `order_by` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`staff_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `staff_group_staff_permission`
--- 
+--
 
-DROP TABLE IF EXISTS `staff_group_staff_permission`;
-CREATE TABLE `staff_group_staff_permission` (
+CREATE TABLE IF NOT EXISTS `staff_group_staff_permission` (
   `staff_group_staff_permission` int(11) NOT NULL auto_increment,
   `staff_group_id` int(11) NOT NULL,
   `staff_permission_id` int(11) NOT NULL,
   PRIMARY KEY  (`staff_group_staff_permission`),
   UNIQUE KEY `staff_group_id` (`staff_group_id`,`staff_permission_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `staff_permission`
--- 
+--
 
-DROP TABLE IF EXISTS `staff_permission`;
-CREATE TABLE `staff_permission` (
+CREATE TABLE IF NOT EXISTS `staff_permission` (
   `staff_permission_id` int(11) NOT NULL auto_increment,
   `api_name` varchar(50) NOT NULL,
   `permission_name` varchar(50) NOT NULL,
   PRIMARY KEY  (`staff_permission_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 ;
+) TYPE=InnoDB;
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `timezone`
--- 
+--
 
-DROP TABLE IF EXISTS `timezone`;
-CREATE TABLE `timezone` (
+CREATE TABLE IF NOT EXISTS `timezone` (
   `timezone_id` int(11) NOT NULL auto_increment,
   `timezone_short_name` varchar(4) NOT NULL,
-  `timezone_long_name` varchar(32) character set utf8 NOT NULL,
+  `timezone_long_name` varchar(32) NOT NULL,
   `timezone_continent` varchar(13) NOT NULL,
   `timezone_offset` float(3,1) NOT NULL,
   `order_by` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`timezone_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `user`
--- 
+--
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
+CREATE TABLE IF NOT EXISTS `user` (
   `user_id` int(11) NOT NULL auto_increment,
   `currency` bigint(20) unsigned NOT NULL,
   `user_name` varchar(25) NOT NULL,
@@ -399,16 +415,15 @@ CREATE TABLE `user` (
   KEY `avatar_id` (`avatar_id`),
   KEY `timezone_id` (`timezone_id`),
   KEY `datetime_format_id` (`datetime_format_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `user_item`
--- 
+--
 
-DROP TABLE IF EXISTS `user_item`;
-CREATE TABLE `user_item` (
+CREATE TABLE IF NOT EXISTS `user_item` (
   `user_item_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `item_type_id` int(11) NOT NULL,
@@ -416,16 +431,15 @@ CREATE TABLE `user_item` (
   PRIMARY KEY  (`user_item_id`),
   KEY `user_id` (`user_id`),
   KEY `item_type_id` (`item_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `user_message`
--- 
+--
 
-DROP TABLE IF EXISTS `user_message`;
-CREATE TABLE `user_message` (
+CREATE TABLE IF NOT EXISTS `user_message` (
   `user_message_id` int(11) unsigned NOT NULL auto_increment,
   `sender_user_id` int(11) NOT NULL,
   `recipient_user_id` int(11) NOT NULL,
@@ -437,16 +451,15 @@ CREATE TABLE `user_message` (
   PRIMARY KEY  (`user_message_id`),
   KEY `sender_user_id` (`sender_user_id`),
   KEY `recipient_user_id` (`recipient_user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=127 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `user_notification`
--- 
+--
 
-DROP TABLE IF EXISTS `user_notification`;
-CREATE TABLE `user_notification` (
+CREATE TABLE IF NOT EXISTS `user_notification` (
   `user_notification_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `notification_text` text NOT NULL,
@@ -454,16 +467,15 @@ CREATE TABLE `user_notification` (
   `notification_datetime` datetime NOT NULL,
   PRIMARY KEY  (`user_notification_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 ;
+) TYPE=InnoDB; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `user_online`
--- 
+--
 
-DROP TABLE IF EXISTS `user_online`;
-CREATE TABLE `user_online` (
+CREATE TABLE IF NOT EXISTS `user_online` (
   `user_online_id` int(11) NOT NULL auto_increment,
   `user_type` enum('user','guest') NOT NULL default 'guest',
   `user_id` int(11) NOT NULL,
@@ -473,16 +485,15 @@ CREATE TABLE `user_online` (
   PRIMARY KEY  (`user_online_id`),
   KEY `user_id` (`user_id`),
   KEY `client_ip` (`client_ip`)
-) ENGINE=MEMORY AUTO_INCREMENT=10 ;
+) TYPE=MEMORY; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `user_pet`
--- 
+--
 
-DROP TABLE IF EXISTS `user_pet`;
-CREATE TABLE `user_pet` (
+CREATE TABLE IF NOT EXISTS `user_pet` (
   `user_pet_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `pet_specie_id` int(11) NOT NULL,
@@ -496,19 +507,18 @@ CREATE TABLE `user_pet` (
   PRIMARY KEY  (`user_pet_id`),
   KEY `user_id` (`user_id`),
   KEY `pet_specie_id` (`pet_specie_id`,`pet_specie_color_id`)
-) ENGINE=InnoDB COMMENT='Pets = specie + user + color.' AUTO_INCREMENT=2 ;
+) TYPE=InnoDB  COMMENT='Pets = specie + user + color.'; 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Table structure for table `user_staff_group`
--- 
+--
 
-DROP TABLE IF EXISTS `user_staff_group`;
-CREATE TABLE `user_staff_group` (
+CREATE TABLE IF NOT EXISTS `user_staff_group` (
   `user_staff_group_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `staff_group_id` int(11) NOT NULL,
   PRIMARY KEY  (`user_staff_group_id`),
   UNIQUE KEY `user_id` (`user_id`,`staff_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 ;
+) TYPE=InnoDB;

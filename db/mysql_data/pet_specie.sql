@@ -1,8 +1,8 @@
--- MySQL dump 10.10
+-- MySQL dump 10.11
 --
--- Host: localhost    Database: kkk
+-- Host: localhost    Database: kitto
 -- ------------------------------------------------------
--- Server version	5.0.22-Debian_0ubuntu6.06.3-log
+-- Server version	5.0.51a-3ubuntu5.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -19,12 +19,11 @@
 -- Dumping data for table `pet_specie`
 --
 
-
-/*!40000 ALTER TABLE `pet_specie` DISABLE KEYS */;
 LOCK TABLES `pet_specie` WRITE;
+/*!40000 ALTER TABLE `pet_specie` DISABLE KEYS */;
 INSERT INTO `pet_specie` (`pet_specie_id`, `specie_name`, `specie_descr`, `relative_image_dir`, `max_hunger`, `max_happiness`, `available`) VALUES (1,'Kitto','Somehow, someone, somewhere!','kitto',10,10,'Y'),(2,'Zutto','Forever, forever, forever!','zutto',10,10,'Y');
-UNLOCK TABLES;
 /*!40000 ALTER TABLE `pet_specie` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -35,3 +34,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+-- Dump completed on 2009-07-13 21:59:01
