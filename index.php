@@ -151,7 +151,10 @@ else
     $online_users = UserOnline::totalUsers($db);
     $renderer->assign('online_users',$online_users);
     
-	$renderer->display("layout/{$jump_page->getLayoutType()}/header.tpl");
+    if($jump_page->getShowLayout() == 'Y')
+    {
+    $renderer->display("layout/{$jump_page->getLayoutType()}/header.tpl");
+    }
 
 	if($jump_page->hasAccess($User) == false)
 	{
@@ -175,7 +178,10 @@ else
 		include('scripts/'.$jump_page->getPhpScript());
 	} // end include script
 
-	$renderer->display("layout/{$jump_page->getLayoutType()}/footer.tpl");
+    if($jump_page->getShowLayout() == 'Y')
+    {
+        $renderer->display("layout/{$jump_page->getLayoutType()}/footer.tpl");
+    }
 } // end else-page found
 
 $db->disconnect();
