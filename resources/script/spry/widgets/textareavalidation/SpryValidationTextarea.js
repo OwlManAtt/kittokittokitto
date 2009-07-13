@@ -1,4 +1,4 @@
-// SpryValidationTextarea.js - version 0.15 - Spry Pre-Release 1.5
+// SpryValidationTextarea.js - version 0.17 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -31,28 +31,28 @@ var Spry;
 if (!Spry) Spry = {};
 if (!Spry.Widget) Spry.Widget = {};
 
-Spry.Widget.BrowserSniff = function() {
+Spry.Widget.BrowserSniff = function()
+{
 	var b = navigator.appName.toString();
 	var up = navigator.platform.toString();
 	var ua = navigator.userAgent.toString();
 
-	this.mozilla = this.ie = this.opera = r = false;
+	this.mozilla = this.ie = this.opera = this.safari = false;
 	var re_opera = /Opera.([0-9\.]*)/i;
 	var re_msie = /MSIE.([0-9\.]*)/i;
 	var re_gecko = /gecko/i;
-	var re_safari = /safari\/([\d\.]*)/i;
-	
-	if (ua.match(re_opera)) {
-		r = ua.match(re_opera);
+	var re_safari = /(applewebkit|safari)\/([\d\.]*)/i;
+	var r = false;
+
+	if ( (r = ua.match(re_opera))) {
 		this.opera = true;
 		this.version = parseFloat(r[1]);
-	} else if (ua.match(re_msie)) {
-		r = ua.match(re_msie);
+	} else if ( (r = ua.match(re_msie))) {
 		this.ie = true;
 		this.version = parseFloat(r[1]);
-	} else if (ua.match(re_safari)) {
+	} else if ( (r = ua.match(re_safari))) {
 		this.safari = true;
-		this.version = 1.4;
+		this.version = parseFloat(r[2]);
 	} else if (ua.match(re_gecko)) {
 		var re_gecko_version = /rv:\s*([0-9\.]+)/i;
 		r = ua.match(re_gecko_version);
@@ -78,7 +78,7 @@ Spry.is = new Spry.Widget.BrowserSniff();
 
 Spry.Widget.ValidationTextarea = function(element, options){
 	
-	options = options || {};
+	options = Spry.Widget.Utils.firstValid(options, {});
 	this.flags = {locked: false};
 	this.options = {};
 	this.element = element;
@@ -147,9 +147,10 @@ Spry.Widget.ValidationTextarea.prototype.init = function(element)
 };
 
 Spry.Widget.ValidationTextarea.prototype.destroy = function() {
-	for (var i=0; i<this.event_handlers.length; i++) {
-		Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
-	}
+	if (this.event_handlers)
+		for (var i=0; i<this.event_handlers.length; i++) {
+			Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
+		}
 	try { delete this.element; } catch(err) {}
 	try { delete this.input; } catch(err) {}
 	try { delete this.counterEl; } catch(err) {}
@@ -485,6 +486,10 @@ Spry.Widget.ValidationTextarea.prototype.validate = function(){
 			return true;	
 	}
 
+  if (this.validateOn & Spry.Widget.ValidationTextarea.ONSUBMIT) {
+    this.removeHint();
+  }
+  
 	var val = this.input.value;
 	this.validateMinRequired(val);
 
@@ -814,32 +819,31 @@ Spry.Widget.SelectionDescriptor = function (element)
 Spry.Widget.SelectionDescriptor.prototype.update = function()
 {
 	if (Spry.is.ie && Spry.is.windows) {
+		var sel = this.element.ownerDocument.selection;
 		if (this.element.nodeName == "TEXTAREA") {
-            var sel = this.element.ownerDocument.selection;
-            if (sel.type != 'None') {
-		var range = this.element.ownerDocument.selection.createRange();
-		if (range.parentElement() == this.element){
-			var range_all = this.element.ownerDocument.body.createTextRange();
-			range_all.moveToElementText(this.element);
-			for (var sel_start = 0; range_all.compareEndPoints('StartToStart', range) < 0; sel_start ++){
-			 	range_all.moveStart('character', 1);
-			}
-			this.start = sel_start;
-			// create a selection of the whole this.element
-			range_all = this.element.ownerDocument.body.createTextRange();
-			range_all.moveToElementText(this.element);
-			for (var sel_end = 0; range_all.compareEndPoints('StartToEnd', range) < 0; sel_end++){
-				range_all.moveStart('character', 1);
-			}
-			this.end = sel_end;
-			this.length = this.end - this.start;
-			// get selected and surrounding text
-			this.text = range.text;
-		 }
-            }        
+			if (sel.type != 'None') {
+				try{var range = sel.createRange();}catch(err){return;}
+				if (range.parentElement() == this.element){
+					var range_all = this.element.ownerDocument.body.createTextRange();
+					range_all.moveToElementText(this.element);
+					for (var sel_start = 0; range_all.compareEndPoints('StartToStart', range) < 0; sel_start ++){
+						range_all.moveStart('character', 1);
+					}
+					this.start = sel_start;
+					// create a selection of the whole this.element
+					range_all = this.element.ownerDocument.body.createTextRange();
+					range_all.moveToElementText(this.element);
+					for (var sel_end = 0; range_all.compareEndPoints('StartToEnd', range) < 0; sel_end++){
+						range_all.moveStart('character', 1);
+					}
+					this.end = sel_end;
+					this.length = this.end - this.start;
+					// get selected and surrounding text
+					this.text = range.text;
+		 		}
+			}        
 		} else if (this.element.nodeName == "INPUT"){
-            var sel = this.element.ownerDocument.selection;
-			this.range = this.element.ownerDocument.selection.createRange();
+			try{this.range = sel.createRange();}catch(err){return;}
 			this.length = this.range.text.length;
 			var clone = this.range.duplicate();
 			this.start = -clone.moveStart("character", -10000);
@@ -852,9 +856,9 @@ Spry.Widget.SelectionDescriptor.prototype.update = function()
 		var tmp = this.element;
 		var selectionStart = 0;
 		var selectionEnd = 0;
-
-		try { selectionStart = tmp.selectionStart; } catch(err) {}
-		try { selectionEnd = tmp.selectionEnd; } catch(err) {}
+        
+		try { selectionStart = tmp.selectionStart;} catch(err) {}
+		try { selectionEnd = tmp.selectionEnd;} catch(err) {}
 
 		if (Spry.is.safari) {
 			if (selectionStart == 2147483647) {
@@ -870,7 +874,6 @@ Spry.Widget.SelectionDescriptor.prototype.update = function()
 		this.text = this.element.value.substring(selectionStart, selectionEnd);
 	}
 };
-
 Spry.Widget.SelectionDescriptor.prototype.destroy = function() {
 	try { delete this.range} catch(err) {}
 	try { delete this.element} catch(err) {}

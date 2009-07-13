@@ -1,4 +1,4 @@
-// SpryJSONDataSet.js - version 0.3 - Spry Pre-Release 1.5
+// SpryJSONDataSet.js - version 0.6 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2007. Adobe Systems Incorporated.
 // All rights reserved.
@@ -303,6 +303,8 @@ Spry.Data.JSONDataSet.flattenDataIntoRecordSet = function(jsonObj, path, pathIsO
 		// objects, so run through all of the arrays and build up row objects and add them
 		// to our record set.
 
+		var rowID = 0;
+
 		for (var i = 0; i < numMatches; i++)
 		{
 			var obj = matches[i];
@@ -328,8 +330,8 @@ Spry.Data.JSONDataSet.flattenDataIntoRecordSet = function(jsonObj, path, pathIsO
 					var colName = colNames[k];
 					row[colName] = obj[colName][j];
 				}
-				row.ds_RowID = i;
-				rs.dataHash[i] = row;
+				row.ds_RowID = rowID++;
+				rs.dataHash[row.ds_RowID] = row;
 				rs.data.push(row);
 			}
 		}
@@ -608,6 +610,30 @@ Spry.Data.JSONDataSet.prototype.parseJSON = function(str, filter)
 	throw new Error("Failed to parse JSON string.");
 };
 
+Spry.Data.JSONDataSet.prototype.syncColumnTypesToData = function()
+{
+	// Run through every column in the first row and set the column type
+	// to match the type of the value currently in the column, but only
+	// if the column type is not already set.
+	//
+	// For the sake of performance, there are a couple of big assumptions
+	// being made here. Specifically, we are assuming that *every* row in the
+	// data set has the same set of column names defined, and that the value
+	// for a specific column has the same type as a value in the same column
+	// in any other row.
+
+	var row = this.getData()[0];
+	for (var colName in row)
+	{
+		if (!this.columnTypes[colName])
+		{
+			var type = typeof row[colName];
+			if (type == "number")
+				this.setColumnType(colName, type);
+		}
+	}
+};
+
 // Translate the raw JSON string (rawDataDoc) into an object, find the
 // data within the object we are interested in, and flatten it into
 // a set of rows for our data set.
@@ -637,4 +663,6 @@ Spry.Data.JSONDataSet.prototype.loadDataIntoDataSet = function(rawDataDoc)
 	this.data = rs.data;
 	this.dataHash = rs.dataHash;
 	this.dataWasLoaded = (this.doc != null);
+
+	this.syncColumnTypesToData();
 };

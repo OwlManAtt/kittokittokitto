@@ -138,12 +138,16 @@ else
         'selectvalidation/SpryValidationSelect.js',
         'textareavalidation/SpryValidationTextarea.js',
         'checkboxvalidation/SpryValidationCheckbox.js',
+        'passwordvalidation/SpryValidationPassword.js',
+        'confirmvalidation/SpryValidationConfirm.js',
     );
     $spry['css'] = array(
         'textfieldvalidation/SpryValidationTextField.css',
         'selectvalidation/SpryValidationSelect.css',
         'textareavalidation/SpryValidationTextarea.css',
         'checkboxvalidation/SpryValidationCheckbox.css',
+        'passwordvalidation/SpryValidationPassword.css',
+        'confirmvalidation/SpryValidationConfirm.css',
     );
     $renderer->assign('spry',$spry);
 

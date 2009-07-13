@@ -1,4 +1,4 @@
-// SpryTabbedPanels.js - version 0.4 - Spry Pre-Release 1.5
+// SpryTabbedPanels.js - version 0.6 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -43,6 +43,8 @@ Spry.Widget.TabbedPanels = function(element, opts)
 	this.hasFocus = false;
 	this.currentTabIndex = 0;
 	this.enableKeyboardNavigation = true;
+	this.nextPanelKeyCode = Spry.Widget.TabbedPanels.KEY_RIGHT;
+	this.previousPanelKeyCode = Spry.Widget.TabbedPanels.KEY_LEFT;
 
 	Spry.Widget.TabbedPanels.setOptions(this, opts);
 
@@ -78,7 +80,7 @@ Spry.Widget.TabbedPanels.prototype.getElement = function(ele)
 	if (ele && typeof ele == "string")
 		return document.getElementById(ele);
 	return ele;
-}
+};
 
 Spry.Widget.TabbedPanels.prototype.getElementChildren = function(element)
 {
@@ -203,16 +205,20 @@ Spry.Widget.TabbedPanels.addEventListener = function(element, eventType, handler
 	catch (e) {}
 };
 
-Spry.Widget.TabbedPanels.prototype.onTabClick = function(e, tab)
+Spry.Widget.TabbedPanels.prototype.cancelEvent = function(e)
 {
-	this.showPanel(tab);
-
 	if (e.preventDefault) e.preventDefault();
-	else e.returnResult = false;
+	else e.returnValue = false;
 	if (e.stopPropagation) e.stopPropagation();
 	else e.cancelBubble = true;
 
 	return false;
+};
+
+Spry.Widget.TabbedPanels.prototype.onTabClick = function(e, tab)
+{
+	this.showPanel(tab);
+	return this.cancelEvent(e);
 };
 
 Spry.Widget.TabbedPanels.prototype.onTabMouseOver = function(e, tab)
@@ -241,23 +247,38 @@ Spry.Widget.TabbedPanels.prototype.onTabBlur = function(e, tab)
 	return false;
 };
 
-Spry.Widget.TabbedPanels.ENTER_KEY = 13;
-Spry.Widget.TabbedPanels.SPACE_KEY = 32;
+Spry.Widget.TabbedPanels.KEY_UP = 38;
+Spry.Widget.TabbedPanels.KEY_DOWN = 40;
+Spry.Widget.TabbedPanels.KEY_LEFT = 37;
+Spry.Widget.TabbedPanels.KEY_RIGHT = 39;
+
+
 
 Spry.Widget.TabbedPanels.prototype.onTabKeyDown = function(e, tab)
 {
 	var key = e.keyCode;
-	if (!this.hasFocus || (key != Spry.Widget.TabbedPanels.ENTER_KEY && key != Spry.Widget.TabbedPanels.SPACE_KEY))
+	if (!this.hasFocus || (key != this.previousPanelKeyCode && key != this.nextPanelKeyCode))
 		return true;
 
-	this.showPanel(tab);
+	var tabs = this.getTabs();
+	for (var i =0; i < tabs.length; i++)
+		if (tabs[i] == tab)
+		{
+			var el = false;
+			if (key == this.previousPanelKeyCode && i > 0)
+				el = tabs[i-1];
+			else if (key == this.nextPanelKeyCode && i < tabs.length-1)
+				el = tabs[i+1];
 
-	if (e.preventDefault) e.preventDefault();
-	else e.returnResult = false;
-	if (e.stopPropagation) e.stopPropagation();
-	else e.cancelBubble = true;
+			if (el)
+			{
+				this.showPanel(el);
+				el.focus();
+				break;
+			}
+		}
 
-	return false;
+	return this.cancelEvent(e);
 };
 
 Spry.Widget.TabbedPanels.prototype.preorderTraversal = function(root, func)

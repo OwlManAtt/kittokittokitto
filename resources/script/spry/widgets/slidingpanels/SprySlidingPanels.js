@@ -1,4 +1,4 @@
-// SprySlidingPanels.js - version 0.4 - Spry Pre-Release 1.5
+// SprySlidingPanels.js - version 0.5 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -111,7 +111,7 @@ Spry.Widget.SlidingPanels.prototype.onKeyDown = function(e)
 		this.showPreviousPanel();
 
 	if (e.preventDefault) e.preventDefault();
-	else e.returnResult = false;
+	else e.returnValue = false;
 	if (e.stopPropagation) e.stopPropagation();
 	else e.cancelBubble = true;
 
@@ -362,7 +362,7 @@ Spry.Widget.SlidingPanels.PanelAnimator = function(ele, curX, curY, dstX, dstY, 
 	this.finish = null;
 
 	var self = this;
-	this.intervalFunc = function() { self.step(); }
+	this.intervalFunc = function() { self.step(); };
 	
 	Spry.Widget.SlidingPanels.setOptions(this, opts, true);
 

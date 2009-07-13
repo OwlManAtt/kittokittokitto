@@ -1,4 +1,4 @@
-// SpryData.js - version 0.35 - Spry Pre-Release 1.5
+// SpryData.js - version 0.45 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -37,7 +37,7 @@ var Spry; if (!Spry) Spry = {};
 
 if (!Spry.Utils) Spry.Utils = {};
 
-Spry.Utils.msProgIDs = ["MSXML2.XMLHTTP.6.0", "MSXML2.XMLHTTP.5.0", "MSXML2.XMLHTTP.4.0", "MSXML2.XMLHTTP.3.0", "MSXML2.XMLHTTP", "Microsoft.XMLHTTP"];
+Spry.Utils.msProgIDs = ["MSXML2.XMLHTTP.6.0", "MSXML2.XMLHTTP.3.0"];
 
 Spry.Utils.createXMLHttpRequest = function()
 {
@@ -209,6 +209,20 @@ Spry.Utils.updateContent = function (ele, url, finishFunc, opts)
 	}, opts);
 };
 
+//////////////////////////////////////////////////////////////////////
+//
+// Functions from SpryDOMUtils.js
+//   - These have been left in for backwards compatibility, but they
+//     should only be defined if Spry.$$ (SpryDOMUtils.js) is not
+//     already included.
+//   - If SpryDOMUtils.js is included *after* SpryData.js, these
+//     functions will be replaced with the latest versions in
+//     SpryDOMUtils.js.
+//
+//////////////////////////////////////////////////////////////////////
+
+if (!Spry.$$)
+{
 Spry.Utils.addEventListener = function(element, eventType, handler, capture)
 {
 	try
@@ -244,6 +258,62 @@ Spry.Utils.addLoadListener = function(handler)
 	else if (typeof window.attachEvent != 'undefined')
 		window.attachEvent('onload', handler);
 };
+
+Spry.Utils.addClassName = function(ele, className)
+{
+	ele = Spry.$(ele);
+	if (!ele || !className || (ele.className && ele.className.search(new RegExp("\\b" + className + "\\b")) != -1))
+		return;
+	ele.className += (ele.className ? " " : "") + className;
+};
+
+Spry.Utils.removeClassName = function(ele, className)
+{
+	ele = Spry.$(ele);
+	if (!ele || !className || (ele.className && ele.className.search(new RegExp("\\b" + className + "\\b")) == -1))
+		return;
+	ele.className = ele.className.replace(new RegExp("\\s*\\b" + className + "\\b", "g"), "");
+};
+
+Spry.Utils.getObjectByName = function(name)
+{
+	var result = null;
+	if (name)
+	{
+		var lu = window;
+		var objPath = name.split(".");
+		for (var i = 0; lu && i < objPath.length; i++)
+		{
+			result = lu[objPath[i]];
+			lu = result;
+		}
+	}
+	return result;
+};
+
+//////////////////////////////////////////////////////////////////////
+//
+// Define Prototype's $() convenience function, but make sure it is
+// namespaced under Spry so that we avoid collisions with other
+// toolkits.
+//
+//////////////////////////////////////////////////////////////////////
+
+Spry.$ = function(element)
+{
+	if (arguments.length > 1)
+	{
+		for (var i = 0, elements = [], length = arguments.length; i < length; i++)
+			elements.push(Spry.$(arguments[i]));
+		return elements;
+	}
+	if (typeof element == 'string')
+		element = document.getElementById(element);
+	return element;
+};
+} // if (!Spry.$$)
+
+//////////////////////////////////////////////////////////////////////
 
 Spry.Utils.eval = function(str)
 {
@@ -561,22 +631,7 @@ Spry.Utils.getNodesByFunc = function(root, func)
 	return resultArr;
 };
 
-Spry.Utils.addClassName = function(ele, className)
-{
-	ele = Spry.$(ele);
-	if (!ele || !className || (ele.className && ele.className.search(new RegExp("\\b" + className + "\\b")) != -1))
-		return;
-	ele.className += (ele.className ? " " : "") + className;
-};
-
-Spry.Utils.removeClassName = function(ele, className)
-{
-	ele = Spry.$(ele);
-	if (!ele || !className || (ele.className && ele.className.search(new RegExp("\\b" + className + "\\b")) == -1))
-		return;
-	ele.className = ele.className.replace(new RegExp("\\s*\\b" + className + "\\b", "g"), "");
-};
-
+// XXX: UNUSED FUNCTION
 Spry.Utils.getFirstChildWithNodeName = function(node, nodeName)
 {
 	var child = node.firstChild;
@@ -589,194 +644,6 @@ Spry.Utils.getFirstChildWithNodeName = function(node, nodeName)
 	}
 
 	return null;
-};
-
-Spry.Utils.nodeContainsElementNode = function(node)
-{
-	if (node)
-	{
-		node = node.firstChild;
-
-		while (node)
-		{
-			if (node.nodeType == 1 /* Node.ELEMENT_NODE */)
-				return true;
-
-			node = node.nextSibling;
-		}
-	}
-	return false;
-};
-
-Spry.Utils.getNodeText = function(node)
-{
-	var txt = "";
-
-	if (!node)
-		return;
-
-	try
-	{
-		var child = node.firstChild;
-
-		while (child)
-		{
-			try
-			{
-				if (child.nodeType == 3 /* TEXT_NODE */)
-					txt += Spry.Utils.encodeEntities(child.data);
-				else if (child.nodeType == 4 /* CDATA_SECTION_NODE */)
-					txt += child.data;
-			} catch (e) { Spry.Debug.reportError("Spry.Utils.getNodeText() exception caught: " + e + "\n"); }
-
-			child = child.nextSibling;
-		}
-	}
-	catch (e) { Spry.Debug.reportError("Spry.Utils.getNodeText() exception caught: " + e + "\n"); }
-
-	return txt;
-};
-
-Spry.Utils.CreateObjectForNode = function(node)
-{
-	if (!node)
-		return null;
-
-	var obj = new Object();
-	var i = 0;
-	var attr = null;
-
-	try
-	{
-		for (i = 0; i < node.attributes.length; i++)
-		{
-			attr = node.attributes[i];
-			if (attr && attr.nodeType == 2 /* Node.ATTRIBUTE_NODE */)
-				obj["@" + attr.name] = attr.value;
-		}
-	}
-	catch (e)
-	{
-		Spry.Debug.reportError("Spry.Utils.CreateObjectForNode() caught exception while accessing attributes: " + e + "\n");
-	}
-
-	var child = node.firstChild;
-
-	if (child && !child.nextSibling && child.nodeType != 1 /* Node.ELEMENT_NODE */)
-	{
-		// We have a single child and it's not an element. It must
-		// be the text value for this node. Add it to the record set and
-		// give it the column the same name as the node.
-
-		obj[node.nodeName] = Spry.Utils.getNodeText(node);
-	}
-
-	while (child)
-	{
-		// Add the text value for each child element. Note that
-		// We skip elements that have element children (sub-elements)
-		// because we don't handle multi-level data sets right now.
-
-		if (child.nodeType == 1 /* Node.ELEMENT_NODE */)
-		{
-			if (!Spry.Utils.nodeContainsElementNode(child))
-			{
-				obj[child.nodeName] = Spry.Utils.getNodeText(child);
-
-				// Now add properties for any attributes on the child. The property
-				// name will be of the form "<child.nodeName>/@<attr.name>".
-				try
-				{
-					var namePrefix = child.nodeName + "/@";
-
-					for (i = 0; i < child.attributes.length; i++)
-					{
-						attr = child.attributes[i];
-						if (attr && attr.nodeType == 2 /* Node.ATTRIBUTE_NODE */)
-							obj[namePrefix + attr.name] = attr.value;
-					}
-				}
-				catch (e)
-				{
-					Spry.Debug.reportError("Spry.Utils.CreateObjectForNode() caught exception while accessing attributes: " + e + "\n");
-				}
-			}
-		}
-
-		child = child.nextSibling;
-	}
-
-	return obj;
-};
-
-Spry.Utils.getRecordSetFromXMLDoc = function(xmlDoc, path, suppressColumns)
-{
-	if (!xmlDoc || !path)
-		return null;
-
-	var recordSet = new Object();
-	recordSet.xmlDoc = xmlDoc;
-	recordSet.xmlPath = path;
-	recordSet.dataHash = new Object;
-	recordSet.data = new Array;
-	recordSet.getData = function() { return this.data; };
-
-	// Use the XPath library to find the nodes that will
-	// make up our data set. The result should be an array
-	// of subtrees that we need to flatten.
-
-	var ctx = new ExprContext(xmlDoc);
-	var pathExpr = xpathParse(path);
-	var e = pathExpr.evaluate(ctx);
-
-	// XXX: Note that we should check the result type of the evaluation
-	// just in case it's a boolean, string, or number value instead of
-	// a node set.
-
-	var nodeArray = e.nodeSetValue();
-
-	var isDOMNodeArray = true;
-
-	if (nodeArray && nodeArray.length > 0)
-		isDOMNodeArray = nodeArray[0].nodeType != 2 /* Node.ATTRIBUTE_NODE */;
-
-	var nextID = 0;
-
-	// We now have the set of nodes that make up our data set
-	// so process each one.
-
-	for (var i = 0; i < nodeArray.length; i++)
-	{
-		var rowObj = null;
-
-		if (suppressColumns)
-			rowObj = new Object;
-		else
-		{
-			if (isDOMNodeArray)
-				rowObj = Spry.Utils.CreateObjectForNode(nodeArray[i]);
-			else // Must be a Node.ATTRIBUTE_NODE array.
-			{
-				rowObj = new Object;
-				rowObj["@" + nodeArray[i].name] = nodeArray[i].value;
-			}
-		}
-
-		if (rowObj)
-		{
-			// We want to make sure that every row has a unique ID and since we
-			// we don't know which column, if any, in this recordSet is a unique
-			// identifier, we generate a unique ID ourselves and store it under
-			// the ds_RowID column in the row object.
-
-			rowObj['ds_RowID'] = nextID++;
-			rowObj['ds_XMLNode'] = nodeArray[i];
-			recordSet.dataHash[rowObj['ds_RowID']] = rowObj;
-			recordSet.data.push(rowObj);
-		}
-	}
-
-	return recordSet;
 };
 
 Spry.Utils.setOptions = function(obj, optionsObj, ignoreUndefinedProps)
@@ -913,27 +780,6 @@ Spry.Utils.SelectionManager.clearSelection = function(selectionGroupName)
 		return;
 
 	groupObj.clearSelection();
-};
-
-//////////////////////////////////////////////////////////////////////
-//
-// Define Prototype's $() convenience function, but make sure it is
-// namespaced under Spry so that we avoid collisions with other
-// toolkits.
-//
-//////////////////////////////////////////////////////////////////////
-
-Spry.$ = function(element)
-{
-	if (arguments.length > 1)
-	{
-		for (var i = 0, elements = [], length = arguments.length; i < length; i++)
-			elements.push(Spry.$(arguments[i]));
-		return elements;
-	}
-	if (typeof element == 'string')
-		element = document.getElementById(element);
-	return element;
 };
 
 Spry.Utils.Notifier = function()
@@ -1099,11 +945,11 @@ Spry.Debug.reportError = function(str)
 
 Spry.Data = {};
 Spry.Data.regionsArray = {};
+Spry.Data.initRegionsOnLoad = true;
 
 Spry.Data.initRegions = function(rootNode)
 {
-	if (!rootNode)
-		rootNode = document.body;
+	rootNode = rootNode ? Spry.$(rootNode) : document.body;
 
 	var lastRegionFound = null;
 
@@ -1162,6 +1008,7 @@ Spry.Data.initRegions = function(rootNode)
 	});
 
 	var name, dataSets, i;
+	var newRegions = [];
 
 	for (i = 0; i < regions.length; i++)
 	{
@@ -1255,7 +1102,7 @@ Spry.Data.initRegions = function(rootNode)
 						if (childrenOnly)
 						{
 								var oComment = document.createComment(openTag);
-								var cComment = document.createComment(closeTag)
+								var cComment = document.createComment(closeTag);
 
 								if (!lastStartComment)
 									node.insertBefore(oComment, node.firstChild);
@@ -1334,9 +1181,11 @@ Spry.Data.initRegions = function(rootNode)
 		// Create a Spry.Data.Region object for this region.
 		var region = new Spry.Data.Region(rgn, name, isDetailRegion, dataStr, dataSets, regionStates, regionStateMap, hasBehaviorAttributes);
 		Spry.Data.regionsArray[region.name] = region;
+		newRegions.push(region);
 	}
 
-	Spry.Data.updateAllRegions();
+	for (var i = 0; i < newRegions.length; i++)
+		newRegions[i].updateContent();
 };
 
 Spry.Data.initRegions.nextUniqueRegionID = 0;
@@ -1363,6 +1212,23 @@ Spry.Data.updateAllRegions = function()
 
 	for (var regionName in Spry.Data.regionsArray)
 		Spry.Data.updateRegion(regionName);
+};
+
+Spry.Data.getDataSetByName = function(dataSetName)
+{
+	// Currently, there is no registry of mappings between
+	// data set names and data set objects. For now, the assumption
+	// is that the user has declared and created a data set in the
+	// global space.
+	//
+	// We check for the presence of a global variable with the
+	// specified name, and then make sure that its value is an
+	// object with at least 2 of the data set base functions defined.
+
+	var ds = window[dataSetName];
+	if (typeof ds != "object" || !ds.getData || !ds.filter)
+		return null;
+	return ds;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -1426,6 +1292,56 @@ Spry.Data.DataSet.prototype.getDataWasLoaded = function()
 	return this.dataWasLoaded;
 };
 
+Spry.Data.DataSet.prototype.getValue = function(valueName, rowContext)
+{
+	var result = undefined;
+
+	// If a rowContext is not defined, we default to
+	// using the current row.
+
+	if (!rowContext)
+		rowContext = this.getCurrentRow();
+
+	switch(valueName)
+	{
+		case "ds_RowNumber":
+			result = this.getRowNumber(rowContext);
+			break;
+		case "ds_RowNumberPlus1":
+			result = this.getRowNumber(rowContext) + 1;
+			break;
+		case "ds_RowCount":
+			result = this.getRowCount();
+			break;
+		case "ds_UnfilteredRowCount":
+			result = this.getRowCount(true);
+			break;
+		case "ds_CurrentRowNumber":
+			result = this.getCurrentRowNumber();
+			break;
+		case "ds_CurrentRowID":
+			result = this.getCurrentRowID();
+			break;
+		case "ds_EvenOddRow":
+			result = (this.getRowNumber(rowContext) % 2) ? Spry.Data.Region.evenRowClassName : Spry.Data.Region.oddRowClassName;
+			break;
+		case "ds_SortOrder":
+			result = this.getSortOrder();
+			break;
+		case "ds_SortColumn":
+			result = this.getSortColumn();
+			break;
+		default:
+			// We have an unknown value, check to see if the current
+			// row has column value that matches the valueName.
+			if (rowContext)
+				result = rowContext[valueName];
+			break;
+	}
+
+	return result;
+};
+
 Spry.Data.DataSet.prototype.setDataFromArray = function(arr, fireSyncLoad)
 {
 	this.notifyObservers("onPreLoad");
@@ -1477,7 +1393,10 @@ Spry.Data.DataSet.prototype.loadData = function(syncLoad)
 		self.dataWasLoaded = true;
 
 		self.applyColumnTypes();
+
+		self.disableNotifications();
 		self.filterAndSortData();
+		self.enableNotifications();
 
 		self.notifyObservers("onPostLoad");
 		self.notifyObservers("onDataChanged");
@@ -1507,7 +1426,7 @@ Spry.Data.DataSet.prototype.filterAndSortData = function()
 	// specified in sortOnLoad.
 
 	if (this.keepSorted && this.getSortColumn())
-		this.sort(this.lastSortColumns, this.lastSortOrder)
+		this.sort(this.lastSortColumns, this.lastSortOrder);
 	else if (this.sortOnLoad)
 		this.sort(this.sortOnLoad, this.sortOrderOnLoad);
 
@@ -2160,8 +2079,7 @@ Spry.Data.HTTPSourceDataSet.prototype.recalculateDataSetDependencies = function(
 				var ds = null;
 				if (!this.dataSetsForDataRefStrings[dsName])
 				{
-					try { ds = eval(dsName); } catch (e) { ds = null; }
-
+					ds = Spry.Data.getDataSetByName(dsName);
 					if (dsName && ds)
 					{
 						// The dataSetsForDataRefStrings array serves as both an
@@ -2321,7 +2239,10 @@ Spry.Data.HTTPSourceDataSet.prototype.setDataFromDoc = function(rawDataDoc)
 
 	this.loadDataIntoDataSet(rawDataDoc);
 	this.applyColumnTypes();
+
+	this.disableNotifications();
 	this.filterAndSortData();
+	this.enableNotifications();
 
 	this.notifyObservers("onPostLoad");
 	this.notifyObservers("onDataChanged");
@@ -2570,6 +2491,7 @@ Spry.Data.XMLDataSet = function(dataSetURL, dataSetPath, dataSetOptions)
 	this.xpath = dataSetPath;
 	this.doc = null;
 	this.subPaths = [];
+	this.entityEncodeStrings = true;
 
 	Spry.Data.HTTPSourceDataSet.call(this, dataSetURL, dataSetOptions);
 
@@ -2608,6 +2530,199 @@ Spry.Data.XMLDataSet.prototype.setXPath = function(path)
 			this.setDataFromDoc(this.doc);
 		}
 	}
+};
+
+Spry.Data.XMLDataSet.nodeContainsElementNode = function(node)
+{
+	if (node)
+	{
+		node = node.firstChild;
+
+		while (node)
+		{
+			if (node.nodeType == 1 /* Node.ELEMENT_NODE */)
+				return true;
+
+			node = node.nextSibling;
+		}
+	}
+	return false;
+};
+
+Spry.Data.XMLDataSet.getNodeText = function(node, encodeText, encodeCData)
+{
+	var txt = "";
+
+	if (!node)
+		return;
+
+	try
+	{
+		var child = node.firstChild;
+
+		while (child)
+		{
+			try
+			{
+				if (child.nodeType == 3 /* TEXT_NODE */)
+					txt += encodeText ? Spry.Utils.encodeEntities(child.data) : child.data;
+				else if (child.nodeType == 4 /* CDATA_SECTION_NODE */)
+					txt += encodeCData ? Spry.Utils.encodeEntities(child.data) : child.data;
+			} catch (e) { Spry.Debug.reportError("Spry.Data.XMLDataSet.getNodeText() exception caught: " + e + "\n"); }
+
+			child = child.nextSibling;
+		}
+	}
+	catch (e) { Spry.Debug.reportError("Spry.Data.XMLDataSet.getNodeText() exception caught: " + e + "\n"); }
+
+	return txt;
+};
+
+Spry.Data.XMLDataSet.createObjectForNode = function(node, encodeText, encodeCData)
+{
+	if (!node)
+		return null;
+
+	var obj = new Object();
+	var i = 0;
+	var attr = null;
+
+	try
+	{
+		for (i = 0; i < node.attributes.length; i++)
+		{
+			attr = node.attributes[i];
+			if (attr && attr.nodeType == 2 /* Node.ATTRIBUTE_NODE */)
+				obj["@" + attr.name] = attr.value;
+		}
+	}
+	catch (e)
+	{
+		Spry.Debug.reportError("Spry.Data.XMLDataSet.createObjectForNode() caught exception while accessing attributes: " + e + "\n");
+	}
+
+	var child = node.firstChild;
+
+	if (child && !child.nextSibling && child.nodeType != 1 /* Node.ELEMENT_NODE */)
+	{
+		// We have a single child and it's not an element. It must
+		// be the text value for this node. Add it to the record set and
+		// give it the column the same name as the node.
+
+		obj[node.nodeName] = Spry.Data.XMLDataSet.getNodeText(node, encodeText, encodeCData);
+	}
+
+	while (child)
+	{
+		// Add the text value for each child element. Note that
+		// We skip elements that have element children (sub-elements)
+		// because we don't handle multi-level data sets right now.
+
+		if (child.nodeType == 1 /* Node.ELEMENT_NODE */)
+		{
+			if (!Spry.Data.XMLDataSet.nodeContainsElementNode(child))
+			{
+				obj[child.nodeName] = Spry.Data.XMLDataSet.getNodeText(child, encodeText, encodeCData);
+
+				// Now add properties for any attributes on the child. The property
+				// name will be of the form "<child.nodeName>/@<attr.name>".
+				try
+				{
+					var namePrefix = child.nodeName + "/@";
+
+					for (i = 0; i < child.attributes.length; i++)
+					{
+						attr = child.attributes[i];
+						if (attr && attr.nodeType == 2 /* Node.ATTRIBUTE_NODE */)
+							obj[namePrefix + attr.name] = attr.value;
+					}
+				}
+				catch (e)
+				{
+					Spry.Debug.reportError("Spry.Data.XMLDataSet.createObjectForNode() caught exception while accessing attributes: " + e + "\n");
+				}
+			}
+		}
+
+		child = child.nextSibling;
+	}
+
+	return obj;
+};
+
+Spry.Data.XMLDataSet.getRecordSetFromXMLDoc = function(xmlDoc, path, suppressColumns, entityEncodeStrings)
+{
+	if (!xmlDoc || !path)
+		return null;
+
+	var recordSet = new Object();
+	recordSet.xmlDoc = xmlDoc;
+	recordSet.xmlPath = path;
+	recordSet.dataHash = new Object;
+	recordSet.data = new Array;
+	recordSet.getData = function() { return this.data; };
+
+	// Use the XPath library to find the nodes that will
+	// make up our data set. The result should be an array
+	// of subtrees that we need to flatten.
+
+	var ctx = new ExprContext(xmlDoc);
+	var pathExpr = xpathParse(path);
+	var e = pathExpr.evaluate(ctx);
+
+	// XXX: Note that we should check the result type of the evaluation
+	// just in case it's a boolean, string, or number value instead of
+	// a node set.
+
+	var nodeArray = e.nodeSetValue();
+
+	var isDOMNodeArray = true;
+
+	if (nodeArray && nodeArray.length > 0)
+		isDOMNodeArray = nodeArray[0].nodeType != 2 /* Node.ATTRIBUTE_NODE */;
+
+	var nextID = 0;
+
+	var encodeText = true;
+	var encodeCData = false;
+	if (typeof entityEncodeStrings == "boolean")
+		encodeText = encodeCData = entityEncodeStrings;
+
+	// We now have the set of nodes that make up our data set
+	// so process each one.
+
+	for (var i = 0; i < nodeArray.length; i++)
+	{
+		var rowObj = null;
+
+		if (suppressColumns)
+			rowObj = new Object;
+		else
+		{
+			if (isDOMNodeArray)
+				rowObj = Spry.Data.XMLDataSet.createObjectForNode(nodeArray[i], encodeText, encodeCData);
+			else // Must be a Node.ATTRIBUTE_NODE array.
+			{
+				rowObj = new Object;
+				rowObj["@" + nodeArray[i].name] = nodeArray[i].value;
+			}
+		}
+
+		if (rowObj)
+		{
+			// We want to make sure that every row has a unique ID and since we
+			// we don't know which column, if any, in this recordSet is a unique
+			// identifier, we generate a unique ID ourselves and store it under
+			// the ds_RowID column in the row object.
+
+			rowObj['ds_RowID'] = nextID++;
+			rowObj['ds_XMLNode'] = nodeArray[i];
+			recordSet.dataHash[rowObj['ds_RowID']] = rowObj;
+			recordSet.data.push(rowObj);
+		}
+	}
+
+	return recordSet;
 };
 
 Spry.Data.XMLDataSet.PathNode = function(path)
@@ -2797,7 +2912,7 @@ Spry.Data.XMLDataSet.prototype.flattenSubPaths = function(rs, subPaths)
 			// the XML node for the base row and flatten the data into
 			// a tabular recordset structure.
 
-			var newRS = Spry.Utils.getRecordSetFromXMLDoc(row.ds_XMLNode, xpathArray[j], (subPaths[j].xpath ? false : true));
+			var newRS = Spry.Data.XMLDataSet.getRecordSetFromXMLDoc(row.ds_XMLNode, xpathArray[j], (subPaths[j].xpath ? false : true), this.entityEncodeStrings);
 
 			// If this subPath has additional subPaths beneath it,
 			// flatten and join them with the recordset we just created.
@@ -2981,7 +3096,7 @@ Spry.Data.XMLDataSet.prototype.loadDataIntoDataSet = function(rawDataDoc)
 		suppressColumns = commonParent.xpath ? false : true;
 	}
 
-	rs = Spry.Utils.getRecordSetFromXMLDoc(rawDataDoc, mainXPath, suppressColumns);
+	rs = Spry.Data.XMLDataSet.getRecordSetFromXMLDoc(rawDataDoc, mainXPath, suppressColumns, this.entityEncodeStrings);
 
 	if (!rs)
 	{
@@ -3393,8 +3508,7 @@ Spry.Data.Region.setRowAttrClickHandler = function(node, dsName, rowAttr, funcNa
 {
 		if (dsName)
 		{
-			var ds = null;
-			try { ds = Spry.Utils.eval(dsName); } catch(e) { ds = null; };
+			var ds = Spry.Data.getDataSetByName(dsName);
 			if (ds)
 			{
 				rowIDAttr = node.attributes.getNamedItem(rowAttr);
@@ -3485,16 +3599,12 @@ Spry.Data.Region.behaviorAttrs["spry:sort"] =
 			// Check the first string in the attribute to see if a data set was
 			// specified. If so, make sure we use it for the sort.
 
-			try
+			var specifiedDS = Spry.Data.getDataSetByName(colArray[0]);
+			if (specifiedDS)
 			{
-				var specifiedDS = eval(colArray[0]);
-				if (specifiedDS && (typeof specifiedDS) == "object")
-				{
-					ds = specifiedDS;
-					colArray.shift();
-				}
-
-			} catch(e) {}
+				ds = specifiedDS;
+				colArray.shift();
+			}
 
 			// Check to see if the last string in the attribute is the name of
 			// a sort order. If so, use that sort order during the sort.
@@ -3632,7 +3742,7 @@ Spry.Data.Region.processContentPI = function(inStr)
 	}
 
 	return outStr;
-}
+};
 
 Spry.Data.Region.prototype.tokenizeData = function(dataStr)
 {
@@ -3756,14 +3866,10 @@ Spry.Data.Region.prototype.tokenizeData = function(dataStr)
 
 						if (selectedDataSetName)
 						{
-							try
+							dataSet = Spry.Data.getDataSetByName(selectedDataSetName);
+							if (!dataSet)
 							{
-								dataSet = eval(selectedDataSetName);
-							}
-							catch (e)
-							{
-								Spry.Debug.reportError("Caught exception in tokenizeData() while trying to retrieve data set (" + selectedDataSetName + "): " + e + "\n");
-								dataSet = null;
+								Spry.Debug.reportError("Failed to retrieve data set (" + selectedDataSetName + ") for " + piName + "\n");
 								selectedDataSetName = "";
 							}
 						}
@@ -3811,6 +3917,37 @@ Spry.Data.Region.prototype.tokenizeData = function(dataStr)
 	}
 
 	return rootToken;
+};
+
+Spry.Data.Region.prototype.callScriptFunction = function(funcName, processContext)
+{
+	var result = undefined;
+
+	funcName = funcName.replace(/^\s*\{?\s*function::\s*|\s*\}?\s*$/g, "");
+	var func = Spry.Utils.getObjectByName(funcName);
+	if (func)
+		result = func(this.name, function() { return processContext.getValueFromDataSet.apply(processContext, arguments); });
+
+	return result;
+};
+
+Spry.Data.Region.prototype.evaluateExpression = function(exprStr, processContext)
+{
+	var result = undefined;
+
+	try
+	{
+		if (exprStr.search(/^\s*function::/) != -1)
+			result = this.callScriptFunction(exprStr, processContext);
+		else
+			result = Spry.Utils.eval(Spry.Data.Region.processDataRefString(processContext, exprStr, null, true));
+	}
+	catch(e)
+	{
+		Spry.Debug.trace("Caught exception in Spry.Data.Region.prototype.evaluateExpression() while evaluating: " + Spry.Utils.encodeEntities(exprStr) + "\n    Exception:" + e + "\n");
+	}
+
+	return result;
 };
 
 Spry.Data.Region.prototype.processTokenChildren = function(outputArr, token, processContext)
@@ -3861,16 +3998,9 @@ Spry.Data.Region.prototype.processTokens = function(outputArr, token, processCon
 					{
 						dsContext.setRowIndex(i);
 						var testVal = true;
+
 						if (token.data.jsExpr)
-						{
-							var jsExpr = Spry.Data.Region.processDataRefString(processContext, token.data.jsExpr, null, true);
-							try { testVal = Spry.Utils.eval(jsExpr); }
-							catch(e)
-							{
-								Spry.Debug.trace("Caught exception in Spry.Data.Region.prototype.processTokens while evaluating: " + jsExpr + "\n    Exception:" + e + "\n");
-								testVal = true;
-							}
-						}
+							testVal = this.evaluateExpression(token.data.jsExpr, processContext);
 
 						if (testVal)
 							this.processTokenChildren(outputArr, token, processContext);
@@ -3883,16 +4013,7 @@ Spry.Data.Region.prototype.processTokens = function(outputArr, token, processCon
 				var testVal = true;
 
 				if (token.data.jsExpr)
-				{
-					var jsExpr = Spry.Data.Region.processDataRefString(processContext, token.data.jsExpr, null, true);
-
-					try { testVal = Spry.Utils.eval(jsExpr); }
-					catch(e)
-					{
-						Spry.Debug.trace("Caught exception in Spry.Data.Region.prototype.processTokens while evaluating: " + jsExpr + "\n    Exception:" + e + "\n");
-						testVal = true;
-					}
-				}
+					testVal = this.evaluateExpression(token.data.jsExpr, processContext);
 
 				if (testVal)
 					this.processTokenChildren(outputArr, token, processContext);
@@ -3918,13 +4039,7 @@ Spry.Data.Region.prototype.processTokens = function(outputArr, token, processCon
 						{
 							if (child.data.jsExpr)
 							{
-								var jsExpr = Spry.Data.Region.processDataRefString(processContext, child.data.jsExpr, null, true);
-								try { testVal = Spry.Utils.eval(jsExpr); }
-								catch(e)
-								{
-									Spry.Debug.trace("Caught exception in Spry.Data.Region.prototype.processTokens while evaluating: " + jsExpr + "\n    Exception:" + e + "\n");
-									testVal = false;
-								}
+								testVal = this.evaluateExpression(child.data.jsExpr, processContext);
 
 								if (testVal)
 								{
@@ -3962,52 +4077,36 @@ Spry.Data.Region.prototype.processTokens = function(outputArr, token, processCon
 		case Spry.Data.Region.Token.VALUE_TOKEN:
 
 			var dataSet = token.dataSet;
-			if (!dataSet && this.dataSets && this.dataSets.length > 0 && this.dataSets[0])
+			var val = undefined;
+
+			if (dataSet && dataSet == "function")
 			{
-				// No dataSet was specified by the token, so use whatever the first
-				// data set specified in the region.
+				// This value token doesn't contain a data set data reference, it
+				// contains a function call, so call it.
 
-				dataSet = this.dataSets[0];
+				val = this.callScriptFunction(token.data, processContext);
 			}
-			if (!dataSet)
-			{
-				Spry.Debug.reportError("processTokens(): Value reference has no data set specified: " + token.regionStr + "\n");
-				return "";
-			}
-
-			var dsContext = processContext.getDataSetContext(dataSet);
-			if (!dsContext)
-			{
-				Spry.Debug.reportError("processTokens: Failed to get a data set context!\n");
-				return "";
-			}
-
-			var ds = dsContext.getDataSet();
-
-			if (token.data == "ds_RowNumber")
-				outputArr.push(dsContext.getRowIndex());
-			else if (token.data == "ds_RowNumberPlus1")
-				outputArr.push(dsContext.getRowIndex() + 1);
-			else if (token.data == "ds_RowCount")
-				outputArr.push(dsContext.getNumRows());
-			else if (token.data == "ds_UnfilteredRowCount")
-				outputArr.push(dsContext.getNumRows(true));
-			else if (token.data == "ds_CurrentRowNumber")
-				outputArr.push(ds.getRowNumber(ds.getCurrentRow()));
-			else if (token.data == "ds_CurrentRowID")
-				outputArr.push(ds.getCurrentRowID());
-			else if (token.data == "ds_EvenOddRow")
-				outputArr.push((dsContext.getRowIndex() % 2) ? Spry.Data.Region.evenRowClassName : Spry.Data.Region.oddRowClassName);
-			else if (token.data == "ds_SortOrder")
-				outputArr.push(ds.getSortOrder());
-			else if (token.data == "ds_SortColumn")
-				outputArr.push(ds.getSortColumn());
 			else
 			{
-				var curDataSetRow = dsContext.getCurrentRow();
-				if (curDataSetRow)
-					outputArr.push(curDataSetRow[token.data]);
+				if (!dataSet && this.dataSets && this.dataSets.length > 0 && this.dataSets[0])
+				{
+					// No dataSet was specified by the token, so use whatever the first
+					// data set specified in the region.
+	
+					dataSet = this.dataSets[0];
+				}
+				if (!dataSet)
+				{
+					Spry.Debug.reportError("processTokens(): Value reference has no data set specified: " + token.regionStr + "\n");
+					return "";
+				}
+	
+				val = processContext.getValueFromDataSet(dataSet, token.data);
 			}
+
+			if (typeof val != "undefined")
+				outputArr.push(val + "");
+
 			break;
 		default:
 			Spry.Debug.reportError("processTokens(): Invalid token type: " + token.regionStr + "\n");
@@ -4206,69 +4305,22 @@ Spry.Data.Region.processDataRefString = function(processingContext, regionStr, d
 		var fieldName = reArray[0].replace(/^\{|.*::|\}/g, "");
 		var row = null;
 
-		if (processingContext)
-		{
-			var dsContext = processingContext.getDataSetContext(dsName);
+		var val = "";
 
-			if (fieldName == "ds_RowNumber")
-			{
-				resultStr += dsContext.getRowIndex();
-				row = null;
-			}
-			else if (fieldName == "ds_RowNumberPlus1")
-			{
-				resultStr += (dsContext.getRowIndex() + 1);
-				row = null;
-			}
-			else if (fieldName == "ds_RowCount")
-			{
-				resultStr += dsContext.getNumRows();
-				row = null;
-			}
-			else if (fieldName == "ds_UnfilteredRowCount")
-			{
-				resultStr += dsContext.getNumRows(true);
-				row = null;
-			}
-			else if (fieldName == "ds_CurrentRowNumber")
-			{
-				var ds = dsContext.getDataSet();
-				resultStr += ds.getRowNumber(ds.getCurrentRow());
-				row = null;
-			}
-			else if (fieldName == "ds_CurrentRowID")
-			{
-				var ds = dsContext.getDataSet();
-				resultStr += "" + ds.getCurrentRowID();
-				row = null;
-			}
-			else if (fieldName == "ds_EvenOddRow")
-			{
-				resultStr += (dsContext.getRowIndex() % 2) ? Spry.Data.Region.evenRowClassName : Spry.Data.Region.oddRowClassName;
-				row = null;
-			}
-			else if (fieldName == "ds_SortOrder")
-			{
-				resultStr += dsContext.getDataSet().getSortOrder();
-				row = null;
-			}
-			else if (fieldName == "ds_SortColumn")
-			{
-				resultStr += dsContext.getDataSet().getSortColumn();
-				row = null;
-			}
-			else
-				row = processingContext.getCurrentRowForDataSet(dsName);
-		}
+		if (processingContext)
+			val = processingContext.getValueFromDataSet(dsName, fieldName);
 		else
 		{
 			var ds = dsName ? dataSetsToUse[dsName] : dataSetsToUse[0];
 			if (ds)
-				row = ds.getCurrentRow();
+				val = ds.getValue(fieldName);
 		}
 
-		if (row)
-			resultStr += isJSExpr ? Spry.Utils.escapeQuotesAndLineBreaks("" + row[fieldName]) : row[fieldName];
+		if (typeof val != "undefined")
+		{
+			val += ""; // Make sure val is converted to a string.
+			resultStr += isJSExpr ? Spry.Utils.escapeQuotesAndLineBreaks(val) : val;
+		}
 
 		if (startSearchIndex == re.lastIndex)
 		{
@@ -4309,7 +4361,7 @@ Spry.Data.Region.strToDataSetsArray = function(str, returnRegionNames)
 		if (arr[i] && !Spry.Data.Region.PI.instructions[arr[i]])
 		{
 			try {
-				var dataSet = eval(arr[i]);
+				var dataSet = Spry.Data.getDataSetByName(arr[i]);
 
 				if (!foundHash[arr[i]])
 				{
@@ -4337,7 +4389,7 @@ Spry.Data.Region.DSContext = function(dataSet, processingContext)
 
 	// Private Methods:
 
-	function getInternalRowIndex() { return m_curRowIndexArray[m_curRowIndexArray.length - 1].rowIndex; }
+	var getInternalRowIndex = function() { return m_curRowIndexArray[m_curRowIndexArray.length - 1].rowIndex; };
 
 	// Public Methods:
 	this.resetAll = function() { m_curRowIndexArray = [ { rowIndex: m_dataSet.getCurrentRow() } ] };
@@ -4355,7 +4407,16 @@ Spry.Data.Region.DSContext = function(dataSet, processingContext)
 	this.setData = function(data)
 	{
 		this.getCurrentState().data = data;
-	}
+	};
+	this.getValue = function(valueName, rowContext)
+	{
+		var result = "";
+		var curState = this.getCurrentState();
+		var ds = curState.nestedDS ? curState.nestedDS : this.getDataSet();
+		if (ds)
+			result = ds.getValue(valueName, rowContext);
+		return result;
+	};
 	this.getCurrentRow = function()
 	{
 		if (m_curRowIndexArray.length < 2 || getInternalRowIndex() < 0)
@@ -4398,8 +4459,16 @@ Spry.Data.Region.DSContext = function(dataSet, processingContext)
 			if (nestedDS)
 			{
 				var currentState = this.getCurrentState();
+				currentState.nestedDS = nestedDS;
 				currentState.data = nestedDS.getData();
 				currentState.rowIndex = nestedDS.getCurrentRowNumber();
+
+				// getCurrentRowNumber() will return a -1 if the nestedDS has
+				// no data in it. If the rowIndex is -1, we need to reset it back to
+				// zero so the dsContext doesn't attempt to use the *real* current
+				// row of the data set.
+
+				currentState.rowIndex = currentState.rowIndex < 0 ? 0 : currentState.rowIndex;
 
 				var numChildren = m_children.length;
 				for (var i = 0; i < numChildren; i++)
@@ -4413,6 +4482,7 @@ Spry.Data.Region.DSContext = function(dataSet, processingContext)
 		var newState = new Object;
 		newState.rowIndex = curState.rowIndex;
 		newState.data = curState.data;
+		newState.nestedDS = curState.nestedDS;
 
 		m_curRowIndexArray.push(newState);
 
@@ -4532,7 +4602,7 @@ Spry.Data.Region.ProcessingContext.prototype.getDataSetContext = function(dataSe
 
 	if (typeof dataSet == 'string')
 	{
-		try { dataSet = eval(dataSet); } catch (e) { dataSet = null; }
+		dataSet = Spry.Data.getDataSetByName(dataSet);
 		if (!dataSet)
 			return null;
 	}
@@ -4546,6 +4616,52 @@ Spry.Data.Region.ProcessingContext.prototype.getDataSetContext = function(dataSe
 
 	return null;
 };
+
+Spry.Data.Region.ProcessingContext.prototype.getValueFromDataSet = function()
+{
+	var dsName = "";
+	var columnName = "";
+
+	if (arguments.length > 1)
+	{
+		// The caller is passing in the data set name and the
+		// name of the data reference separately.
+
+		dsName = arguments[0];
+		columnName = arguments[1];
+	}
+	else
+	{
+		// The caller is passing a single string which can be in one
+		// of the following forms:
+		//
+		//    "columnName"
+		//    "dsName::columnName"
+		//    "{columnName}"
+		//    "{dsName::columnName}"
+
+		var dataRef = arguments[0].replace(/\s*{\s*|\s*}\s*/g, "");
+		if (dataRef.search("::") != -1)
+		{
+			dsName = dataRef.replace(/::.*/, "");
+			columnName = dataRef.replace(/.*::/, "");
+		}
+		else
+			columnName = dataRef;
+	}
+
+	var result = "";
+	var dsContext = this.getDataSetContext(dsName);
+	if (dsContext)
+		result = dsContext.getValue(columnName, dsContext.getCurrentRow());
+	else
+		Spry.Debug.reportError("getValueFromDataSet: Failed to get " + dsName + " context for the " + this.region.regionNode.id + " region.\n");
+
+	return result;
+};
+
+// Define a short-hand name for developers.
+Spry.Data.Region.ProcessingContext.prototype.$v = Spry.Data.Region.ProcessingContext.prototype.getValueFromDataSet;
 
 Spry.Data.Region.ProcessingContext.prototype.getCurrentRowForDataSet = function(dataSet)
 {
@@ -4592,4 +4708,4 @@ Spry.Data.Region.Token.PIData = function(piName, data, jsExpr, regionState)
 	this.regionState = regionState;
 };
 
-Spry.Utils.addLoadListener(function() { setTimeout(function() { Spry.Data.initRegions(); }, 0); });
+Spry.Utils.addLoadListener(function() { setTimeout(function() { if (Spry.Data.initRegionsOnLoad) Spry.Data.initRegions(); }, 0); });

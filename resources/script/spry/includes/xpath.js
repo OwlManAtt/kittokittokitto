@@ -1,35 +1,294 @@
-// xpath.js - version 0.4 - Revision: Spry Pre-Release 1.5
+// xpath.js - version 0.7 - Spry Pre-Release 1.6.1
 //
-// Copyright (c) 2005, Google Inc.
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//         
-//  * Redistributions of source code must retain the above copyright
-//    notice, this list of conditions and the following disclaimer.
-// 
-//  * Redistributions in binary form must reproduce the above copyright
-//    notice, this list of conditions and the following disclaimer in the
-//    documentation and/or other materials provided with the
-//    distribution.
-// 
-//  * Neither the name of Google Inc. nor the names of its contributors
-//    may be used to endorse or promote products derived from this
-//    software without specific prior written permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Code from xmltoken.js.
+//
+// Copyright 2006 Google Inc.
+// All Rights Reserved
+//
+// Defines regular expression patterns to extract XML tokens from string.
+// See <http://www.w3.org/TR/REC-xml/#sec-common-syn>,
+// <http://www.w3.org/TR/xml11/#sec-common-syn> and
+// <http://www.w3.org/TR/REC-xml-names/#NT-NCName> for the specifications.
+//
+// Author: Junji Takagi <jtakagi@google.com>
+
+// Detect whether RegExp supports Unicode characters or not.
+
+var REGEXP_UNICODE = function() {
+  var tests = [' ', '\u0120', -1,  // Konquerer 3.4.0 fails here.
+               '!', '\u0120', -1,
+               '\u0120', '\u0120', 0,
+               '\u0121', '\u0120', -1,
+               '\u0121', '\u0120|\u0121', 0,
+               '\u0122', '\u0120|\u0121', -1,
+               '\u0120', '[\u0120]', 0,  // Safari 2.0.3 fails here.
+               '\u0121', '[\u0120]', -1,
+               '\u0121', '[\u0120\u0121]', 0,  // Safari 2.0.3 fails here.
+               '\u0122', '[\u0120\u0121]', -1,
+               '\u0121', '[\u0120-\u0121]', 0,  // Safari 2.0.3 fails here.
+               '\u0122', '[\u0120-\u0121]', -1];
+  for (var i = 0; i < tests.length; i += 3) {
+    if (tests[i].search(new RegExp(tests[i + 1])) != tests[i + 2]) {
+      return false;
+    }
+  }
+  return true;
+}();
+
+// Common tokens in XML 1.0 and XML 1.1.
+
+var XML_S = '[ \t\r\n]+';
+var XML_EQ = '(' + XML_S + ')?=(' + XML_S + ')?';
+var XML_CHAR_REF = '&#[0-9]+;|&#x[0-9a-fA-F]+;';
+
+// XML 1.0 tokens.
+
+var XML10_VERSION_INFO = XML_S + 'version' + XML_EQ + '("1\\.0"|' + "'1\\.0')";
+var XML10_BASE_CHAR = (REGEXP_UNICODE) ?
+  '\u0041-\u005a\u0061-\u007a\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff' +
+  '\u0100-\u0131\u0134-\u013e\u0141-\u0148\u014a-\u017e\u0180-\u01c3' +
+  '\u01cd-\u01f0\u01f4-\u01f5\u01fa-\u0217\u0250-\u02a8\u02bb-\u02c1\u0386' +
+  '\u0388-\u038a\u038c\u038e-\u03a1\u03a3-\u03ce\u03d0-\u03d6\u03da\u03dc' +
+  '\u03de\u03e0\u03e2-\u03f3\u0401-\u040c\u040e-\u044f\u0451-\u045c' +
+  '\u045e-\u0481\u0490-\u04c4\u04c7-\u04c8\u04cb-\u04cc\u04d0-\u04eb' +
+  '\u04ee-\u04f5\u04f8-\u04f9\u0531-\u0556\u0559\u0561-\u0586\u05d0-\u05ea' +
+  '\u05f0-\u05f2\u0621-\u063a\u0641-\u064a\u0671-\u06b7\u06ba-\u06be' +
+  '\u06c0-\u06ce\u06d0-\u06d3\u06d5\u06e5-\u06e6\u0905-\u0939\u093d' +
+  '\u0958-\u0961\u0985-\u098c\u098f-\u0990\u0993-\u09a8\u09aa-\u09b0\u09b2' +
+  '\u09b6-\u09b9\u09dc-\u09dd\u09df-\u09e1\u09f0-\u09f1\u0a05-\u0a0a' +
+  '\u0a0f-\u0a10\u0a13-\u0a28\u0a2a-\u0a30\u0a32-\u0a33\u0a35-\u0a36' +
+  '\u0a38-\u0a39\u0a59-\u0a5c\u0a5e\u0a72-\u0a74\u0a85-\u0a8b\u0a8d' +
+  '\u0a8f-\u0a91\u0a93-\u0aa8\u0aaa-\u0ab0\u0ab2-\u0ab3\u0ab5-\u0ab9' +
+  '\u0abd\u0ae0\u0b05-\u0b0c\u0b0f-\u0b10\u0b13-\u0b28\u0b2a-\u0b30' +
+  '\u0b32-\u0b33\u0b36-\u0b39\u0b3d\u0b5c-\u0b5d\u0b5f-\u0b61\u0b85-\u0b8a' +
+  '\u0b8e-\u0b90\u0b92-\u0b95\u0b99-\u0b9a\u0b9c\u0b9e-\u0b9f\u0ba3-\u0ba4' +
+  '\u0ba8-\u0baa\u0bae-\u0bb5\u0bb7-\u0bb9\u0c05-\u0c0c\u0c0e-\u0c10' +
+  '\u0c12-\u0c28\u0c2a-\u0c33\u0c35-\u0c39\u0c60-\u0c61\u0c85-\u0c8c' +
+  '\u0c8e-\u0c90\u0c92-\u0ca8\u0caa-\u0cb3\u0cb5-\u0cb9\u0cde\u0ce0-\u0ce1' +
+  '\u0d05-\u0d0c\u0d0e-\u0d10\u0d12-\u0d28\u0d2a-\u0d39\u0d60-\u0d61' +
+  '\u0e01-\u0e2e\u0e30\u0e32-\u0e33\u0e40-\u0e45\u0e81-\u0e82\u0e84' +
+  '\u0e87-\u0e88\u0e8a\u0e8d\u0e94-\u0e97\u0e99-\u0e9f\u0ea1-\u0ea3\u0ea5' +
+  '\u0ea7\u0eaa-\u0eab\u0ead-\u0eae\u0eb0\u0eb2-\u0eb3\u0ebd\u0ec0-\u0ec4' +
+  '\u0f40-\u0f47\u0f49-\u0f69\u10a0-\u10c5\u10d0-\u10f6\u1100\u1102-\u1103' +
+  '\u1105-\u1107\u1109\u110b-\u110c\u110e-\u1112\u113c\u113e\u1140\u114c' +
+  '\u114e\u1150\u1154-\u1155\u1159\u115f-\u1161\u1163\u1165\u1167\u1169' +
+  '\u116d-\u116e\u1172-\u1173\u1175\u119e\u11a8\u11ab\u11ae-\u11af' +
+  '\u11b7-\u11b8\u11ba\u11bc-\u11c2\u11eb\u11f0\u11f9\u1e00-\u1e9b' +
+  '\u1ea0-\u1ef9\u1f00-\u1f15\u1f18-\u1f1d\u1f20-\u1f45\u1f48-\u1f4d' +
+  '\u1f50-\u1f57\u1f59\u1f5b\u1f5d\u1f5f-\u1f7d\u1f80-\u1fb4\u1fb6-\u1fbc' +
+  '\u1fbe\u1fc2-\u1fc4\u1fc6-\u1fcc\u1fd0-\u1fd3\u1fd6-\u1fdb\u1fe0-\u1fec' +
+  '\u1ff2-\u1ff4\u1ff6-\u1ffc\u2126\u212a-\u212b\u212e\u2180-\u2182' +
+  '\u3041-\u3094\u30a1-\u30fa\u3105-\u312c\uac00-\ud7a3' :
+  'A-Za-z';
+var XML10_IDEOGRAPHIC = (REGEXP_UNICODE) ?
+  '\u4e00-\u9fa5\u3007\u3021-\u3029' :
+  '';
+var XML10_COMBINING_CHAR = (REGEXP_UNICODE) ?
+  '\u0300-\u0345\u0360-\u0361\u0483-\u0486\u0591-\u05a1\u05a3-\u05b9' +
+  '\u05bb-\u05bd\u05bf\u05c1-\u05c2\u05c4\u064b-\u0652\u0670\u06d6-\u06dc' +
+  '\u06dd-\u06df\u06e0-\u06e4\u06e7-\u06e8\u06ea-\u06ed\u0901-\u0903\u093c' +
+  '\u093e-\u094c\u094d\u0951-\u0954\u0962-\u0963\u0981-\u0983\u09bc\u09be' +
+  '\u09bf\u09c0-\u09c4\u09c7-\u09c8\u09cb-\u09cd\u09d7\u09e2-\u09e3\u0a02' +
+  '\u0a3c\u0a3e\u0a3f\u0a40-\u0a42\u0a47-\u0a48\u0a4b-\u0a4d\u0a70-\u0a71' +
+  '\u0a81-\u0a83\u0abc\u0abe-\u0ac5\u0ac7-\u0ac9\u0acb-\u0acd\u0b01-\u0b03' +
+  '\u0b3c\u0b3e-\u0b43\u0b47-\u0b48\u0b4b-\u0b4d\u0b56-\u0b57\u0b82-\u0b83' +
+  '\u0bbe-\u0bc2\u0bc6-\u0bc8\u0bca-\u0bcd\u0bd7\u0c01-\u0c03\u0c3e-\u0c44' +
+  '\u0c46-\u0c48\u0c4a-\u0c4d\u0c55-\u0c56\u0c82-\u0c83\u0cbe-\u0cc4' +
+  '\u0cc6-\u0cc8\u0cca-\u0ccd\u0cd5-\u0cd6\u0d02-\u0d03\u0d3e-\u0d43' +
+  '\u0d46-\u0d48\u0d4a-\u0d4d\u0d57\u0e31\u0e34-\u0e3a\u0e47-\u0e4e\u0eb1' +
+  '\u0eb4-\u0eb9\u0ebb-\u0ebc\u0ec8-\u0ecd\u0f18-\u0f19\u0f35\u0f37\u0f39' +
+  '\u0f3e\u0f3f\u0f71-\u0f84\u0f86-\u0f8b\u0f90-\u0f95\u0f97\u0f99-\u0fad' +
+  '\u0fb1-\u0fb7\u0fb9\u20d0-\u20dc\u20e1\u302a-\u302f\u3099\u309a' :
+  '';
+var XML10_DIGIT = (REGEXP_UNICODE) ?
+  '\u0030-\u0039\u0660-\u0669\u06f0-\u06f9\u0966-\u096f\u09e6-\u09ef' +
+  '\u0a66-\u0a6f\u0ae6-\u0aef\u0b66-\u0b6f\u0be7-\u0bef\u0c66-\u0c6f' +
+  '\u0ce6-\u0cef\u0d66-\u0d6f\u0e50-\u0e59\u0ed0-\u0ed9\u0f20-\u0f29' :
+  '0-9';
+var XML10_EXTENDER = (REGEXP_UNICODE) ?
+  '\u00b7\u02d0\u02d1\u0387\u0640\u0e46\u0ec6\u3005\u3031-\u3035' +
+  '\u309d-\u309e\u30fc-\u30fe' :
+  '';
+var XML10_LETTER = XML10_BASE_CHAR + XML10_IDEOGRAPHIC;
+var XML10_NAME_CHAR = XML10_LETTER + XML10_DIGIT + '\\._:' +
+                      XML10_COMBINING_CHAR + XML10_EXTENDER + '-';
+var XML10_NAME = '[' + XML10_LETTER + '_:][' + XML10_NAME_CHAR + ']*';
+
+var XML10_ENTITY_REF = '&' + XML10_NAME + ';';
+var XML10_REFERENCE = XML10_ENTITY_REF + '|' + XML_CHAR_REF;
+var XML10_ATT_VALUE = '"(([^<&"]|' + XML10_REFERENCE + ')*)"|' +
+                      "'(([^<&']|" + XML10_REFERENCE + ")*)'";
+var XML10_ATTRIBUTE =
+  '(' + XML10_NAME + ')' + XML_EQ + '(' + XML10_ATT_VALUE + ')';
+
+// XML 1.1 tokens.
+// TODO(jtakagi): NameStartChar also includes \u10000-\ueffff.
+// ECMAScript Language Specifiction defines UnicodeEscapeSequence as
+// "\u HexDigit HexDigit HexDigit HexDigit" and we may need to use
+// surrogate pairs, but any browser doesn't support surrogate paris in
+// character classes of regular expression, so avoid including them for now.
+
+var XML11_VERSION_INFO = XML_S + 'version' + XML_EQ + '("1\\.1"|' + "'1\\.1')";
+var XML11_NAME_START_CHAR = (REGEXP_UNICODE) ?
+  ':A-Z_a-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02ff\u0370-\u037d' +
+  '\u037f-\u1fff\u200c-\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff' +
+  '\uf900-\ufdcf\ufdf0-\ufffd' :
+  ':A-Z_a-z';
+var XML11_NAME_CHAR = XML11_NAME_START_CHAR +
+  ((REGEXP_UNICODE) ? '\\.0-9\u00b7\u0300-\u036f\u203f-\u2040-' : '\\.0-9-');
+var XML11_NAME = '[' + XML11_NAME_START_CHAR + '][' + XML11_NAME_CHAR + ']*';
+
+var XML11_ENTITY_REF = '&' + XML11_NAME + ';';
+var XML11_REFERENCE = XML11_ENTITY_REF + '|' + XML_CHAR_REF;
+var XML11_ATT_VALUE = '"(([^<&"]|' + XML11_REFERENCE + ')*)"|' +
+                      "'(([^<&']|" + XML11_REFERENCE + ")*)'";
+var XML11_ATTRIBUTE =
+  '(' + XML11_NAME + ')' + XML_EQ + '(' + XML11_ATT_VALUE + ')';
+
+// XML Namespace tokens.
+// Used in XML parser and XPath parser.
+
+var XML_NC_NAME_CHAR = XML10_LETTER + XML10_DIGIT + '\\._' +
+                       XML10_COMBINING_CHAR + XML10_EXTENDER + '-';
+var XML_NC_NAME = '[' + XML10_LETTER + '_][' + XML_NC_NAME_CHAR + ']*';
+
+
+// Code from dom.js.
+//
+// Based on <http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/
+// core.html#ID-1950641247>
+var DOM_ELEMENT_NODE = 1;
+var DOM_ATTRIBUTE_NODE = 2;
+var DOM_TEXT_NODE = 3;
+var DOM_CDATA_SECTION_NODE = 4;
+var DOM_ENTITY_REFERENCE_NODE = 5;
+var DOM_ENTITY_NODE = 6;
+var DOM_PROCESSING_INSTRUCTION_NODE = 7;
+var DOM_COMMENT_NODE = 8;
+var DOM_DOCUMENT_NODE = 9;
+var DOM_DOCUMENT_TYPE_NODE = 10;
+var DOM_DOCUMENT_FRAGMENT_NODE = 11;
+var DOM_NOTATION_NODE = 12;
+
+// Code from util.js.
+//
+// Copyright 2005 Google
+//
+// Author: Steffen Meschkat <mesch@google.com>
+//
+// Miscellaneous utility and placeholder functions.
+
+// Dummy implmentation for the logging functions. Replace by something
+// useful when you want to debug.
+function xpathLog(msg) {};
+function xsltLog(msg) {};
+function xsltLogXml(msg) {};
+
+// Throws an exception if false.
+function assert(b) {
+  if (!b) {
+    throw "Assertion failed";
+  }
+}
+
+// Splits a string s at all occurrences of character c. This is like
+// the split() method of the string object, but IE omits empty
+// strings, which violates the invariant (s.split(x).join(x) == s).
+function stringSplit(s, c) {
+  var a = s.indexOf(c);
+  if (a == -1) {
+    return [ s ];
+  }
+  var parts = [];
+  parts.push(s.substr(0,a));
+  while (a != -1) {
+    var a1 = s.indexOf(c, a + 1);
+    if (a1 != -1) {
+      parts.push(s.substr(a + 1, a1 - a - 1));
+    } else {
+      parts.push(s.substr(a + 1));
+    }
+    a = a1;
+  }
+  return parts;
+}
+
+// Applies the given function to each element of the array, preserving
+// this, and passing the index.
+function mapExec(array, func) {
+  for (var i = 0; i < array.length; ++i) {
+    func.call(this, array[i], i);
+  }
+}
+
+// Returns an array that contains the return value of the given
+// function applied to every element of the input array.
+function mapExpr(array, func) {
+  var ret = [];
+  for (var i = 0; i < array.length; ++i) {
+    ret.push(func(array[i]));
+  }
+  return ret;
+};
+
+// Reverses the given array in place.
+function reverseInplace(array) {
+  for (var i = 0; i < array.length / 2; ++i) {
+    var h = array[i];
+    var ii = array.length - i - 1;
+    array[i] = array[ii];
+    array[ii] = h;
+  }
+}
+
+// Removes value from array. Returns the number of instances of value
+// that were removed from array.
+function removeFromArray(array, value, opt_notype) {
+  var shift = 0;
+  for (var i = 0; i < array.length; ++i) {
+    if (array[i] === value || (opt_notype && array[i] == value)) {
+      array.splice(i--, 1);
+      shift++;
+    }
+  }
+  return shift;
+}
+
+// Shallow-copies an array.
+function copyArray(dst, src) {
+  for (var i = 0; i < src.length; ++i) {
+    dst.push(src[i]);
+  }
+}
+
+// Returns the text value of a node; for nodes without children this
+// is the nodeValue, for nodes with children this is the concatenation
+// of the value of all children.
+function xmlValue(node) {
+  if (!node) {
+    return '';
+  }
+
+  var ret = '';
+  if (node.nodeType == DOM_TEXT_NODE ||
+      node.nodeType == DOM_CDATA_SECTION_NODE ||
+      node.nodeType == DOM_ATTRIBUTE_NODE) {
+    ret += node.nodeValue;
+
+  } else if (node.nodeType == DOM_ELEMENT_NODE ||
+             node.nodeType == DOM_DOCUMENT_NODE ||
+             node.nodeType == DOM_DOCUMENT_FRAGMENT_NODE) {
+    for (var i = 0; i < node.childNodes.length; ++i) {
+      ret += arguments.callee(node.childNodes[i]);
+    }
+  }
+  return ret;
+}
+
+// Code from xpath.js.
+//
+// Copyright 2005 Google Inc.
+// All Rights Reserved
 //
 // An XPath parser and evaluator written in JavaScript. The
 // implementation is complete except for functions handling
@@ -61,9 +320,6 @@
 // that are used internally follow after them.
 //
 //
-// TODO(mesch): add jsdoc comments. Use more coherent naming.
-//
-//
 // Author: Steffen Meschkat <mesch@google.com>
 
 
@@ -74,16 +330,12 @@
 // expression context.
 
 function xpathParse(expr) {
-  if (xpathdebug) {
-    Log.write('XPath parse ' + expr);
-  }
+  xpathLog('parse ' + expr);
   xpathParseInit();
 
   var cached = xpathCacheLookup(expr);
   if (cached) {
-    if (xpathdebug) {
-      Log.write(' ... cached');
-    }
+    xpathLog(' ... cached');
     return cached;
   }
 
@@ -92,29 +344,22 @@ function xpathParse(expr) {
   // ($address), numbers (4), multi-step path expressions where each
   // step is a plain element node test
   // (page/overlay/locations/location).
-  
+
   if (expr.match(/^(\$|@)?\w+$/i)) {
     var ret = makeSimpleExpr(expr);
     xpathParseCache[expr] = ret;
-    if (xpathdebug) {
-      Log.write(' ... simple');
-    }
+    xpathLog(' ... simple');
     return ret;
   }
 
   if (expr.match(/^\w+(\/\w+)*$/i)) {
     var ret = makeSimpleExpr2(expr);
     xpathParseCache[expr] = ret;
-    if (xpathdebug) {
-      Log.write(' ... simple 2');
-    }
+    xpathLog(' ... simple 2');
     return ret;
   }
 
   var cachekey = expr; // expr is modified during parse
-  if (xpathdebug) {
-    Timer.start('XPath parse', cachekey);
-  }
 
   var stack = [];
   var ahead = null;
@@ -124,7 +369,7 @@ function xpathParse(expr) {
   var parse_count = 0;
   var lexer_count = 0;
   var reduce_count = 0;
-  
+
   while (!done) {
     parse_count++;
     expr = expr.replace(/^\s*/, '');
@@ -158,24 +403,22 @@ function xpathParse(expr) {
     // and not explicitly set.
 
     if (rule &&
-        (rule == TOK_DIV || 
+        (rule == TOK_DIV ||
          rule == TOK_MOD ||
-         rule == TOK_AND || 
+         rule == TOK_AND ||
          rule == TOK_OR) &&
-        (!previous || 
-         previous.tag == TOK_AT || 
-         previous.tag == TOK_DSLASH || 
+        (!previous ||
+         previous.tag == TOK_AT ||
+         previous.tag == TOK_DSLASH ||
          previous.tag == TOK_SLASH ||
-         previous.tag == TOK_AXIS || 
+         previous.tag == TOK_AXIS ||
          previous.tag == TOK_DOLLAR)) {
       rule = TOK_QNAME;
     }
 
     if (rule) {
       expr = expr.substr(match.length);
-      if (xpathdebug) {
-        Log.write('token: ' + match + ' -- ' + rule.label);
-      }
+      xpathLog('token: ' + match + ' -- ' + rule.label);
       ahead = {
         tag: rule,
         match: match,
@@ -184,23 +427,17 @@ function xpathParse(expr) {
       };
 
     } else {
-      if (xpathdebug) {
-        Log.write('DONE');
-      }
+      xpathLog('DONE');
       done = true;
     }
 
     while (xpathReduce(stack, ahead)) {
       reduce_count++;
-      if (xpathdebug) {
-        Log.write('stack: ' + stackToString(stack));
-      }
+      xpathLog('stack: ' + stackToString(stack));
     }
   }
 
-  if (xpathdebug) {
-    Log.write(stackToString(stack));
-  }
+  xpathLog('stack: ' + stackToString(stack));
 
   if (stack.length != 1) {
     throw 'XPath parse error ' + cachekey + ':\n' + stackToString(stack);
@@ -209,14 +446,8 @@ function xpathParse(expr) {
   var result = stack[0].expr;
   xpathParseCache[cachekey] = result;
 
-  if (xpathdebug) {
-    Timer.end('XPath parse', cachekey);
-  }
-
-  if (xpathdebug) {
-    Log.write('XPath parse: ' + parse_count + ' / ' + 
-              lexer_count + ' / ' + reduce_count);
-  }
+  xpathLog('XPath parse: ' + parse_count + ' / ' +
+           lexer_count + ' / ' + reduce_count);
 
   return result;
 }
@@ -252,18 +483,16 @@ function xpathReduce(stack, ahead) {
   }
 
   var ret;
-  if (cand && (!ahead || cand.prec > ahead.prec || 
+  if (cand && (!ahead || cand.prec > ahead.prec ||
                (ahead.tag.left && cand.prec >= ahead.prec))) {
     for (var i = 0; i < cand.match.matchlength; ++i) {
       stack.pop();
     }
 
-    if (xpathdebug) {
-      Log.write('reduce ' + cand.tag.label + ' ' + cand.prec +
-                ' ahead ' + (ahead ? ahead.tag.label + ' ' + ahead.prec + 
-                             (ahead.tag.left ? ' left' : '')
-                             : ' none '));
-    }
+    xpathLog('reduce ' + cand.tag.label + ' ' + cand.prec +
+             ' ahead ' + (ahead ? ahead.tag.label + ' ' + ahead.prec +
+                          (ahead.tag.left ? ' left' : '')
+                          : ' none '));
 
     var matchexpr = mapExpr(cand.match, function(m) { return m.expr; });
     cand.expr = cand.rule[3].apply(null, matchexpr);
@@ -273,12 +502,10 @@ function xpathReduce(stack, ahead) {
 
   } else {
     if (ahead) {
-      if (xpathdebug) {
-        Log.write('shift ' + ahead.tag.label + ' ' + ahead.prec + 
-                  (ahead.tag.left ? ' left' : '') +
-                  ' over ' + (cand ? cand.tag.label + ' ' + 
-                              cand.prec : ' none'));
-      }
+      xpathLog('shift ' + ahead.tag.label + ' ' + ahead.prec +
+               (ahead.tag.left ? ' left' : '') +
+               ' over ' + (cand ? cand.tag.label + ' ' +
+                           cand.prec : ' none'));
       stack.push(ahead);
     }
     ret = false;
@@ -428,25 +655,35 @@ function stackToString(stack) {
 //
 //   getVariable(name) -- what the name says.
 //
-//   setNode(node, position) -- sets the context to the new node and
-//   its corresponding position. Needed to implement scoping rules for
-//   variables in XPath. (A variable is visible to all subsequent
-//   siblings, not only to its children.)
+//   setNode(position) -- sets the context to the node at the given
+//   position. Needed to implement scoping rules for variables in
+//   XPath. (A variable is visible to all subsequent siblings, not
+//   only to its children.)
 
-function ExprContext(node, position, nodelist, parent) {
+function ExprContext(node, opt_position, opt_nodelist, opt_parent) {
   this.node = node;
-  this.position = position || 0;
-  this.nodelist = nodelist || [ node ];
+  this.position = opt_position || 0;
+  this.nodelist = opt_nodelist || [ node ];
   this.variables = {};
-  this.parent = parent || null;
-  this.root = parent ? parent.root : node.ownerDocument;
+  this.parent = opt_parent || null;
+  if (opt_parent) {
+    this.root = opt_parent.root;
+  } else if (this.node.nodeType == DOM_DOCUMENT_NODE) {
+    // NOTE(mesch): DOM Spec stipulates that the ownerDocument of a
+    // document is null. Our root, however is the document that we are
+    // processing, so the initial context is created from its document
+    // node, which case we must handle here explcitly.
+    this.root = node;
+  } else {
+    this.root = node.ownerDocument;
+  }
 }
 
-ExprContext.prototype.clone = function(node, position, nodelist) {
-  return new
-  ExprContext(node || this.node,
-              typeof position != 'undefined' ? position : this.position,
-              nodelist || this.nodelist, this);
+ExprContext.prototype.clone = function(opt_node, opt_position, opt_nodelist) {
+  return new ExprContext(
+      opt_node || this.node,
+      typeof opt_position != 'undefined' ? opt_position : this.position,
+      opt_nodelist || this.nodelist, this);
 };
 
 ExprContext.prototype.setVariable = function(name, value) {
@@ -463,12 +700,16 @@ ExprContext.prototype.getVariable = function(name) {
   } else {
     return null;
   }
-}
+};
 
-ExprContext.prototype.setNode = function(node, position) {
-  this.node = node;
+ExprContext.prototype.setNode = function(position) {
+  this.node = this.nodelist[position];
   this.position = position;
-}
+};
+
+ExprContext.prototype.contextSize = function() {
+  return this.nodelist.length;
+};
 
 
 // XPath expression values. They are what XPath expressions evaluate
@@ -511,19 +752,19 @@ function StringValue(value) {
 
 StringValue.prototype.stringValue = function() {
   return this.value;
-}
+};
 
 StringValue.prototype.booleanValue = function() {
   return this.value.length > 0;
-}
+};
 
 StringValue.prototype.numberValue = function() {
   return this.value - 0;
-}
+};
 
 StringValue.prototype.nodeSetValue = function() {
-  throw this + ' ' + Error().stack;
-}
+  throw this;
+};
 
 function BooleanValue(value) {
   this.value = value;
@@ -532,19 +773,19 @@ function BooleanValue(value) {
 
 BooleanValue.prototype.stringValue = function() {
   return '' + this.value;
-}
+};
 
 BooleanValue.prototype.booleanValue = function() {
   return this.value;
-}
+};
 
 BooleanValue.prototype.numberValue = function() {
   return this.value ? 1 : 0;
-}
+};
 
 BooleanValue.prototype.nodeSetValue = function() {
-  throw this + ' ' + Error().stack;
-}
+  throw this;
+};
 
 function NumberValue(value) {
   this.value = value;
@@ -553,19 +794,19 @@ function NumberValue(value) {
 
 NumberValue.prototype.stringValue = function() {
   return '' + this.value;
-}
+};
 
 NumberValue.prototype.booleanValue = function() {
   return !!this.value;
-}
+};
 
 NumberValue.prototype.numberValue = function() {
   return this.value - 0;
-}
+};
 
 NumberValue.prototype.nodeSetValue = function() {
-  throw this + ' ' + Error().stack;
-}
+  throw this;
+};
 
 function NodeSetValue(value) {
   this.value = value;
@@ -578,15 +819,15 @@ NodeSetValue.prototype.stringValue = function() {
   } else {
     return xmlValue(this.value[0]);
   }
-}
+};
 
 NodeSetValue.prototype.booleanValue = function() {
   return this.value.length > 0;
-}
+};
 
 NodeSetValue.prototype.numberValue = function() {
   return this.stringValue() - 0;
-}
+};
 
 NodeSetValue.prototype.nodeSetValue = function() {
   return this.value;
@@ -624,7 +865,7 @@ function LocationExpr() {
 
 LocationExpr.prototype.appendStep = function(s) {
   this.steps.push(s);
-}
+};
 
 LocationExpr.prototype.prependStep = function(s) {
   var steps0 = this.steps;
@@ -662,15 +903,15 @@ function xPathStep(nodes, steps, step, input, ctx) {
   }
 }
 
-function StepExpr(axis, nodetest, predicate) {
+function StepExpr(axis, nodetest, opt_predicate) {
   this.axis = axis;
   this.nodetest = nodetest;
-  this.predicate = predicate || [];
+  this.predicate = opt_predicate || [];
 }
 
 StepExpr.prototype.appendPredicate = function(p) {
   this.predicate.push(p);
-}
+};
 
 StepExpr.prototype.evaluate = function(ctx) {
   var input = ctx.node;
@@ -682,12 +923,12 @@ StepExpr.prototype.evaluate = function(ctx) {
 
   if (this.axis ==  xpathAxis.ANCESTOR_OR_SELF) {
     nodelist.push(input);
-    for (var n = input.parentNode; n; n = input.parentNode) {
+    for (var n = input.parentNode; n; n = n.parentNode) {
       nodelist.push(n);
     }
 
   } else if (this.axis == xpathAxis.ANCESTOR) {
-    for (var n = input.parentNode; n; n = input.parentNode) {
+    for (var n = input.parentNode; n; n = n.parentNode) {
       nodelist.push(n);
     }
 
@@ -705,7 +946,7 @@ StepExpr.prototype.evaluate = function(ctx) {
     xpathCollectDescendants(nodelist, input);
 
   } else if (this.axis == xpathAxis.FOLLOWING) {
-    for (var n = input.parentNode; n; n = n.parentNode) {
+    for (var n = input; n; n = n.parentNode) {
       for (var nn = n.nextSibling; nn; nn = nn.nextSibling) {
         nodelist.push(nn);
         xpathCollectDescendants(nodelist, nn);
@@ -713,7 +954,7 @@ StepExpr.prototype.evaluate = function(ctx) {
     }
 
   } else if (this.axis == xpathAxis.FOLLOWING_SIBLING) {
-    for (var n = input.nextSibling; n; n = input.nextSibling) {
+    for (var n = input.nextSibling; n; n = n.nextSibling) {
       nodelist.push(n);
     }
 
@@ -726,7 +967,7 @@ StepExpr.prototype.evaluate = function(ctx) {
     }
 
   } else if (this.axis == xpathAxis.PRECEDING) {
-    for (var n = input.parentNode; n; n = n.parentNode) {
+    for (var n = input; n; n = n.parentNode) {
       for (var nn = n.previousSibling; nn; nn = nn.previousSibling) {
         nodelist.push(nn);
         xpathCollectDescendantsReverse(nodelist, nn);
@@ -734,7 +975,7 @@ StepExpr.prototype.evaluate = function(ctx) {
     }
 
   } else if (this.axis == xpathAxis.PRECEDING_SIBLING) {
-    for (var n = input.previousSibling; n; n = input.previousSibling) {
+    for (var n = input.previousSibling; n; n = n.previousSibling) {
       nodelist.push(n);
     }
 
@@ -778,23 +1019,25 @@ NodeTestAny.prototype.evaluate = function(ctx) {
   return this.value;
 };
 
-function NodeTestElement() {}
+function NodeTestElementOrAttribute() {}
 
-NodeTestElement.prototype.evaluate = function(ctx) {
-  return new BooleanValue(ctx.node.nodeType == DOM_ELEMENT_NODE);
-}
+NodeTestElementOrAttribute.prototype.evaluate = function(ctx) {
+  return new BooleanValue(
+      ctx.node.nodeType == DOM_ELEMENT_NODE ||
+      ctx.node.nodeType == DOM_ATTRIBUTE_NODE);
+};
 
 function NodeTestText() {}
 
 NodeTestText.prototype.evaluate = function(ctx) {
   return new BooleanValue(ctx.node.nodeType == DOM_TEXT_NODE);
-}
+};
 
 function NodeTestComment() {}
 
 NodeTestComment.prototype.evaluate = function(ctx) {
   return new BooleanValue(ctx.node.nodeType == DOM_COMMENT_NODE);
-}
+};
 
 function NodeTestPI(target) {
   this.target = target;
@@ -804,7 +1047,7 @@ NodeTestPI.prototype.evaluate = function(ctx) {
   return new
   BooleanValue(ctx.node.nodeType == DOM_PROCESSING_INSTRUCTION_NODE &&
                (!this.target || ctx.node.nodeName == this.target));
-}
+};
 
 function NodeTestNC(nsprefix) {
   this.regex = new RegExp("^" + nsprefix + ":");
@@ -814,7 +1057,7 @@ function NodeTestNC(nsprefix) {
 NodeTestNC.prototype.evaluate = function(ctx) {
   var n = ctx.node;
   return new BooleanValue(this.regex.match(n.nodeName));
-}
+};
 
 function NodeTestName(name) {
   this.name = name;
@@ -823,7 +1066,7 @@ function NodeTestName(name) {
 NodeTestName.prototype.evaluate = function(ctx) {
   var n = ctx.node;
   return new BooleanValue(n.nodeName == this.name);
-}
+};
 
 function PredicateExpr(expr) {
   this.expr = expr;
@@ -856,7 +1099,7 @@ FunctionCallExpr.prototype.evaluate = function(ctx) {
   if (f) {
     return f.call(this, ctx);
   } else {
-    Log.write('XPath NO SUCH FUNCTION ' + fn);
+    xpathLog('XPath NO SUCH FUNCTION ' + fn);
     return new BooleanValue(false);
   }
 };
@@ -865,7 +1108,7 @@ FunctionCallExpr.prototype.xpathfunctions = {
   'last': function(ctx) {
     assert(this.args.length == 0);
     // NOTE(mesch): XPath position starts at 1.
-    return new NumberValue(ctx.nodelist.length);
+    return new NumberValue(ctx.contextSize());
   },
 
   'position': function(ctx) {
@@ -882,19 +1125,20 @@ FunctionCallExpr.prototype.xpathfunctions = {
 
   'id': function(ctx) {
     assert(this.args.length == 1);
-    var e = this.args.evaluate(ctx);
+    var e = this.args[0].evaluate(ctx);
     var ret = [];
     var ids;
     if (e.type == 'node-set') {
       ids = [];
-      for (var i = 0; i < e.length; ++i) {
-        var v = xmlValue(e[i]).split(/\s+/);
+      var en = e.nodeSetValue();
+      for (var i = 0; i < en.length; ++i) {
+        var v = xmlValue(en[i]).split(/\s+/);
         for (var ii = 0; ii < v.length; ++ii) {
           ids.push(v[ii]);
         }
       }
     } else {
-      ids = e.split(/\s+/);
+      ids = e.stringValue().split(/\s+/);
     }
     var d = ctx.node.ownerDocument;
     for (var i = 0; i < ids.length; ++i) {
@@ -1154,19 +1398,10 @@ FunctionCallExpr.prototype.xpathfunctions = {
     }
   },
 
-  'ext-sprintf': function(ctx) {
-    assert(this.args.length >= 1);
-    var args = [];
-    for (var i = 0; i < this.args.length; ++i) {
-      args.push(this.args[i].evaluate(ctx).stringValue());
-    }
-    return new StringValue(sprintf.apply(null, args));
-  },
-
   // ext-cardinal() evaluates its single argument as a number, and
   // returns the current node that many times. It can be used in the
   // select attribute to iterate over an integer range.
-  
+
   'ext-cardinal': function(ctx) {
     assert(this.args.length >= 1);
     var c = this.args[0].evaluate(ctx).numberValue();
@@ -1188,16 +1423,19 @@ UnionExpr.prototype.evaluate = function(ctx) {
   var nodes2 = this.expr2.evaluate(ctx).nodeSetValue();
   var I1 = nodes1.length;
   for (var i2 = 0; i2 < nodes2.length; ++i2) {
+    var n = nodes2[i2];
+    var inBoth = false;
     for (var i1 = 0; i1 < I1; ++i1) {
-      if (nodes1[i1] == nodes2[i2]) {
-        // break inner loop and continue outer loop, labels confuse
-        // the js compiler, so we don't use them here.
-        i1 = I1;
+      if (nodes1[i1] == n) {
+        inBoth = true;
+        i1 = I1; // break inner loop
       }
     }
-    nodes1.push(nodes2[i2]);
+    if (!inBoth) {
+      nodes1.push(n);
+    }
   }
-  return new NodeSetValue(nodes2);
+  return new NodeSetValue(nodes1);
 };
 
 function PathExpr(filter, rel) {
@@ -1236,7 +1474,7 @@ FilterExpr.prototype.evaluate = function(ctx) {
   }
 
   return new NodeSetValue(nodes);
-}
+};
 
 function UnaryMinusExpr(expr) {
   this.expr = expr;
@@ -1410,7 +1648,7 @@ BinaryExpr.prototype.compare = function(ctx, cmp) {
   }
 
   return new BooleanValue(ret);
-}
+};
 
 function LiteralExpr(value) {
   this.value = value;
@@ -1434,7 +1672,7 @@ function VariableExpr(name) {
 
 VariableExpr.prototype.evaluate = function(ctx) {
   return ctx.getVariable(this.name);
-}
+};
 
 // Factory functions for semantic values (i.e. Expressions) of the
 // productions in the grammar. When a production is matched to reduce
@@ -1533,7 +1771,7 @@ function makeAbbrevStep(abbrev) {
 }
 
 function makeNodeTestExpr1(asterisk) {
-  return new NodeTestElement;
+  return new NodeTestElementOrAttribute;
 }
 
 function makeNodeTestExpr2(ncname, colon, asterisk) {
@@ -1557,14 +1795,14 @@ function makeNodeTestExpr4(typeo, parenc) {
     return new NodeTestComment;
 
   case 'processing-instruction':
-    return new NodeTestPI;
+    return new NodeTestPI('');
   }
 }
 
 function makeNodeTestExpr5(typeo, target, parenc) {
   var type = typeo.replace(/\s*\($/, '');
   if (type != 'processing-instruction') {
-    throw type + ' ' + Error().stack;
+    throw type;
   }
   return new NodeTestPI(target.value);
 }
@@ -1660,9 +1898,9 @@ function makeSimpleExpr(expr) {
 }
 
 function makeSimpleExpr2(expr) {
-  var steps = expr.split('/');
+  var steps = stringSplit(expr, '/');
   var c = new LocationExpr();
-  for (var i = 0; i < steps.length; i++) {
+  for (var i = 0; i < steps.length; ++i) {
     var a = new NodeTestName(steps[i]);
     var b = new StepExpr('child', a);
     c.appendStep(b);
@@ -1745,7 +1983,7 @@ var TOK_BRACKO = { label: "[",   prec:   32, re: new RegExp("^\\[") };
 var TOK_BRACKC = { label: "]",               re: new RegExp("^\\]") };
 var TOK_DOLLAR = { label: "$",               re: new RegExp("^\\$") };
 
-var TOK_NCNAME = { label: "[ncname]", re: new RegExp('^[a-z][-\\w]*','i') };
+var TOK_NCNAME = { label: "[ncname]", re: new RegExp('^' + XML_NC_NAME) };
 
 var TOK_ASTERISK = { label: "*", prec: 15, re: new RegExp("^\\*"), left: true };
 var TOK_LITERALQ = { label: "[litq]", prec: 20, re: new RegExp("^'[^\\']*'") };
@@ -1762,7 +2000,7 @@ var TOK_NUMBER  = {
 
 var TOK_QNAME = {
   label: "[qname]",
-  re: new RegExp('^([a-z][-\\w]*:)?[a-z][-\\w]*','i')
+  re: new RegExp('^(' + XML_NC_NAME + ':)?' + XML_NC_NAME)
 };
 
 var TOK_NODEO = {
@@ -1892,7 +2130,7 @@ var xpathGrammarRules =
    [ XPathLocationPath, [ XPathAbsoluteLocationPath ], 18,
      passExpr ],
 
-   [ XPathAbsoluteLocationPath, [ TOK_SLASH, XPathRelativeLocationPath ], 18, 
+   [ XPathAbsoluteLocationPath, [ TOK_SLASH, XPathRelativeLocationPath ], 18,
      makeLocationExpr1 ],
    [ XPathAbsoluteLocationPath, [ TOK_DSLASH, XPathRelativeLocationPath ], 18,
      makeLocationExpr2 ],
@@ -1964,11 +2202,11 @@ var xpathGrammarRules =
    [ XPathUnionExpr, [ XPathUnionExpr, TOK_PIPE, XPathPathExpr ], 20,
      makeUnionExpr ],
 
-   [ XPathPathExpr, [ XPathLocationPath ], 20, 
-     passExpr ], 
-   [ XPathPathExpr, [ XPathFilterExpr ], 19, 
-     passExpr ], 
-   [ XPathPathExpr, 
+   [ XPathPathExpr, [ XPathLocationPath ], 20,
+     passExpr ],
+   [ XPathPathExpr, [ XPathFilterExpr ], 19,
+     passExpr ],
+   [ XPathPathExpr,
      [ XPathFilterExpr, TOK_SLASH, XPathRelativeLocationPath ], 20,
      makePathExpr1 ],
    [ XPathPathExpr,
@@ -1976,7 +2214,7 @@ var xpathGrammarRules =
      makePathExpr2 ],
 
    [ XPathFilterExpr, [ XPathPrimaryExpr, XPathPredicate, Q_MM ], 20,
-     makeFilterExpr ], 
+     makeFilterExpr ],
 
    [ XPathExpr, [ XPathPrimaryExpr ], 16,
      passExpr ],
@@ -2065,8 +2303,7 @@ function xpathParseInit() {
     xpathTokenRules[i].key = k++;
   }
 
-  if (xpathdebug)
-  Log.write('XPath parse INIT: ' + k + ' rules');
+  xpathLog('XPath parse INIT: ' + k + ' rules');
 
   // Another slight optimization: sort the rules into bins according
   // to the last element (observing quantifiers), so we can restrict
@@ -2092,7 +2329,7 @@ function xpathParseInit() {
       if (pattern[j] == Q_1M) {
         push_(xpathRules, pattern[j-1].key, rule);
         break;
-        
+
       } else if (pattern[j] == Q_MM || pattern[j] == Q_01) {
         push_(xpathRules, pattern[j-1].key, rule);
         --j;
@@ -2104,18 +2341,17 @@ function xpathParseInit() {
     }
   }
 
-  if (xpathdebug)
-  Log.write('XPath parse INIT: ' + xpathRules.length + ' rule bins');
-  
+  xpathLog('XPath parse INIT: ' + xpathRules.length + ' rule bins');
+
   var sum = 0;
   mapExec(xpathRules, function(i) {
     if (i) {
       sum += i.length;
     }
   });
-  
-  if (xpathdebug)
-  Log.write('XPath parse INIT: ' + (sum / xpathRules.length) + ' average bin size');
+
+  xpathLog('XPath parse INIT: ' + (sum / xpathRules.length) +
+           ' average bin size');
 }
 
 // Local utility functions that are used by the lexer or parser.
@@ -2152,11 +2388,11 @@ function xpathSort(input, sort) {
 
   var sortlist = [];
 
-  for (var i = 0; i < input.nodelist.length; ++i) {
+  for (var i = 0; i < input.contextSize(); ++i) {
     var node = input.nodelist[i];
     var sortitem = { node: node, key: [] };
     var context = input.clone(node, 0, [ node ]);
-    
+
     for (var j = 0; j < sort.length; ++j) {
       var s = sort[j];
       var value = s.expr.evaluate(context);
@@ -2185,7 +2421,7 @@ function xpathSort(input, sort) {
     nodes.push(sortlist[i].node);
   }
   input.nodelist = nodes;
-  input.setNode(nodes[0], 0);
+  input.setNode(0);
 }
 
 
@@ -2196,7 +2432,6 @@ function xpathSort(input, sort) {
 // NOTE: In browsers which do not follow the spec, this breaks only in
 // the case that numbers should be sorted as strings, which is very
 // uncommon.
-
 function xpathSortByKey(v1, v2) {
   // NOTE: Sort key vectors of different length never occur in
   // xsltSort.
@@ -2214,286 +2449,10 @@ function xpathSortByKey(v1, v2) {
 }
 
 
-// Copyright (c) 2005, Google Inc.
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//         
-//  * Redistributions of source code must retain the above copyright
-//    notice, this list of conditions and the following disclaimer.
-// 
-//  * Redistributions in binary form must reproduce the above copyright
-//    notice, this list of conditions and the following disclaimer in the
-//    documentation and/or other materials provided with the
-//    distribution.
-// 
-//  * Neither the name of Google Inc. nor the names of its contributors
-//    may be used to endorse or promote products derived from this
-//    software without specific prior written permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// Miscellania that support the ajaxslt implementation.
-//
-// Author: Steffen Meschkat <mesch@google.com>
-//
-
-function el(i) {
-  return document.getElementById(i);
-}
-
-function px(x) {
-  return x + 'px';
-}
-
-// Split a string s at all occurrences of character c. This is like
-// the split() method of the string object, but IE omits empty
-// strings, which violates the invariant (s.split(x).join(x) == s).
-function stringSplit(s, c) {
-  var a = s.indexOf(c);
-  if (a == -1) {
-    return [ s ];
-  }
-  
-  var parts = [];
-  parts.push(s.substr(0,a));
-  while (a != -1) {
-    var a1 = s.indexOf(c, a + 1);
-    if (a1 != -1) {
-      parts.push(s.substr(a + 1, a1 - a - 1));
-    } else {
-      parts.push(s.substr(a + 1));
-    } 
-    a = a1;
-  }
-
-  return parts;
-}
-
-// Returns the text value if a node; for nodes without children this
-// is the nodeValue, for nodes with children this is the concatenation
-// of the value of all children.
-function xmlValue(node) {
-  if (!node) {
-    return '';
-  }
-
-  var ret = '';
-  if (node.nodeType == DOM_TEXT_NODE ||
-      node.nodeType == DOM_CDATA_SECTION_NODE ||
-      node.nodeType == DOM_ATTRIBUTE_NODE) {
-    ret += node.nodeValue;
-
-  } else if (node.nodeType == DOM_ELEMENT_NODE ||
-             node.nodeType == DOM_DOCUMENT_NODE ||
-             node.nodeType == DOM_DOCUMENT_FRAGMENT_NODE) {
-    for (var i = 0; i < node.childNodes.length; ++i) {
-      ret += arguments.callee(node.childNodes[i]);
-    }
-  }
+// Parses and then evaluates the given XPath expression in the given
+// input context. Notice that parsed xpath expressions are cached.
+function xpathEval(select, context) {
+  var expr = xpathParse(select);
+  var ret = expr.evaluate(context);
   return ret;
 }
-
-// Returns the representation of a node as XML text.
-function xmlText(node) {
-  var ret = '';
-  if (node.nodeType == DOM_TEXT_NODE) {
-    ret += xmlEscapeText(node.nodeValue);
-    
-  } else if (node.nodeType == DOM_ELEMENT_NODE) {
-    ret += '<' + node.nodeName;
-    for (var i = 0; i < node.attributes.length; ++i) {
-      var a = node.attributes[i];
-      if (a && a.nodeName && a.nodeValue) {
-        ret += ' ' + a.nodeName;
-        ret += '="' + xmlEscapeAttr(a.nodeValue) + '"';
-      }
-    }
-
-    if (node.childNodes.length == 0) {
-      ret += '/>';
-
-    } else {
-      ret += '>';
-      for (var i = 0; i < node.childNodes.length; ++i) {
-        ret += arguments.callee(node.childNodes[i]);
-      }
-      ret += '</' + node.nodeName + '>';
-    }
-    
-  } else if (node.nodeType == DOM_DOCUMENT_NODE || 
-             node.nodeType == DOM_DOCUMENT_FRAGMENT_NODE) {
-    for (var i = 0; i < node.childNodes.length; ++i) {
-      ret += arguments.callee(node.childNodes[i]);
-    }
-  }
-  
-  return ret;
-}
-
-// Applies the given function to each element of the array.
-function mapExec(array, func) {
-  for (var i = 0; i < array.length; ++i) {
-    func(array[i]);
-  }
-}
-
-// Returns an array that contains the return value of the given
-// function applied to every element of the input array.
-function mapExpr(array, func) {
-  var ret = [];
-  for (var i = 0; i < array.length; ++i) {
-    ret.push(func(array[i]));
-  }
-  return ret;
-};
-
-// Reverses the given array in place.
-function reverseInplace(array) {
-  for (var i = 0; i < array.length / 2; ++i) {
-    var h = array[i];
-    var ii = array.length - i - 1;
-    array[i] = array[ii];
-    array[ii] = h;
-  }
-}
-
-// Shallow-copies an array.
-function copyArray(dst, src) { 
-  for (var i = 0; i < src.length; ++i) {
-    dst.push(src[i]);
-  }
-}
-
-function assert(b) {
-  if (!b) {
-    throw 'assertion failed';
-  }
-}
-
-// Based on
-// <http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247>
-var DOM_ELEMENT_NODE = 1;
-var DOM_ATTRIBUTE_NODE = 2;
-var DOM_TEXT_NODE = 3;
-var DOM_CDATA_SECTION_NODE = 4;
-var DOM_ENTITY_REFERENCE_NODE = 5;
-var DOM_ENTITY_NODE = 6;
-var DOM_PROCESSING_INSTRUCTION_NODE = 7;
-var DOM_COMMENT_NODE = 8;
-var DOM_DOCUMENT_NODE = 9;
-var DOM_DOCUMENT_TYPE_NODE = 10;
-var DOM_DOCUMENT_FRAGMENT_NODE = 11;
-var DOM_NOTATION_NODE = 12;
-
-
-var xpathdebug = false; // trace xpath parsing
-var xsltdebug = false; // trace xslt processing
-
-
-// Escape XML special markup chracters: tag delimiter < > and entity
-// reference start delimiter &. The escaped string can be used in XML
-// text portions (i.e. between tags).
-function xmlEscapeText(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// Escape XML special markup characters: tag delimiter < > entity
-// reference start delimiter & and quotes ". The escaped string can be
-// used in double quoted XML attribute value portions (i.e. in
-// attributes within start tags).
-function xmlEscapeAttr(s) {
-  return xmlEscapeText(s).replace(/\"/g, '&quot;');
-}
-
-// Escape markup in XML text, but don't touch entity references. The
-// escaped string can be used as XML text (i.e. between tags).
-function xmlEscapeTags(s) {
-  return s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// An implementation of the debug log. 
-
-var logging__ = true;
-
-function Log() {};
-
-Log.lines = [];
-
-Log.write = function(s) {
-  if (logging__) {
-    this.lines.push(xmlEscapeText(s));
-    this.show();
-  }
-};
-
-// Writes the given XML with every tag on a new line.
-Log.writeXML = function(xml) {
-  if (logging__) {
-    var s0 = xml.replace(/</g, '\n<');
-    var s1 = xmlEscapeText(s0);
-    var s2 = s1.replace(/\s*\n(\s|\n)*/g, '<br/>');
-    this.lines.push(s2);
-    this.show();
-  }
-}
-
-// Writes without any escaping
-Log.writeRaw = function(s) {
-  if (logging__) {
-    this.lines.push(s);
-    this.show();
-  }
-}
-
-Log.clear = function() {
-  if (logging__) {
-    var l = this.div();
-    l.innerHTML = '';
-    this.lines = [];
-  }
-}
-
-Log.show = function() {
-  var l = this.div();
-  l.innerHTML += this.lines.join('<br/>') + '<br/>';
-  this.lines = [];
-  l.scrollTop = l.scrollHeight;
-}
-
-Log.div = function() {
-  var l = document.getElementById('log');
-  if (!l) {
-    l = document.createElement('div');
-    l.id = 'log';
-    l.style.position = 'absolute';
-    l.style.right = '5px';
-    l.style.top = '5px';
-    l.style.width = '250px';
-    l.style.height = '150px';
-    l.style.overflow = 'auto';
-    l.style.backgroundColor = '#f0f0f0';
-    l.style.border = '1px solid gray';
-    l.style.fontSize = '10px';
-    l.style.padding = '5px';
-    document.body.appendChild(l);
-  }
-  return l;
-}
-
-
-function Timer() {}
-Timer.start = function() {}
-Timer.end = function() {}

@@ -1,4 +1,4 @@
-// SpryValidationRadio.js - version 0.1 - Spry Pre-Release 1.5
+// SpryValidationRadio.js - version 0.1 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2007. Adobe Systems Incorporated.
 // All rights reserved.
@@ -120,6 +120,8 @@ Spry.Widget.ValidationRadio.addLoadListener(function(){
 
 Spry.Widget.ValidationRadio.prototype.attachBehaviors = function()
 {
+	if (!this.element)
+		return;
 	// find the INPUT type="Radio" element(s) inside current container
 	if (this.element.nodeName == "INPUT") {
 		this.radioElements = [this.element];
@@ -295,13 +297,17 @@ Spry.Widget.ValidationRadio.prototype.isDisabled = function()
 
 Spry.Widget.ValidationRadio.prototype.destroy = function()
 {
-	for (var i=0; i<this.event_handlers.length; i++) {
-		Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
-	}
+	if (this.event_handlers)
+		for (var i=0; i<this.event_handlers.length; i++)
+		{
+			Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
+		}
 	try { delete this.element; } catch(err) {}
-	for(var i=0; i < this.radioElements.length; i++) {
-		try { delete this.radioElements[i];} catch(err) {}
-	}
+	if (this.radioElements)
+		for(var i=0; i < this.radioElements.length; i++)
+		{
+			try { delete this.radioElements[i];} catch(err) {}
+		}
 	try { delete this.radioElements; } catch(err) {}
 	try { delete this.form; } catch(err) {}
 	try { delete this.event_handlers; } catch(err) {}

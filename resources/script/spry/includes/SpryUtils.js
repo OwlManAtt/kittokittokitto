@@ -1,4 +1,4 @@
-// SpryUtils.js - version 0.2 - Spry Pre-Release 1.5
+// SpryUtils.js - version 0.3 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2007. Adobe Systems Incorporated.
 // All rights reserved.
@@ -36,12 +36,12 @@ Spry.Utils.submitForm = function(form, callback, opts)
 		return true;
 
 	if ( typeof form == 'string' )
-		form = document.getElementById(form) || document.forms[form];
+		form = Spry.$(form) || document.forms[form];
 
 	var frmOpts = {};
-	frmOpts.method = form.method;
-	frmOpts.url = form.action || document.location.href;
-	frmOpts.enctype = form.enctype;
+	frmOpts.method = form.getAttribute('method');
+	frmOpts.url = form.getAttribute('action') || document.location.href;
+	frmOpts.enctype = form.getAttribute('enctype');
 
 	Spry.Utils.setOptions(frmOpts, opts);
 
@@ -49,10 +49,10 @@ Spry.Utils.submitForm = function(form, callback, opts)
 	if (frmOpts.additionalData)
 		submitData += "&" + frmOpts.additionalData;
 
-	if (frmOpts.enctype.toLowerCase() != 'multipart/form-data')
+	if (!frmOpts.enctype || frmOpts.enctype.toLowerCase() != 'multipart/form-data')
 	{
 		// Ajax submission of a form doesn't work for multipart/form-data!
-		frmOpts.method = (frmOpts.method.toLowerCase() == "post") ? 'POST' : 'GET';
+		frmOpts.method = (frmOpts.method && frmOpts.method.toLowerCase() == "post") ? 'POST' : 'GET';
 		if (frmOpts.method == "GET")
 		{
 			// Data will be submitted in the url.

@@ -1,4 +1,4 @@
-// Spry.Effect.js - version 0.35 - Spry Pre-Release 1.5
+// Spry.Effect.js - version 0.38 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -114,9 +114,10 @@ Spry.Effect.Registry.prototype.addEffect = function(effect, element, options)
 	{
 		var len = this.effects.length;
 		this.effects[len] = {};
-		this.effects[len].effect = effect;
-		this.effects[len].element = element;
-		this.effects[len].options = options;
+		var eff = this.effects[len];
+		eff.effect = effect;
+		eff.element = Spry.Effect.getElement(element);
+		eff.options = options;
 	}
 };
 
@@ -171,12 +172,6 @@ Spry.Effect.Utils.Rectangle = function()
 	this.units = "px";
 };
 
-Spry.Effect.Utils.PositionedRectangle = function()
-{
-	this.position = new Spry.Effect.Utils.Position;
-	this.rectangle = new Spry.Effect.Utils.Rectangle;
-};
-
 Spry.Effect.Utils.intToHex = function(integerNum) 
 {
 	var result = integerNum.toString(16);
@@ -192,15 +187,16 @@ Spry.Effect.Utils.hexToInt = function(hexStr)
 
 Spry.Effect.Utils.rgb = function(redInt, greenInt, blueInt)
 {
-	var redHex = Spry.Effect.Utils.intToHex(redInt);
-	var greenHex = Spry.Effect.Utils.intToHex(greenInt);
-	var blueHex = Spry.Effect.Utils.intToHex(blueInt);
+	var intToHex = Spry.Effect.Utils.intToHex;
+	var redHex = intToHex(redInt);
+	var greenHex = intToHex(greenInt);
+	var blueHex = intToHex(blueInt);
 	compositeColorHex = redHex.concat(greenHex, blueHex).toUpperCase();
 	compositeColorHex = '#' + compositeColorHex;
 	return compositeColorHex;
 };
 
-Spry.Effect.Utils.longVersion = function(color){
+Spry.Effect.Utils.longColorVersion = function(color){
 	if ( color.match(/^#[0-9a-f]{3}$/i) ){
 		var tmp = color.split('');
 		var color = '#';
@@ -299,7 +295,7 @@ Spry.Effect.Utils.fetchChildImages = function(startEltIn, targetImagesOut)
 
 	if(startEltIn.hasChildNodes())
 	{
-		var childImages = startEltIn.getElementsByTagName('img')
+		var childImages = startEltIn.getElementsByTagName('img');
 		var imageCnt = childImages.length;
 		for(var i=0; i<imageCnt; i++)
 		{
@@ -328,10 +324,9 @@ Spry.Effect.Utils.optionsAreIdentical = function(optionsA, optionsB)
 
 		for (var prop in optionsA)
 		{
-			if (optionsA[prop] === undefined)
-				if(optionsB[prop] !== undefined)
-					return false;
-			else if((optionsB[prop] === undefined) || (optionsA[prop] != optionsB[prop]))
+			var typeA = typeof optionsA[prop];
+			var typeB = typeof optionsB[prop];
+			if ( typeA != typeB || (typeA != 'undefined' && optionsA[prop] != optionsB[prop]))
 				return false;
 		}
 
@@ -844,7 +839,7 @@ Spry.Effect.Animator.prototype.start = function(withoutTimer)
 	this.startMilliseconds = currDate.getTime();
 
 	if (this.element.id)
-		this.element = document.getElementById(this.element.id)
+		this.element = document.getElementById(this.element.id);
 
 	if (this.cancelRemaining != 0 && this.options.toggle)
 	{
@@ -968,7 +963,7 @@ Spry.Effect.Animator.prototype.doToggle = function()
 			this.direction = Spry.forwards;
 		}
 	}
-}
+};
 
 Spry.Effect.Animator.prototype.prepareStart = function()
 {
@@ -1084,12 +1079,16 @@ Spry.Effect.Size = function(element, fromRect, toRect, options)
 	element = this.element;
 
 	if (fromRect.units != toRect.units)
+	{
 		Spry.Effect.Utils.showError('Spry.Effect.Size: Conflicting units (' + fromRect.units + ', ' + toRect.units + ')');
+		return false;
+	}
 
 	this.units = fromRect.units;
 
 	var originalRect = Spry.Effect.getDimensionsRegardlessOfDisplayState(element);
 	this.originalWidth = originalRect.width;
+	this.originalHeight = originalRect.height;
 
 	this.startWidth = fromRect.width;
 	this.startHeight = fromRect.height;
@@ -1129,28 +1128,24 @@ Spry.Effect.Size = function(element, fromRect, toRect, options)
 	if (isPercent(this.startWidth))
 	{
 		var startWidthPercent = Spry.Effect.Utils.getPercentValue(this.startWidth);
-		//var originalRect = Spry.Effect.getDimensions(element);
 		this.startWidth = originalRect.width * (startWidthPercent / 100);
 	}
 
 	if (isPercent(this.startHeight))
 	{
 		var startHeightPercent = Spry.Effect.Utils.getPercentValue(this.startHeight);
-		//var originalRect = Spry.Effect.getDimensions(element);
 		this.startHeight = originalRect.height * (startHeightPercent / 100);
 	}
 
 	if (isPercent(this.stopWidth))
 	{
 		var stopWidthPercent = Spry.Effect.Utils.getPercentValue(this.stopWidth);
-		var originalRect = Spry.Effect.getDimensionsRegardlessOfDisplayState(element);
 		this.stopWidth = originalRect.width * (stopWidthPercent / 100);
 	}
 
 	if (isPercent(this.stopHeight))
 	{
 		var stopHeightPercent = Spry.Effect.Utils.getPercentValue(this.stopHeight);
-		var originalRect = Spry.Effect.getDimensionsRegardlessOfDisplayState(element);
 		this.stopHeight = originalRect.height * (stopHeightPercent / 100);
 	}
 
@@ -1168,7 +1163,6 @@ Spry.Effect.Size.prototype.animate = function()
 	var direction = 0;
 	var floor = Math.floor;
 	var elapsed = this.getElapsedMilliseconds();
-	var position = this.options.transition(elapsed , 0, 1, this.options.duration);
 
 	if (this.direction == Spry.forwards) {
 		width = floor(this.options.transition(elapsed, this.startWidth, this.stopWidth - this.startWidth, this.options.duration));
@@ -1179,7 +1173,9 @@ Spry.Effect.Size.prototype.animate = function()
 		height = floor(this.options.transition(elapsed, this.stopHeight, this.startHeight - this.stopHeight, this.options.duration));
 		direction = -1;
 	}
-	fontSize = this.fontFactor*width/this.originalWidth;
+
+	var propFactor = width/this.originalWidth;
+	fontSize = this.fontFactor * propFactor;
 
 	var elStyle = this.element.style;
 	if (width < 0)
@@ -1191,16 +1187,16 @@ Spry.Effect.Size.prototype.animate = function()
 	elStyle.width = width + this.units;
 	elStyle.height = height + this.units;
 
-	if (this.options.useCSSBox == true)
+	if (typeof this.options.useCSSBox != 'undefined' && this.options.useCSSBox == true)
 	{
-		var intProp = Spry.Effect.intPropStyle
+		var intProp = Spry.Effect.intPropStyle;
 		var origTop = intProp(this.element, 'top');
 		var origLeft = intProp(this.element, 'left');
 		var origMarginTop = intProp(this.element, 'margin-top');
 		var origMarginLeft = intProp(this.element, 'margin-left');
 
-		var widthFactor = width/this.startWidth;
-		var heightFactor = height/this.startHeight;
+		var widthFactor = propFactor;
+		var heightFactor = height / this.originalHeight;
 		var border_top = floor(this.startFromBorder_top * heightFactor);
 		var border_bottom = floor(this.startFromBorder_bottom * heightFactor);
 		var border_left = floor(this.startFromBorder_left * widthFactor);
@@ -1228,13 +1224,12 @@ Spry.Effect.Size.prototype.animate = function()
 		elStyle.marginRight = margin_right + this.units;
 
 		// compensate the margin shrinking
-		elStyle.left = (origLeft + origMarginLeft - margin_left) + this.units;
-		elStyle.top = (origTop + origMarginTop - margin_top) + this.units;
+		elStyle.left = floor(origLeft + origMarginLeft - margin_left) + this.units;
+		elStyle.top = floor(origTop + origMarginTop - margin_top) + this.units;
 	}
 
-	if (this.options.scaleContent == true)
+	if (this.options.scaleContent)
 	{
-		var propFactor = width/this.originalWidth;
 
 		for(var i=0; i < this.childImages.length; i++)
 		{
@@ -1258,7 +1253,7 @@ Spry.Effect.Size.prototype.prepareStart = function()
 
 	if (this.dynamicFromRect == true)
 	{
-		var fromRect = Spry.Effect.getDimensions(element);
+		var fromRect = Spry.Effect.getDimensions(this.element);
 		this.startWidth = fromRect.width;
 		this.startHeight = fromRect.height;
 
@@ -1312,6 +1307,9 @@ Spry.Effect.Opacity.prototype.animate = function()
 	else if (this.direction == Spry.backwards) 
 		opacity = this.options.transition(elapsed, this.stopOpacity, this.startOpacity - this.stopOpacity, this.options.duration);
 
+	if (opacity < 0)
+		opacity = 0;
+
 	if(/MSIE/.test(navigator.userAgent))
 	{
 		var tmpval = Spry.Effect.getStyleProp(this.element,'filter');
@@ -1337,7 +1335,7 @@ Spry.Effect.Opacity.prototype.prepareStart = function()
 
 	if (this.dynamicStartOpacity == true)
 	{
-		this.startOpacity = Spry.Effect.getOpacity(element);
+		this.startOpacity = Spry.Effect.getOpacity(this.element);
 		this.opacityRange = this.startOpacity - this.stopOpacity;
 	}
 };
@@ -1775,8 +1773,8 @@ Spry.Effect.Highlight = function (element, options)
 	if ( toColor.indexOf('rgb') != -1 )
 		var toColor = Spry.Effect.Utils.rgb(parseInt(toColor.substring(toColor.indexOf('(')+1, toColor.indexOf(',')),10), parseInt(toColor.substring(toColor.indexOf(',')+1, toColor.lastIndexOf(',')),10), parseInt(toColor.substring(toColor.lastIndexOf(',')+1, toColor.indexOf(')')),10));
 
-	var fromColor = Spry.Effect.Utils.longVersion(fromColor);
-	var toColor = Spry.Effect.Utils.longVersion(toColor);
+	var fromColor = Spry.Effect.Utils.longColorVersion(fromColor);
+	var toColor = Spry.Effect.Utils.longColorVersion(toColor);
 
 	this.restoreBackgroundImage = Spry.Effect.getStyleProp(element, 'background-image');
 
@@ -1979,6 +1977,7 @@ Spry.Effect.Grow = function (element, options)
 
 	var optionFrom = options ? options.from : dimRect.width;
 	var optionTo   = options ? options.to : 0;
+	var pixelValue = Spry.Effect.Utils.getPixelValue;
 
 	if (options)
 	{
@@ -1997,13 +1996,13 @@ Spry.Effect.Grow = function (element, options)
 			{
 				if(calcHeight)
 				{
-					fromRect.height = Spry.Effect.Utils.getPixelValue(options.from);
-					fromRect.width  = Spry.Effect.Utils.getPixelValue(options.from) / propFactor;
+					fromRect.height = pixelValue(options.from);
+					fromRect.width  = pixelValue(options.from) / propFactor;
 				}
 				else
 				{
-					fromRect.width = Spry.Effect.Utils.getPixelValue(options.from);
-					fromRect.height = propFactor * Spry.Effect.Utils.getPixelValue(options.from);
+					fromRect.width = pixelValue(options.from);
+					fromRect.height = propFactor * pixelValue(options.from);
 				}
 			}
 		}
@@ -2018,13 +2017,13 @@ Spry.Effect.Grow = function (element, options)
 			{
 				if(calcHeight)
 				{
-					toRect.height = Spry.Effect.Utils.getPixelValue(options.to);
-					toRect.width  = Spry.Effect.Utils.getPixelValue(options.to) / propFactor;
+					toRect.height = pixelValue(options.to);
+					toRect.width  = pixelValue(options.to) / propFactor;
 				}
 				else
 				{
-					toRect.width = Spry.Effect.Utils.getPixelValue(options.to);
-					toRect.height = propFactor * Spry.Effect.Utils.getPixelValue(options.to);
+					toRect.width = pixelValue(options.to);
+					toRect.height = propFactor * pixelValue(options.to);
 				}
 			}
 		}
@@ -2154,7 +2153,7 @@ Spry.Effect.Squish = function (element, options)
 	options.growCenter = false;
 	Spry.Effect.Grow.call(this, element, options);
 	this.name = 'Squish';
-}
+};
 Spry.Effect.Squish.prototype = new Spry.Effect.Grow();
 Spry.Effect.Squish.prototype.constructor = Spry.Effect.Squish;
 
@@ -2297,6 +2296,8 @@ Spry.Effect.DropOut = function (element, options)
 	var durationInMilliseconds = 1000;
 	var fps = 60;
 	var kindOfTransition = Spry.fifthTransition;
+	var direction = Spry.forwards;
+	var doToggle = false;
 	this.name = 'DropOut';
 
 	Spry.Effect.makePositioned(element);
@@ -2307,6 +2308,7 @@ Spry.Effect.DropOut = function (element, options)
 		if (options.toggle != null) doToggle = options.toggle;
 		if (options.fps != null) fps = options.fps;
 		if (options.transition != null) kindOfTransition = options.transition;
+		if (options.dropIn != null) direction = -1;
 	}
 
 	var startOffsetPosition = new Spry.Effect.Utils.Position();
@@ -2321,7 +2323,7 @@ Spry.Effect.DropOut = function (element, options)
 
 	var toPos = new Spry.Effect.Utils.Position;
 	toPos.x = startOffsetPosition.x + 0;
-	toPos.y = startOffsetPosition.y + 160;
+	toPos.y = startOffsetPosition.y + (direction * 160);
 
 	options = {from:fromPos, to:toPos, duration:durationInMilliseconds, toggle:doToggle, transition: kindOfTransition, fps: fps};
 	var moveEffect = new Spry.Effect.Move(element, options.from, options.to, options);
@@ -2335,7 +2337,7 @@ Spry.Effect.DropOut = function (element, options)
 
 	var self = this;
 	this.addObserver({
-		onPreEffect:function(){if (self.direction == Spry.backwards){self.element.style.display = 'block';}},
+		onPreEffect:function(){self.element.style.display = 'block';},
 		onPostEffect: function(){if (self.direction == Spry.forwards){self.element.style.display = 'none';}}
 	});
 

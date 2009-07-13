@@ -1,4 +1,4 @@
-// SpryDebug.js - version: 0.7 - Spry Pre-Release 1.5
+// SpryDebug.js - version 0.9 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2007. Adobe Systems Incorporated.
 // All rights reserved.
@@ -29,28 +29,28 @@
 
 var Spry; if (!Spry) Spry = {};
 
-Spry.BrowserSniff = function() {
+Spry.BrowserSniff = function()
+{
 	var b = navigator.appName.toString();
 	var up = navigator.platform.toString();
 	var ua = navigator.userAgent.toString();
 
-	this.mozilla = this.ie = this.opera = r = false;
+	this.mozilla = this.ie = this.opera = this.safari = false;
 	var re_opera = /Opera.([0-9\.]*)/i;
 	var re_msie = /MSIE.([0-9\.]*)/i;
 	var re_gecko = /gecko/i;
-	var re_safari = /safari\/([\d\.]*)/i;
-
-	if (ua.match(re_opera)) {
-		r = ua.match(re_opera);
+	var re_safari = /(applewebkit|safari)\/([\d\.]*)/i;
+	var r = false;
+	
+	if ( (r = ua.match(re_opera))) {
 		this.opera = true;
 		this.version = parseFloat(r[1]);
-	} else if (ua.match(re_msie)) {
-		r = ua.match(re_msie);
+	} else if ( (r = ua.match(re_msie))) {
 		this.ie = true;
 		this.version = parseFloat(r[1]);
-	} else if (ua.match(re_safari)) {
+	} else if ( (r = ua.match(re_safari))) {
 		this.safari = true;
-		this.version = 1.4;
+		this.version = parseFloat(r[2]);
 	} else if (ua.match(re_gecko)) {
 		var re_gecko_version = /rv:\s*([0-9\.]+)/i;
 		r = ua.match(re_gecko_version);
@@ -88,7 +88,7 @@ Spry.Debugger = function(){
 			rmvListener(self.headdiv, 'mouseup', this.mudwfunc, false);
 			rmvListener(document.body, 'mousemove', self.mmdwfunc, false);
 			for (var k in self){
-				var t = typeof self[k]
+				var t = typeof self[k];
 				if (t != "function"){
 					if (t == "object" && self[k].innerHTML)
 						self[k].innerHTML = '';
@@ -96,12 +96,12 @@ Spry.Debugger = function(){
 					self[k] = null;
 				}
 			}
-	}
+	};
 
 	this.myerrorhandler = function( errType, errURL, errLineNum )
 	{
 		try{
-			self.out('<div style="color:red">' + self.explode(errType + " \n " + errURL + ' on line: ' + errLineNum, 0) + '</div>');
+			self.out('<div class="error">' + self.explode(errType + " \n " + errURL + ' on line: ' + errLineNum, 0) + '<br style="clear: both;" /></div>');
 		}catch(err){alert(err.message);}
 		return false;
 	};
@@ -122,8 +122,8 @@ Spry.Debugger = function(){
 		};
 	}
 
-	this.unloadfunc = function(e){self.onunloaddocument()}
-	this.loadfunc = function(e){self.init()}
+	this.unloadfunc = function(e){self.onunloaddocument()};
+	this.loadfunc = function(e){self.init()};
 	Spry.Debugger.Utils.addEvListener(window, 'beforeunload', this.unloadfunc, false);
 	Spry.Debugger.Utils.addEvListener(window, 'load', this.loadfunc, false);
 	window.onerror = this.myerrorhandler;
@@ -140,6 +140,7 @@ Spry.Debugger.prototype.init = function(){
 		var textdiv = document.createElement('div');
 		var consolediv = document.createElement('div');
 		var cleardiv = document.createElement('div');
+		var iframe = document.createElement('iframe');
 
 		var scripts = document.getElementsByTagName('script');
 		var link = '';
@@ -173,6 +174,11 @@ Spry.Debugger.prototype.init = function(){
 
 		debugwindow.id = 'debugdiv';
 
+		iframe.src = 'javascript:""';
+		iframe.frameBorder = '0';
+		iframe.scrolling = 'no';
+		iframe.id = 'debugIframe';
+
 		//scroll in the visible area on refresh
 		setTimeout(function(){
 			try{
@@ -199,17 +205,18 @@ Spry.Debugger.prototype.init = function(){
 		headdiv.appendChild(maximdiv);
 		headdiv.appendChild(cleardiv);
 		headdiv.appendChild(invdiv);
+		debugwindow.parentNode.appendChild(iframe);
 		this.jstext = document.getElementById('debugtext');
 		this.jstext.setAttribute('AutoComplete', 'off');
 		var self = this;
 
-		this.dkfunc = function(e){return self.debuggerKey(e)}
-		this.cdwfunc = function(e){return self.closeDebugWindow(e)}
-		this.cldwfunc = function(e){return self.clearDebugWindow(e)}
-		this.mdwfunc = function(e){return self.maximDebugWindow(e)}
-		this.mddwfunc = function(e){return self.mousedownDebugWindow(e)}
-		this.mmdwfunc = function(e){return self.mousemoveDebugWindow(e)}
-		this.mudwfunc = function(e){return self.mouseupDebugWindow(e)}
+		this.dkfunc = function(e){return self.debuggerKey(e)};
+		this.cdwfunc = function(e){return self.closeDebugWindow(e)};
+		this.cldwfunc = function(e){return self.clearDebugWindow(e)};
+		this.mdwfunc = function(e){return self.maximDebugWindow(e)};
+		this.mddwfunc = function(e){return self.mousedownDebugWindow(e)};
+		this.mmdwfunc = function(e){return self.mousemoveDebugWindow(e)};
+		this.mudwfunc = function(e){return self.mouseupDebugWindow(e)};
 		this.imdfunc = function(e){return self.introspectPage(e)};
 		var addEv = Spry.Debugger.Utils.addEvListener;
 		addEv(self.jstext, 'keydown', this.dkfunc, false);
@@ -231,6 +238,11 @@ Spry.Debugger.prototype.init = function(){
 	}
 	// clear stack
 	this.out();
+	setTimeout(function(){if (Spry.is.ie && Spry.is.version < 7)
+	{
+			iframe.style.height = debugwindow.offsetHeight + 'px';
+			iframe.style.width = debugwindow.offsetWidth + 'px';
+	}},0);
 };
 Spry.Debugger.prototype.introspectPage = function(e){
 	if (this.introspRun && this.introspRun == true){
@@ -465,7 +477,7 @@ Spry.Debugger.prototype.dumpObjectEl = function(e, k, depth){
 	var ctrl='';
 	try{
 		var tipe = typeof e[k];
-		if (tipe == 'unknown') return '<div class="varlabel">'+k+'</div><div class="varvalue"> value unknown</div>';
+		if (tipe == 'unknown') return '<div class="varlabel">'+k+'</div><div class="varvalue">value unknown</div>';
 		if (tipe != 'function'){
 			if (typeof k == 'number' || k.toUpperCase() != k){
 				ctrl += '<div class="varlabel';
@@ -521,7 +533,7 @@ Spry.Debugger.prototype.explode = function (e, depth){
 		ctrl += '<div class="dumptable' + ((depth > 0)?' hidedump' : '') + '">';
 		switch (typeof e){
 			case 'object':
-				if ( typeof e.length == 'undefined' || (e.length > 0 && typeof e[0] == 'undefined')){
+				if ( typeof e.length == 'undefined' || (e.length > 0 && typeof e.push == 'undefined')){
 					for (var k in e){
 						if (k != 'domConfig' && typeof e[k] != 'function'){
 							ctrl += this.dumpObjectEl(e, k, depth);
@@ -532,7 +544,7 @@ Spry.Debugger.prototype.explode = function (e, depth){
 									css = document.defaultView.getComputedStyle(e, null);
 								else if (e.currentStyle) 
 									css = e.currentStyle;
-								ctrl += '<div style="color:#FF3333" class="varlabel">[Computed Style]:</div><div class="varvalue">[<a href="#" onclick="Spry.Debugger.Utils.makeVisible(this); return false;">STYLE</a>]';
+								ctrl += '<div class="varlabel computed">[Computed Style]:</div><div class="varvalue">[<a href="#" onclick="Spry.Debugger.Utils.makeVisible(this); return false;">STYLE</a>]';
 								ctrl += this.explode(css, 1);
 								ctrl += '</div>';
 							}
@@ -550,7 +562,7 @@ Spry.Debugger.prototype.explode = function (e, depth){
 					if (e.length == 0){
 						ctrl += '<div class="specialvaluedump" colspan="2">Empty Array</div>';
 					}else{
-						ctrl += '<div class="varlabel">Length</div><div>'+e.length+'</div>';
+						ctrl += '<div class="varlabel">Length</div><div class="varvalue">'+e.length+'</div>';
 						for (var k = 0; k < e.length; k++)
 							ctrl += this.dumpObjectEl(e, k, depth);
 					}
@@ -581,7 +593,7 @@ Spry.Debugger.prototype.explode = function (e, depth){
 			case 'boolean':
 				ctrl +=  '<div class="varlabel">Boolean:</div><div class="varvalue">' + e +'</div>';
 		}
-		ctrl += '</div>';
+		ctrl += '<br class="clear" /></div>';
 		return ctrl;
 
 	}catch(e){this.out('Spry.Debugger.explode error: ' + e.message);}
@@ -593,38 +605,42 @@ Spry.Debugger.prototype.log = function (){
 	var self = this;
 	setTimeout(function(){
 		var ctrl = '';
-		var scrollSave = self.textdiv.scrollHeight;
 		if (t.length > 0)
 				for (var j =0; j < t.length; j++)
 					ctrl += self.explode(t[j], 0);
 
 		self.out(ctrl);
-		self.textdiv.scrollTop = scrollSave;
 	}, 10);
 };
 
-Spry.Debugger.prototype.out = function(str){
-		if (typeof buffer == 'undefined')
-			buffer = '';
+Spry.Debugger.prototype.out = function(str, notype){
+	if (typeof buffer == 'undefined')
+		buffer = '';
 
-		var t = this.textdiv;
+	var t = this.textdiv;
+	var self = this;
 
-		if (t){
-			if (!t.innerHTML)
-				t.innerHTML = '';
-
+	if (t){
+		if (!t.innerHTML)
+			t.innerHTML = '';
+		
+		setTimeout(function(){
 			if (buffer.length > 0){
 				t.innerHTML += buffer;
 				buffer = '';
 			}
-			if (typeof str == 'string')
-				t.innerHTML += str + '<hr style="clear:both">';
-		}else{
-			var self = this;
-			setTimeout(function(){self.out();}, 400);
-			if (typeof str == 'string')
-				buffer += str+'<hr style="clear:both">';
-		}
+			if (typeof str == 'string'){
+				var scrollSave = self.textdiv.scrollHeight;
+				t.innerHTML += str + '<br class="clear" />';
+				self.textdiv.scrollTop = scrollSave;
+			}
+		}, 0);
+
+	}else{
+		setTimeout(function(){self.out();}, 400);
+		if (typeof str == 'string')
+			buffer += str+'<br class="clear" />';
+	}
 };
 
 Spry.Debugger.prototype.closeDebugWindow = function(e){
@@ -645,26 +661,32 @@ Spry.Debugger.prototype.clearDebugWindow = function(e){
 };
 Spry.Debugger.prototype.maximDebugWindow = function(){
 	var main = this.debugdiv;
-	if (this.textdiv){
+	if (this.textdiv)
 		this.textdiv.style.display = 'block';
-	}
-	if (main.style.width != '99%'){
-		this.width = main.style.width;
-		this.height = main.style.height;
+	
+	if (!main.className)
+		main.className = '';		
+
+	if (main.className.indexOf('maximized') == -1){
 		this.left = main.style.left;
-		this.top = main.style.top;
-		this.hheight = this.textdiv.style.height;
-		main.style.width = '99%';
-		main.style.height = '99%';
+		main.className += 'maximized';
 		main.style.left = '0';
-		main.style.top = '0';
-		main.style.height = '94%'
+		if (document.documentElement){
+			main.style.height = document.documentElement.clientHeight;
+			main.style.width = document.documentElement.clientWidth;
+		}
 	}else{
-		main.style.width = this.width;
-		main.style.height = this.height;
+		main.className = main.className.replace(/maximized/i, '');
 		main.style.left = this.left;
-		main.style.top = this.top;
-		this.textdiv.style.height = this.hheight;
+		main.style.height = '';
+		main.style.width = '';
+	}
+	var layer = document.getElementById('debugIframe');
+	if (layer){
+		layer.style.top = main.style.top;
+		layer.style.left = main.style.left;
+		layer.style.height = main.offsetHeight;
+		layer.style.width = main.offsetWidth;
 	}
 	return true;
 };
@@ -695,12 +717,19 @@ Spry.Debugger.prototype.mouseupDebugWindow = function (e){
 Spry.Debugger.prototype.mousemoveDebugWindow = function (e){
 	e = e||event;
 	if (this.startDrag){
-		this.debugdiv.style.opacity = 0.6;
-		this.debugdiv.style.filter = 'alpha(opacity=60)';
+		if (Spry.is.ie)
+			this.debugdiv.style.filter = 'alpha(opacity=60)';
+		else
+			this.debugdiv.style.opacity = 0.6;
 		var x = e.screenX - initialX;
 		var y = e.screenY - initialY;
 		this.debugdiv.style.left = (topX + x) + 'px';
 		this.debugdiv.style.top = (topY + y) + 'px';
+		var layer = document.getElementById('debugIframe');
+		if (layer){
+			layer.style.top = this.debugdiv.style.top;
+			layer.style.left = this.debugdiv.style.left;
+		}
 	}
 	return false;
 };
@@ -712,13 +741,41 @@ Spry.Debugger.prototype.mousemoveDebugWindow = function (e){
 /////////////////////////////////////////////////////////////////
 
 if (!Spry.Debugger.Utils) Spry.Debugger.Utils = {};
+Spry.Debugger.Utils.camelize = function(stringToCamelize)
+{
+	if (stringToCamelize.indexOf('-') == -1){
+		return stringToCamelize;	
+	}
+	var oStringList = stringToCamelize.split('-');
+	var isFirstEntry = true;
+	var camelizedString = '';
+
+	for(var i=0; i < oStringList.length; i++)
+	{
+		if(oStringList[i].length>0)
+		{
+			if(isFirstEntry)
+			{
+				camelizedString = oStringList[i];
+				isFirstEntry = false;
+			}
+			else
+			{
+				var s = oStringList[i];
+				camelizedString += s.charAt(0).toUpperCase() + s.substring(1);
+			}
+		}
+	}
+
+	return camelizedString;
+};
 Spry.Debugger.Utils.getStyleProp = function(element, prop)
 {
 	var value;
 	try
 	{
 		if (element.style)
-			value = element.style[Spry.Effect.Utils.camelize(prop)];
+			value = element.style[Spry.Debugger.Utils.camelize(prop)];
 
 		if (!value)
 		{
@@ -729,7 +786,7 @@ Spry.Debugger.Utils.getStyleProp = function(element, prop)
 			}
 			else if (element.currentStyle) 
 			{
-					value = element.currentStyle[Spry.Effect.Utils.camelize(prop)];
+					value = element.currentStyle[Spry.Debugger.Utils.camelize(prop)];
 			}
 		}
 	}
@@ -798,10 +855,8 @@ Spry.Debugger.Utils.getBorderBox = function (el, doc) {
 		ret.x -= blw;
 		ret.y -= btw;
 		// opera & (safari absolute) incorrectly account for body offsetTop
-		var ua = navigator.userAgent.toLowerCase();
-		if (Spry.is.opera || Spry.is.safari && Spry.Debugger.Utils.getIntProp(el, 'position') == 'absolute')
+		if (Spry.is.opera || Spry.is.safari && Spry.Debugger.Utils.getStyleProp(el, 'position') == 'absolute')
 			ret.y -= doc.body.offsetTop;
-
 	}
 	if (el.parentNode)
 			parent = el.parentNode;
@@ -864,18 +919,29 @@ Spry.Debugger.Utils.stopEvent = function(e){
 };
 Spry.Debugger.Utils.logXHRequest = function(req, m, url){
 	if (req.readyState == 4){
-		var o = '<div class="urldump">' + m + ' ' + url + ' <a href="#" onclick="Spry.Debugger.Utils.makeVisible(this);return false;">Content</a>';
-		o += '<div class="contenturldump hidedump"><pre>' + req.responseText.replace(/</g, '&lt;') + '</pre></div>';
-		o +='| <span><a href="#" onclick="Spry.Debugger.Utils.makeVisible(this); return false;"> Headers</a>';
+		var uniqIdHeader = (new Date()).getTime() + '' + Math.random();
+		var uniqIdContent = (new Date()).getTime() + '' + Math.random();
+		var o = '<div class="urldump">' + m + ' ' + url + ' <a href="#" onclick="Spry.Debugger.Utils.makeVisible(\''+uniqIdHeader+'\', false); Spry.Debugger.Utils.makeVisible(\''+uniqIdContent+'\'); return false;">Content</a> | <a href="#" onclick="Spry.Debugger.Utils.makeVisible(\''+uniqIdContent+'\', false); Spry.Debugger.Utils.makeVisible(\''+uniqIdHeader+'\'); return false;"> Headers</a>';
+		o += '<div><div class="contenturldump hidedump" id="'+uniqIdContent+'"><pre>' + req.responseText.replace(/</g, '&lt;') + '</pre></div></div>';
 		var k = req.getAllResponseHeaders();
-		o += '<div class="contenturldump hidedump"><pre>' + k + '</pre>';
-		o += '</div></span></div>';
+		o += '<div><div class="contenturldump hidedump" id="' + uniqIdHeader + '"><pre>' + k + '</pre></div></div>';
 		debug.out(o);
 	}
 };
 
-Spry.Debugger.Utils.makeVisible = function(el){
-  if (el.parentNode){
+Spry.Debugger.Utils.makeVisible = function(el, visible){
+	el = Spry.Debugger.Utils.getElement(el);
+	if (typeof visible != 'undefined')
+	{
+		if (visible == 'block'){
+			el.style.display = 'block';
+		}else{
+			el.style.display = 'none';	
+		}
+		return;
+	}
+  if (el.parentNode)
+	{
 		var l = el.parentNode.getElementsByTagName('div');
 		var b = false;
 		for (var i = 0; i < l.length; i++){
@@ -886,11 +952,21 @@ Spry.Debugger.Utils.makeVisible = function(el){
 		}
 		if (b){
 			var tmp = b.style.display || Spry.Debugger.Utils.getStyleProp(b, 'display');
-			b.style.display = (tmp && tmp == 'block') ? 'none' : 'block';
+			if (tmp && tmp == 'block'){
+				b.style.display =  'none';
+				//b.innerHTML = b.innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			}else{
+				//b.innerHTML = b.innerHTML.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+				b.style.display =  'block';
+			}
 		}
 	}
 };
-
+Spry.Debugger.Utils.getElement = function(el){
+	if (typeof el == 'string')
+		return document.getElementById(el);
+	return el;
+};
 if (typeof debug == 'undefined' || typeof debug.toString == 'undefined'){
 	var debug = new Spry.Debugger();
 	if (typeof console == 'undefined'){

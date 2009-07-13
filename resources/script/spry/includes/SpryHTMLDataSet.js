@@ -1,4 +1,4 @@
-// SpryHTMLDataSet.js - version 0.17 - Spry Pre-Release 1.5
+// SpryHTMLDataSet.js - version 0.20 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -27,12 +27,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-/*
- *  HTMLDataSet (0.16)
- *  
- */
-
-
 //////////////////////////////////////////////////////////////////////
 //
 // Spry.Data.HTMLDataSet
@@ -44,7 +38,7 @@ Spry.Data.HTMLDataSet = function(dataSetURL, sourceElementID, dataSetOptions)
 	this.sourceElementID = sourceElementID; // ID of the html element to be used as a data source
 	this.sourceElement = null;  			      // The actual html element to be used as a data source
 
-  this.sourceWasInitialized = false;
+	this.sourceWasInitialized = false;
 	this.usesExternalFile = (dataSetURL != null) ? true : false;
 	
 	this.firstRowAsHeaders = true;
@@ -54,7 +48,9 @@ Spry.Data.HTMLDataSet = function(dataSetURL, sourceElementID, dataSetOptions)
 	
 	this.rowSelector = null;
 	this.dataSelector = null;
-	
+
+	this.tableModeEnabled = true;
+
 	Spry.Data.HTTPSourceDataSet.call(this, dataSetURL, dataSetOptions);
 };
 
@@ -253,7 +249,9 @@ Spry.Data.HTMLDataSet.prototype.loadData = function()
 			}
 			self.dataWasLoaded = true;
 			
+			self.disableNotifications();
 			self.filterAndSortData();
+			self.enableNotifications();
 			
 			self.notifyObservers("onPostLoad");
 			self.notifyObservers("onDataChanged");	
@@ -331,20 +329,15 @@ Spry.Data.HTMLDataSet.prototype.getDataFromSourceElement = function()
     return null;
 
 	var extractedData;
-	var usesTable = false;
-	switch (this.sourceElement.nodeName.toLowerCase())
-	{
-		case "table":
-   		usesTable = true;
-			extractedData = this.getDataFromHTMLTable();
-			break;
-		default:
-			extractedData = this.getDataFromNestedStructure();
-	}
+	var usesTable = (this.tableModeEnabled && this.sourceElement.nodeName.toLowerCase() == "table");
+	if (usesTable)
+		extractedData = this.getDataFromHTMLTable();
+	else
+		extractedData = this.getDataFromNestedStructure();
+
 	if (!extractedData)
      return null;
-	
-	
+
 	// Flip Columns / Rows
 	if (this.useColumnsAsRows) 
 	{
@@ -453,7 +446,7 @@ Spry.Data.HTMLDataSet.prototype.getDataFromHTMLTable = function()
      
      var dataRow;
      if (extractedData[rowIdx]) dataRow = extractedData[rowIdx];
-     else dataRow = new Array
+     else dataRow = new Array;
      
      var offset = 0;
      var cells = row.cells;
@@ -491,13 +484,14 @@ Spry.Data.HTMLDataSet.prototype.getDataFromHTMLTable = function()
          nextRowIndex = rowIdx + rowOffIdx;
          var nextDataRow;
          if (extractedData[nextRowIndex]) nextDataRow = extractedData[nextRowIndex];
-         else nextDataRow = new Array
+         else nextDataRow = new Array;
          
+         var rowSpanCellOffset = startOffset;
          for (var offIdx = 0; offIdx < colspan; offIdx++)
          {
-           nextCellIndex = cellIdx + startOffset;
+           nextCellIndex = cellIdx + rowSpanCellOffset;
            nextDataRow[nextCellIndex] = cellValue;
-           startOffset ++;
+           rowSpanCellOffset ++;
          }
          extractedData[nextRowIndex] = nextDataRow;
        }

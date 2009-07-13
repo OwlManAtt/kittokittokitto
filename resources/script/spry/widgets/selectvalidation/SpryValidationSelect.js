@@ -1,4 +1,4 @@
-// SpryValidationSelect.js - version 0.10 - Spry Pre-Release 1.5
+// SpryValidationSelect.js - version 0.10 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -90,9 +90,10 @@ Spry.Widget.ValidationSelect.prototype.init = function(element)
 };
 
 Spry.Widget.ValidationSelect.prototype.destroy = function() {
-	for (var i=0; i<this.event_handlers.length; i++) {
-		Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
-	}
+	if (this.event_handlers)
+		for (var i=0; i<this.event_handlers.length; i++) {
+			Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
+		}
 	try { delete this.element; } catch(err) {}
 	try { delete this.selectElement; } catch(err) {}
 	try { delete this.form; } catch(err) {}
@@ -295,11 +296,11 @@ Spry.Widget.ValidationSelect.prototype.validate = function() {
 	this.addClassName(this.element, this.validClass);
 	this.addClassName(this.additionalError, this.validClass);
 	return true;
-}
+};
 
 Spry.Widget.ValidationSelect.prototype.isDisabled = function() {
 	return this.selectElement.disabled;	
-}
+};
 
 //////////////////////////////////////////////////////////////////////
 //

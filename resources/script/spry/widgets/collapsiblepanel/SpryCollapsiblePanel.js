@@ -1,4 +1,4 @@
-// SpryCollapsiblePanel.js - version 0.5 - Spry Pre-Release 1.5
+// SpryCollapsiblePanel.js - version 0.7 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -44,6 +44,9 @@ Spry.Widget.CollapsiblePanel = function(element, opts)
 	this.animator = null;
 	this.hasFocus = false;
 	this.contentIsOpen = true;
+
+	this.openPanelKeyCode = Spry.Widget.CollapsiblePanel.KEY_DOWN;
+	this.closePanelKeyCode = Spry.Widget.CollapsiblePanel.KEY_UP;
 
 	Spry.Widget.CollapsiblePanel.setOptions(this, opts);
 
@@ -151,12 +154,7 @@ Spry.Widget.CollapsiblePanel.prototype.onTabClick = function(e)
 
 	this.focus();
 
-	if (e.preventDefault) e.preventDefault();
-	else e.returnResult = false;
-	if (e.stopPropagation) e.stopPropagation();
-	else e.cancelBubble = true;
-
-	return false;
+	return this.stopPropagation(e);
 };
 
 Spry.Widget.CollapsiblePanel.prototype.onFocus = function(e)
@@ -173,25 +171,29 @@ Spry.Widget.CollapsiblePanel.prototype.onBlur = function(e)
 	return false;
 };
 
-Spry.Widget.CollapsiblePanel.ENTER_KEY = 13;
-Spry.Widget.CollapsiblePanel.SPACE_KEY = 32;
+Spry.Widget.CollapsiblePanel.KEY_UP = 38;
+Spry.Widget.CollapsiblePanel.KEY_DOWN = 40;
 
 Spry.Widget.CollapsiblePanel.prototype.onKeyDown = function(e)
 {
 	var key = e.keyCode;
-	if (!this.hasFocus || (key != Spry.Widget.CollapsiblePanel.ENTER_KEY && key != Spry.Widget.CollapsiblePanel.SPACE_KEY))
+	if (!this.hasFocus || (key != this.openPanelKeyCode && key != this.closePanelKeyCode))
 		return true;
-	
-	if (this.isOpen())
-		this.close();
-	else
-		this.open();
 
+	if (this.isOpen() && key == this.closePanelKeyCode)
+		this.close();
+	else if ( key == this.openPanelKeyCode)
+		this.open();
+	
+	return this.stopPropagation(e);
+};
+
+Spry.Widget.CollapsiblePanel.prototype.stopPropagation = function(e)
+{
 	if (e.preventDefault) e.preventDefault();
-	else e.returnResult = false;
+	else e.returnValue = false;
 	if (e.stopPropagation) e.stopPropagation();
 	else e.cancelBubble = true;
-
 	return false;
 };
 
@@ -286,6 +288,7 @@ Spry.Widget.CollapsiblePanel.prototype.attachBehaviors = function()
 
 	if (this.contentIsOpen || this.hasClassName(panel, this.openClass))
 	{
+		this.addClassName(panel, this.openClass);
 		this.removeClassName(panel, this.closedClass);
 		this.setDisplay(content, "block");
 		this.contentIsOpen = true;

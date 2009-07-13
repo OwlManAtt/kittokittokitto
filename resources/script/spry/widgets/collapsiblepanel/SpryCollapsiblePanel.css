@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* SpryCollapsiblePanel.css - version 0.5 - Spry Pre-Release 1.5 */
+/* SpryCollapsiblePanel.css - version 0.5 - Spry Pre-Release 1.6.1 */
 
 /* Copyright (c) 2006. Adobe Systems Incorporated. All rights reserved. */
 
@@ -74,6 +74,15 @@
  */
 .CollapsiblePanelOpen .CollapsiblePanelTab {
 	background-color: #EEE;
+}
+
+/* This is an example of how to change the appearance of the panel tab when the
+ * CollapsiblePanel is closed. The "CollapsiblePanelClosed" class is programatically added and removed
+ * whenever the CollapsiblePanel is closed.
+ */
+
+.CollapsiblePanelClosed .CollapsiblePanelTab {
+ /* background-color: #EFEFEF */
 }
 
 /* This is an example of how to change the appearance of the panel tab as the

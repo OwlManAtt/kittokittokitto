@@ -1,4 +1,4 @@
-// SpryDataExtensions.js - version 0.2 - Spry Pre-Release 1.5
+// SpryDataExtensions.js - version 0.4 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2007. Adobe Systems Incorporated.
 // All rights reserved.
@@ -33,9 +33,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-Spry.Data.DataSet.multiFilterFunc = function(ds, row, rowNumber)
+Spry.Data.DataSet.multiFilterFuncs = {};
+Spry.Data.DataSet.multiFilterFuncs.and = function(ds, row, rowNumber, filters)
 {
-	var filters = ds.activeFilters;
 	if (filters)
 	{
 		var numFilters = filters.length;
@@ -47,6 +47,33 @@ Spry.Data.DataSet.multiFilterFunc = function(ds, row, rowNumber)
 		}
 	}
 	return row;
+};
+
+Spry.Data.DataSet.multiFilterFuncs.or = function(ds, row, rowNumber, filters)
+{
+	if (filters && filters.length > 0)
+	{
+		var numFilters = filters.length;
+		for (var i = 0; i < numFilters; i++)
+		{
+			var savedRow = row;
+			row = filters[i](ds, row, rowNumber);
+			if (row)
+				return row;
+			row = savedRow;
+		}
+		return null;
+	}
+	return row;
+};
+
+Spry.Data.DataSet.prototype.getMultiFilterFunc = function()
+{
+	var func = Spry.Data.DataSet.multiFilterFuncs[this.getFilterMode()];
+	if (!func)
+		func = Spry.Data.DataSet.multiFilterFuncs["and"];
+	var filters = this.activeFilters;
+	return function(ds, row, rowNumber) { return func(ds, row, rowNumber, filters); };
 };
 
 Spry.Data.DataSet.prototype.addFilter = function(filterFunc, doApplyFilters)
@@ -96,12 +123,12 @@ Spry.Data.DataSet.prototype.getFilters = function(filterFunc)
 	if (!this.activeFilters)
 		this.activeFilters = [];
 	return this.activeFilters;
-}
+};
 
 Spry.Data.DataSet.prototype.applyFilters = function()
 {
 	if (this.activeFilters && this.activeFilters.length > 0)
-		this.filter(Spry.Data.DataSet.multiFilterFunc);
+		this.filter(this.getMultiFilterFunc());
 	else
 		this.filter(null);
 };
@@ -119,4 +146,18 @@ Spry.Data.DataSet.prototype.hasFilter = function(filterFunc)
 		}
 	}
 	return false;
+};
+
+Spry.Data.DataSet.prototype.getFilterMode = function()
+{
+	return this.filterMode ? this.filterMode : "and";
+};
+
+Spry.Data.DataSet.prototype.setFilterMode = function(mode, doApplyFilters)
+{
+	var oldMode = this.getFilterMode();
+	this.filterMode = mode;
+	if (doApplyFilters)
+		this.applyFilters();
+	return oldMode;
 };

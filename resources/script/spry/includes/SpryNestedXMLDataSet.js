@@ -1,4 +1,4 @@
-// SpryNestedXMLDataSet.js - version 0.1 - Spry Pre-Release 1.5
+// SpryNestedXMLDataSet.js - version 0.7 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2007. Adobe Systems Incorporated.
 // All rights reserved.
@@ -37,6 +37,7 @@ Spry.Data.NestedXMLDataSet = function(parentDataSet, xpath, options)
 	this.currentDSAncestor = null;
 	this.options = options;
 	this.ignoreOnDataChanged = false;
+	this.entityEncodeStrings = parentDataSet ? parentDataSet.entityEncodeStrings : true;
 
 	Spry.Data.DataSet.call(this, options);
 
@@ -147,12 +148,53 @@ Spry.Data.NestedXMLDataSet.prototype.onPreParentContextChange = function(notifie
 	this.ignoreOnDataChanged = true;
 };
 
+Spry.Data.NestedXMLDataSet.prototype.filterAndSortData = function()
+{
+	// This method is almost identical to the one from the
+	// DataSet base class, except that it does not set the
+	// current row id.
+
+	// If there is a data filter installed, run it.
+
+	if (this.filterDataFunc)
+		this.filterData(this.filterDataFunc, true);
+
+	// If the distinct flag was set, run through all the records in the recordset
+	// and toss out any that are duplicates.
+
+	if (this.distinctOnLoad)
+		this.distinct(this.distinctFieldsOnLoad);
+
+	// If sortOnLoad was set, sort the data based on the columns
+	// specified in sortOnLoad.
+
+	if (this.keepSorted && this.getSortColumn())
+		this.sort(this.lastSortColumns, this.lastSortOrder);
+	else if (this.sortOnLoad)
+		this.sort(this.sortOnLoad, this.sortOrderOnLoad);
+
+	// If there is a view filter installed, run it.
+
+	if (this.filterFunc)
+		this.filter(this.filterFunc, true);
+};
+
 Spry.Data.NestedXMLDataSet.prototype.loadData = function()
 {
 	var parentDS = this.parentDataSet;
 
-	if (!parentDS || parentDS.getLoadDataRequestIsPending() || !parentDS.getDataWasLoaded() || !this.xpath)
+	if (!parentDS || parentDS.getLoadDataRequestIsPending() || !this.xpath)
 		return;
+
+	if (!parentDS.getDataWasLoaded())
+	{
+		// Someone is asking us to load our data, but our parent
+		// hasn't even initiated a load yet. Tell our parent to
+		// load its data, so we can get our data!
+
+		parentDS.loadData();
+		return;
+	}
 
 	this.notifyObservers("onPreLoad");
 
@@ -194,10 +236,16 @@ Spry.Data.NestedXMLDataSet.prototype.loadData = function()
 
 					var ds = new Spry.Data.DataSet(this.options);
 
+					// Make sure the internal nested data set has the same set
+					// of columnTypes as the nested data set itself.
+
+					for (var cname in this.columnTypes)
+						ds.setColumnType(cname, this.columnTypes[cname]);
+
 					// Flatten any data that matches our XPath and stuff it into
 					// our new nested data set.
 
-					var dataArr = Spry.Utils.getRecordSetFromXMLDoc(row.ds_XMLNode, this.xpath);
+					var dataArr = Spry.Data.XMLDataSet.getRecordSetFromXMLDoc(row.ds_XMLNode, this.xpath, false, this.entityEncodeStrings);
 					ds.setDataFromArray(dataArr.data, true);
 
 					// Create an object that stores the relationship between our
@@ -222,7 +270,7 @@ Spry.Data.NestedXMLDataSet.prototype.loadData = function()
 					// Add an observer on the nested data set so that whenever it dispatches
 					// a notifications, we forward it on as if we generated the notification.
 		
-					ds.addObserver(function(notificationType, notifier, data){ self.notifyObservers(notificationType, data); });
+					ds.addObserver(function(notificationType, notifier, data){ if (notifier == self.currentDS) setTimeout(function() { self.notifyObservers(notificationType, data); }, 0); });
 				}
 			}
 		}
@@ -234,7 +282,11 @@ Spry.Data.NestedXMLDataSet.prototype.loadData = function()
 	this.pendingRequest.timer = setTimeout(function() {
 		self.pendingRequest = null;
 		self.dataWasLoaded = true;
-	
+
+		self.disableNotifications();
+		self.filterAndSortData();
+		self.enableNotifications();
+
 		self.notifyObservers("onPostLoad");
 		self.notifyObservers("onDataChanged");
 	}, 0);
@@ -319,6 +371,15 @@ Spry.Data.NestedXMLDataSet.prototype.setColumnType = function(columnNames, colum
 {
 	if (columnNames)
 	{
+		// Make sure the nested xml data set tracks the column types
+		// that the user sets so that if our data changes, we can re-apply
+		// the column types.
+
+		Spry.Data.DataSet.prototype.setColumnType.call(this, columnNames, columnType);
+
+		// Now apply the column types to any internal nested data sets
+		// that exist.
+
 		var dsArr = this.nestedDataSets;
 		var dsArrLen = dsArr.length;
 		for (var i = 0; i < dsArrLen; i++)
@@ -344,47 +405,66 @@ Spry.Data.NestedXMLDataSet.prototype.distinct = function(columnNames)
 	}
 };
 
-Spry.Data.NestedXMLDataSet.prototype.getSortColumn = function() {
-	if (this.currentDS)
-		return this.currentDS.getSortColumn();
-	return "";
-};
-
-Spry.Data.NestedXMLDataSet.prototype.getSortOrder = function() {
-	if (this.currentDS)
-		return this.currentDS.getSortOrder();
-	return "";
-};
-
 Spry.Data.NestedXMLDataSet.prototype.sort = function(columnNames, sortOrder)
 {
 	if (columnNames)
 	{
+		// Forward the sort request to all internal data sets.
+
 		var dsArr = this.nestedDataSets;
 		var dsArrLen = dsArr.length;
 		for (var i = 0; i < dsArrLen; i++)
 			dsArr[i].dataSet.sort(columnNames, sortOrder);
+
+		// Make sure we store a local copy of the last sort order
+		// column so we can restore it if new data is loaded.
+
+		if (dsArrLen > 0)
+		{
+			var ds = dsArr[0].dataSet;
+			this.lastSortColumns = ds.lastSortColumns.slice(0); // Copy the array.
+			this.lastSortOrder = ds.lastSortOrder;
+		}
 	}
 };
 
 Spry.Data.NestedXMLDataSet.prototype.filterData = function(filterFunc, filterOnly)
 {
-	if (columnNames)
-	{
-		var dsArr = this.nestedDataSets;
-		var dsArrLen = dsArr.length;
-		for (var i = 0; i < dsArrLen; i++)
-			dsArr[i].dataSet.filterData(filterFunc, filterOnly);
-	}
+	// Store a copy of the filterFunc so we can apply it
+	// if the data set loads new data.
+
+	this.filterDataFunc = filterFunc;
+
+	// Now set the filterFunc on all of the internal
+	// data sets.
+
+	var dsArr = this.nestedDataSets;
+	var dsArrLen = dsArr.length;
+	for (var i = 0; i < dsArrLen; i++)
+		dsArr[i].dataSet.filterData(filterFunc, filterOnly);
 };
 
 Spry.Data.NestedXMLDataSet.prototype.filter = function(filterFunc, filterOnly)
 {
-	if (columnNames)
+	// Store a copy of the filterFunc so we can apply it
+	// if the data set loads new data.
+
+	this.filterFunc = filterFunc;
+
+	// Now set the filterFunc on all of the internal
+	// data sets.
+
+	var dsArr = this.nestedDataSets;
+	var dsArrLen = dsArr.length;
+	for (var i = 0; i < dsArrLen; i++)
+		dsArr[i].dataSet.filter(filterFunc, filterOnly);
+};
+
+Spry.Data.NestedXMLDataSet.prototype.setXPath = function(path)
+{
+	if (this.xpath != path)
 	{
-		var dsArr = this.nestedDataSets;
-		var dsArrLen = dsArr.length;
-		for (var i = 0; i < dsArrLen; i++)
-			dsArr[i].dataSet.filter(filterFunc, filterOnly);
+		this.xpath = path;
+		this.loadData();
 	}
 };

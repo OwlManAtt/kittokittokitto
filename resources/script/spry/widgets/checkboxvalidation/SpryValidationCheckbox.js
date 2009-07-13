@@ -1,4 +1,4 @@
-// SpryValidationCheckbox.js - version 0.10 - Spry Pre-Release 1.5
+// SpryValidationCheckbox.js - version 0.10 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -96,13 +96,17 @@ Spry.Widget.ValidationCheckbox.prototype.init = function(element)
 };
 
 Spry.Widget.ValidationCheckbox.prototype.destroy = function() {
-	for (var i=0; i<this.event_handlers.length; i++) {
-		Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
-	}
+	if (this.event_handlers)
+		for (var i=0; i<this.event_handlers.length; i++)
+		{
+			Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
+		}
 	try { delete this.element; } catch(err) {}
-	for(var i=0; i<this.checkboxElements.length; i++) {
-		try { delete this.checkboxElements[i];} catch(err) {}
-	}
+	if (this.checkboxElements)
+		for(var i=0; i<this.checkboxElements.length; i++)
+		{
+			try { delete this.checkboxElements[i];} catch(err) {}
+		}
 	try { delete this.checkboxElements; } catch(err) {}
 	try { delete this.form; } catch(err) {}
 	try { delete this.event_handlers; } catch(err) {}
@@ -153,6 +157,8 @@ Spry.Widget.ValidationCheckbox.addLoadListener(function(){
 
 Spry.Widget.ValidationCheckbox.prototype.attachBehaviors = function()
 {
+	if (!this.element)
+		return;
 	// find the INPUT type="checkbox" element(s) inside current container
 	if (this.element.nodeName == "INPUT") {
 		this.checkboxElements = [this.element];
@@ -212,7 +218,7 @@ Spry.Widget.ValidationCheckbox.prototype.getCheckboxes = function() {
 		return arrCheckboxes;
 	}
 	return null;
-}
+};
 
 Spry.Widget.ValidationCheckbox.prototype.addClassName = function(ele, className)
 {
@@ -312,7 +318,7 @@ Spry.Widget.ValidationCheckbox.prototype.validate = function() {
 	this.addClassName(this.element, this.validClass);
 	this.addClassName(this.additionalError, this.validClass);
 	return true;
-}
+};
 
 Spry.Widget.ValidationCheckbox.prototype.isDisabled = function() {
 	var ret = true;
@@ -326,7 +332,7 @@ Spry.Widget.ValidationCheckbox.prototype.isDisabled = function() {
 		}
 	}
 	return ret;
-}
+};
 
 //////////////////////////////////////////////////////////////////////
 //

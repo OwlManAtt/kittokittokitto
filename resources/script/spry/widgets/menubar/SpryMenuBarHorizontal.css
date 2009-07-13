@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* SpryMenuBarHorizontal.css - version 0.6 - Spry Pre-Release 1.5 */
+/* SpryMenuBarHorizontal.css - version 0.6 - Spry Pre-Release 1.6.1 */
 
 /* Copyright (c) 2006. Adobe Systems Incorporated. All rights reserved. */
 
@@ -154,6 +154,7 @@ ul.MenuBarHorizontal iframe
 {
 	position: absolute;
 	z-index: 1010;
+	filter:alpha(opacity:0.1);
 }
 /* HACK FOR IE: to stabilize appearance of menu items; the slash in float is to keep IE 5.0 from parsing */
 @media screen, projection

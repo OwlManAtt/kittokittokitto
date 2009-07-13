@@ -1,4 +1,4 @@
-// SpryAccordion.js - version 0.13 - Spry Pre-Release 1.5
+// SpryAccordion.js - version 0.15 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -140,7 +140,7 @@ Spry.Widget.Accordion.prototype.openPanel = function(elementOrIndex)
 			contentA.style.height = "0px";
 		}
 		contentB.style.display = "block";
-		contentB.style.height = (this.useFixedPanelHeights ? this.fixedPanelHeight : contentB.scrollHeight) + "px";
+		contentB.style.height = this.useFixedPanelHeights ? this.fixedPanelHeight + "px" : "auto";
 	}
 
 	if(panelA)
@@ -221,7 +221,7 @@ Spry.Widget.Accordion.prototype.onPanelTabClick = function(e, panel)
 		this.focus();
 
 	if (e.preventDefault) e.preventDefault();
-	else e.returnResult = false;
+	else e.returnValue = false;
 	if (e.stopPropagation) e.stopPropagation();
 	else e.cancelBubble = true;
 
@@ -268,7 +268,7 @@ Spry.Widget.Accordion.prototype.onKeyDown = function(e)
 		this.openPanel(nextPanel);
 
 	if (e.preventDefault) e.preventDefault();
-	else e.returnResult = false;
+	else e.returnValue = false;
 	if (e.stopPropagation) e.stopPropagation();
 	else e.cancelBubble = true;
 
@@ -453,6 +453,7 @@ Spry.Widget.Accordion.PanelAnimator = function(accordion, panel, opts)
 	this.panel = panel;
 	this.panelToOpen = accordion.getElement(panel);
 	this.panelData = [];
+	this.useFixedPanelHeights = accordion.useFixedPanelHeights;
 
 	Spry.Widget.Accordion.setOptions(this, opts, true);
 
@@ -538,7 +539,7 @@ Spry.Widget.Accordion.PanelAnimator.prototype.stepAnimation = function()
 				obj.content.style.height = "0px";
 			}
 			obj.content.style.overflow = obj.overflow;
-			obj.content.style.height = obj.toHeight + "px";
+			obj.content.style.height = (this.useFixedPanelHeights || obj.toHeight == 0) ? obj.toHeight + "px" : "auto";
 		}
 		if (this.onComplete)
 			this.onComplete();

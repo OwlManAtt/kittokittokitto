@@ -1,4 +1,4 @@
-// SpryValidationTextField.js - version 0.33 - Spry Pre-Release 1.5
+// SpryValidationTextField.js - version 0.37 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -31,28 +31,28 @@ var Spry;
 if (!Spry) Spry = {};
 if (!Spry.Widget) Spry.Widget = {};
 
-Spry.Widget.BrowserSniff = function() {
+Spry.Widget.BrowserSniff = function()
+{
 	var b = navigator.appName.toString();
 	var up = navigator.platform.toString();
 	var ua = navigator.userAgent.toString();
 
-	this.mozilla = this.ie = this.opera = r = false;
+	this.mozilla = this.ie = this.opera = this.safari = false;
 	var re_opera = /Opera.([0-9\.]*)/i;
 	var re_msie = /MSIE.([0-9\.]*)/i;
 	var re_gecko = /gecko/i;
-	var re_safari = /safari\/([\d\.]*)/i;
-	
-	if (ua.match(re_opera)) {
-		r = ua.match(re_opera);
+	var re_safari = /(applewebkit|safari)\/([\d\.]*)/i;
+	var r = false;
+
+	if ( (r = ua.match(re_opera))) {
 		this.opera = true;
 		this.version = parseFloat(r[1]);
-	} else if (ua.match(re_msie)) {
-		r = ua.match(re_msie);
+	} else if ( (r = ua.match(re_msie))) {
 		this.ie = true;
 		this.version = parseFloat(r[1]);
-	} else if (ua.match(re_safari)) {
+	} else if ( (r = ua.match(re_safari))) {
 		this.safari = true;
-		this.version = 1.4;
+		this.version = parseFloat(r[2]);
 	} else if (ua.match(re_gecko)) {
 		var re_gecko_version = /rv:\s*([0-9\.]+)/i;
 		r = ua.match(re_gecko_version);
@@ -79,9 +79,11 @@ Spry.Widget.ValidationTextField = function(element, type, options)
 {
 	type = Spry.Widget.Utils.firstValid(type, "none");
 	if (typeof type != 'string') {
+		this.showError('The second parameter in the constructor should be the validation type, the options are the third parameter.');
 		return;
 	}
 	if (typeof Spry.Widget.ValidationTextField.ValidationDescriptors[type] == 'undefined') {
+		this.showError('Unknown validation type received as the second parameter.');
 		return;
 	}
 	options = Spry.Widget.Utils.firstValid(options, {});
@@ -208,7 +210,7 @@ Spry.Widget.ValidationTextField.ValidationDescriptors = {
 	'email': {
 		characterMasking: /[^\s]/,
 		validation: function(value, options) {
-			var rx = /^[\w\.\+-]+@[\w\.-]+\.\w+$/i;
+			var rx = /^[\w\.-]+@[\w\.-]+\.\w+$/i;
 			return rx.test(value);
 		}
 	},
@@ -259,7 +261,7 @@ Spry.Widget.ValidationTextField.ValidationDescriptors = {
 							maxDay = 31;
 							break;
 						case 4:	// April
-						case 6: // Juna
+						case 6: // June
 						case 9: // September
 						case 11: // November
 							maxDay = 30;
@@ -279,7 +281,7 @@ Spry.Widget.ValidationTextField.ValidationDescriptors = {
 					}
 					
 					// If successfull we'll return the date object
-					return (new Date(theYear, theMonth, theDay));
+					return (new Date(theYear, theMonth - 1, theDay));   //JavaScript requires a month between 0 and 11
 				}
 			} else {
 				return false;
@@ -362,12 +364,12 @@ Spry.Widget.ValidationTextField.ValidationDescriptors = {
 			var regExp = null;
 			options.format = options.format || 'ALL';
 			switch (options.format.toUpperCase()) {
-				case 'ALL': regExp = /^[3-6]{1}[0-9]{12,15}$/; break;
-				case 'VISA': regExp = /^4[0-9]{12,15}$/; break;
+				case 'ALL': regExp = /^[3-6]{1}[0-9]{12,18}$/; break;
+				case 'VISA': regExp = /^4(?:[0-9]{12}|[0-9]{15})$/; break;
 				case 'MASTERCARD': regExp = /^5[1-5]{1}[0-9]{14}$/; break;
 				case 'AMEX': regExp = /^3(4|7){1}[0-9]{13}$/; break;
 				case 'DISCOVER': regExp = /^6011[0-9]{12}$/; break;
-				case 'DINERSCLUB': regExp = /^3((0[0-5]{1}[0-9]{11})|(6[0-9]{12})|(8[0-9]{12}))$/; break;
+				case 'DINERSCLUB': regExp = /^3(?:(0[0-5]{1}[0-9]{11})|(6[0-9]{12})|(8[0-9]{12}))$/; break;
 			}
 			if (!regExp.test(value)) {
 				return false;
@@ -729,9 +731,10 @@ Spry.Widget.ValidationTextField.prototype.init = function(element, options)
 };
 
 Spry.Widget.ValidationTextField.prototype.destroy = function() {
-	for (var i=0; i<this.event_handlers.length; i++) {
-		Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
-	}
+	if (this.event_handlers)
+		for (var i=0; i<this.event_handlers.length; i++) {
+			Spry.Widget.Utils.removeEventListener(this.event_handlers[i][0], this.event_handlers[i][1], this.event_handlers[i][2], false);
+		}
 	try { delete this.element; } catch(err) {}
 	try { delete this.input; } catch(err) {}
 	try { delete this.form; } catch(err) {}
@@ -1016,7 +1019,7 @@ Spry.Widget.ValidationTextField.prototype.doValidations = function(testValue, re
 	}
 
 	if(!mustRevert && this.validation && this.minValue !== null && continueValidations) {
-		var minValue = this.validation(this.minValue, this.options);
+		var minValue = this.validation(this.minValue.toString(), this.options);
 		if (minValue !== false) {
 			if (this.typedValue < minValue) {
 				errors = errors | Spry.Widget.ValidationTextField.ERROR_RANGE_MIN;
@@ -1026,7 +1029,7 @@ Spry.Widget.ValidationTextField.prototype.doValidations = function(testValue, re
 	}
 
 	if(!mustRevert && this.validation && this.maxValue !== null && continueValidations) {
-		var maxValue = this.validation(this.maxValue, this.options);
+		var maxValue = this.validation(this.maxValue.toString(), this.options);
 		if (maxValue !== false) {
 			if( this.typedValue > maxValue) {
 				errors = errors | Spry.Widget.ValidationTextField.ERROR_RANGE_MAX;
@@ -1160,12 +1163,12 @@ Spry.Widget.ValidationTextField.prototype.compileDatePattern = function ()
 			}
 		}
 	}
-	this.dateValidationPattern = new RegExp("^" + dateValidationPatternString + "$" , "")
+	this.dateValidationPattern = new RegExp("^" + dateValidationPatternString + "$" , "");
 	this.dateAutocompleteCharacters = autocompleteCharacters;
 	this.dateGroupPatterns = groupPatterns;
 	this.dateFullGroupPatterns = fullGroupPatterns;
 	this.lastDateGroup = formatGroups.length-2;
-}
+};
 
 Spry.Widget.ValidationTextField.prototype.getRegExpForGroup = function (group) 
 {
@@ -1173,7 +1176,7 @@ Spry.Widget.ValidationTextField.prototype.getRegExpForGroup = function (group)
 	for (var j = 0; j <= group; j++) ret += this.dateGroupPatterns[j];
 	ret += '$';
 	return new RegExp(ret, "");	
-}
+};
 
 Spry.Widget.ValidationTextField.prototype.getRegExpForFullGroup = function (group) 
 {
@@ -1181,7 +1184,7 @@ Spry.Widget.ValidationTextField.prototype.getRegExpForFullGroup = function (grou
 	for (var j = 0; j < group; j++) ret += this.dateGroupPatterns[j];
 	ret += this.dateFullGroupPatterns[group];
 	return new RegExp(ret, "");	
-}
+};
 
 Spry.Widget.ValidationTextField.prototype.getDateGroup = function(value, pos) 
 {
@@ -1196,20 +1199,20 @@ Spry.Widget.ValidationTextField.prototype.getDateGroup = function(value, pos)
 Spry.Widget.ValidationTextField.prototype.isDateGroupFull = function(value, group) 
 {
 	return this.getRegExpForFullGroup(group).test(value);
-}
+};
 
 Spry.Widget.ValidationTextField.prototype.isValueValid = function(value, pos, group) 
 {
 	var test_value = value.substring(0, pos);
 	return this.getRegExpForGroup(group).test(test_value);
-	}
+};
 
 
 Spry.Widget.ValidationTextField.prototype.isPositionAtEndOfGroup = function (value, pos, group)
 {
 	var test_value = value.substring(0, pos);
 	return this.getRegExpForFullGroup(group).test(test_value);
-}
+};
 
 Spry.Widget.ValidationTextField.prototype.nextDateDelimiterExists = function (value, pos, group)
 {
@@ -1223,7 +1226,7 @@ Spry.Widget.ValidationTextField.prototype.nextDateDelimiterExists = function (va
 			return true;
 	}
 	return false;
-}
+};
 
 
 
@@ -1718,7 +1721,7 @@ Spry.Widget.ValidationTextField.prototype.patternToRegExp = function(len) {
 };
 
 Spry.Widget.ValidationTextField.prototype.resetClasses = function() {
-	var classes = [this.requiredClass, this.invalidFormatClass, this.invalidRangeMinClass, this.invalidRangeMaxClass, this.invalidCharsMinClass, this.invalidCharsMaxClass, this.validClass]
+	var classes = [this.requiredClass, this.invalidFormatClass, this.invalidRangeMinClass, this.invalidRangeMaxClass, this.invalidCharsMinClass, this.invalidCharsMaxClass, this.validClass];
 	for (var i=0; i < classes.length; i++)
 	{
 		this.removeClassName(this.element, classes[i]);
@@ -1796,7 +1799,7 @@ Spry.Widget.ValidationTextField.prototype.validate = function() {
 	this.addClassName(this.element, this.validClass);
 	this.addClassName(this.additionalError, this.validClass);
 	return true;
-}
+};
 
 Spry.Widget.ValidationTextField.prototype.addClassName = function(ele, className)
 {
@@ -1811,7 +1814,10 @@ Spry.Widget.ValidationTextField.prototype.removeClassName = function(ele, classN
 		return;
 	ele.className = ele.className.replace(new RegExp("\\s*\\b" + className + "\\b", "g"), "");
 };
-
+Spry.Widget.ValidationTextField.prototype.showError = function(msg)
+{
+	alert('Spry.Widget.TextField ERR: ' + msg);
+};
 /**
  * SelectionDescriptor is a wrapper for input type text selection methods and properties 
  * as implemented by various  browsers
@@ -1825,32 +1831,31 @@ Spry.Widget.SelectionDescriptor = function (element)
 Spry.Widget.SelectionDescriptor.prototype.update = function()
 {
 	if (Spry.is.ie && Spry.is.windows) {
+		var sel = this.element.ownerDocument.selection;
 		if (this.element.nodeName == "TEXTAREA") {
-            var sel = this.element.ownerDocument.selection;
-            if (sel.type != 'None') {
-		var range = this.element.ownerDocument.selection.createRange();
-		if (range.parentElement() == this.element){
-			var range_all = this.element.ownerDocument.body.createTextRange();
-			range_all.moveToElementText(this.element);
-			for (var sel_start = 0; range_all.compareEndPoints('StartToStart', range) < 0; sel_start ++){
-			 	range_all.moveStart('character', 1);
-			}
-			this.start = sel_start;
-			// create a selection of the whole this.element
-			range_all = this.element.ownerDocument.body.createTextRange();
-			range_all.moveToElementText(this.element);
-			for (var sel_end = 0; range_all.compareEndPoints('StartToEnd', range) < 0; sel_end++){
-				range_all.moveStart('character', 1);
-			}
-			this.end = sel_end;
-			this.length = this.end - this.start;
-			// get selected and surrounding text
-			this.text = range.text;
-		 }
-            }        
+			if (sel.type != 'None') {
+				try{var range = sel.createRange();}catch(err){return;}
+				if (range.parentElement() == this.element){
+					var range_all = this.element.ownerDocument.body.createTextRange();
+					range_all.moveToElementText(this.element);
+					for (var sel_start = 0; range_all.compareEndPoints('StartToStart', range) < 0; sel_start ++){
+						range_all.moveStart('character', 1);
+					}
+					this.start = sel_start;
+					// create a selection of the whole this.element
+					range_all = this.element.ownerDocument.body.createTextRange();
+					range_all.moveToElementText(this.element);
+					for (var sel_end = 0; range_all.compareEndPoints('StartToEnd', range) < 0; sel_end++){
+						range_all.moveStart('character', 1);
+					}
+					this.end = sel_end;
+					this.length = this.end - this.start;
+					// get selected and surrounding text
+					this.text = range.text;
+		 		}
+			}        
 		} else if (this.element.nodeName == "INPUT"){
-            var sel = this.element.ownerDocument.selection;
-			this.range = this.element.ownerDocument.selection.createRange();
+			try{this.range = sel.createRange();}catch(err){return;}
 			this.length = this.range.text.length;
 			var clone = this.range.duplicate();
 			this.start = -clone.moveStart("character", -10000);
@@ -2120,7 +2125,7 @@ Spry.Widget.Utils.punycode_encode = function (input, max_out) {
 			}
 
 			if (input[j] == n) {
-				for (q = delta, k = this.punycode_constants.base;; k += this.punycode_constants.base) {
+				for (q = delta, k = this.punycode_constants.base; true; k += this.punycode_constants.base) {
 					if (out >= max_out) {
 						return false;
 					}

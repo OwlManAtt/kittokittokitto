@@ -1,4 +1,4 @@
-// SpryPagedView.js - version 0.5 - Spry Pre-Release 1.5
+// SpryPagedView.js - version 0.7 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
@@ -96,7 +96,7 @@ Spry.Data.PagedView = function(ds, options)
 
 	if (this.pageSize > 0)
 		this.filter(this.getFilterFunc());
-}
+};
 
 Spry.Data.PagedView.prototype = new Spry.Data.DataSet();
 Spry.Data.PagedView.prototype.constructor = Spry.Data.PagedView;
@@ -117,6 +117,63 @@ Spry.Data.PagedView.prototype.setCurrentRowNumber = function(rowNumber)
 
 	if (this.ds)
 		this.ds.setCurrentRowNumber(rowNumber);
+};
+
+Spry.Data.PagedView.prototype.sort = function(columnNames, sortOrder)
+{
+	// We try to discourage developers from sorting the "view"
+	// for a data set instead of the "view itself, but since this
+	// "view" is implemented as a data set, some still insist on
+	// sorting the "view".
+
+	if (!columnNames)
+		return;
+
+	// We need to calculate the sort order and the set of columnNames
+	// we are going to use so we can pass it when we fire off our
+	// onPreSort and onPostSort notifications.
+
+	if (typeof columnNames == "string")
+		columnNames = [ columnNames, "ds_RowID" ];
+	else if (columnNames.length < 2 && columnNames[0] != "ds_RowID")
+		columnNames.push("ds_RowID");
+
+	if (!sortOrder)
+		sortOrder = "toggle";
+
+	if (sortOrder == "toggle")
+	{
+		if (this.lastSortColumns.length > 0 && this.lastSortColumns[0] == columnNames[0] && this.lastSortOrder == "ascending")
+			sortOrder = "descending";
+		else
+			sortOrder = "ascending";
+	}
+
+	var nData = {
+		oldSortColumns: this.lastSortColumns,
+		oldSortOrder: this.lastSortOrder,
+		newSortColumns: columnNames,
+		newSortOrder: sortOrder
+	};
+
+
+	this.notifyObservers("onPreSort", nData);
+
+	// Disable notifications so that when we call our inherited
+	// sort function, no notifications get fired off. We want to
+	// delay any onPostSort notification until *after* we get a chance
+	// to update our pager columns and reset the view to the first
+	// page.
+
+	this.disableNotifications();
+
+	Spry.Data.DataSet.prototype.sort.call(this, columnNames, sortOrder);
+	this.updatePagerColumns();
+	this.firstPage();
+
+	this.enableNotifications();
+
+	this.notifyObservers("onPostSort", nData);
 };
 
 Spry.Data.PagedView.prototype.loadData = function()
@@ -421,7 +478,7 @@ Spry.Data.PagedView.PagingInfo.prototype.onDataChanged = function(notifier, data
 	this.extractInfo();
 };
 
-Spry.Data.PagedView.PagingInfo.prototype.onPostSort = Spry.Data.PagedView.prototype.onDataChanged;
+Spry.Data.PagedView.PagingInfo.prototype.onPostSort = Spry.Data.PagedView.PagingInfo.prototype.onDataChanged;
 
 Spry.Data.PagedView.PagingInfo.prototype.extractInfo = function()
 {

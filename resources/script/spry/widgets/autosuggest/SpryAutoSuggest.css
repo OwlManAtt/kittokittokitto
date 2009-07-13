@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* SpryAutoSuggest.css - version 0.1 - Spry Pre-Release 1.5 */
+/* SpryAutoSuggest.css - version 0.2 - Spry Pre-Release 1.6.1 */
 
 /* Copyright (c) 2006. Adobe Systems Incorporated. All rights reserved. */
 
@@ -13,6 +13,7 @@
 	width: 250px;
 	margin: 0px;
 	cursor: pointer;
+	z-index: 1011;
 }
 
 .showSuggestClass .hideSuggestClass{
@@ -21,4 +22,11 @@
 
 .showSuggestClass .hoverSuggestClass{
 	background-color: #CCCCCC !important;
+}
+
+.iframeSuggest
+{
+	position: absolute;
+	z-index: 1010;
+	filter:alpha(opacity:0.1);
 }

@@ -1,4 +1,4 @@
-// SpryXML.js - version 0.4 - Spry Pre-Release 1.5
+// SpryXML.js - version 0.4 - Spry Pre-Release 1.6.1
 //
 // Copyright (c) 2006. Adobe Systems Incorporated.
 // All rights reserved.
