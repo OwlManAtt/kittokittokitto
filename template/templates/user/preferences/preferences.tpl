@@ -1,4 +1,4 @@
-<p>You may update your password, e-mail address, and other preferences here. If you wish to update any fields in the '<em>Account Details</em>' section, please enter your old password. The text-editor preference allows you to toggle the formatting buttons for certain fields (like post bodies, messages, and even your profile) on or off.</p>
+<p>You may update your password, e-mail address, and other preferences here. If you wish to update any fields in the '<em>Account Settings</em>' section, please enter your old password. The text-editor preference allows you to toggle the formatting buttons for certain fields (like post bodies, messages, and even your profile) on or off.</p>
 
 {if $notice != ''}<p id='pref_notice' class='{$fat} notice-box'>{$notice}{/if}
 
@@ -26,7 +26,7 @@
                     </td>
                     <td class='inputTableRowAlt' id='a_td'>
                         <input type='password' name='password[a]' id='a' /><br />
-                        <span class='textfieldRequiredMsg valid'>You must enter a new password.</span>
+                        <span class='passwordRequiredMsg valid'>You must enter a new password.</span>
                     </td>
                 </tr>
                 <tr>
@@ -35,7 +35,7 @@
                     </td>
                     <td class='inputTableRow' id='b_td'>
                         <input type='password' name='password[b]' id='b' /><br />
-                        <span class='textfieldRequiredMsg valid'>You must repeat the new password.</span>
+                        <span class='textfieldRequiredMsg confirmInvalidMsg valid'>You must repeat the new password.</span>
                         <span class='textfieldInvalidFormatMsg valid'>Passwords do not match.</span>
                     </td>
                 </tr>
@@ -150,8 +150,10 @@
 {literal}
 <script type='text/javascript'>
     var old_password = new Spry.Widget.ValidationTextField("old_td", "none", {useCharacterMasking:true, validateOn:['change','blur']});    
-    var password = new Spry.Widget.ValidationTextField("a_td", "none", {useCharacterMasking:true, validateOn:['change','blur'], isRequired: false});    
-    var password_again = new Spry.Widget.ValidationTextField("b_td", "none", {validateOn:['change','blur'], isRequired: false});    
+    var password_a = new Spry.Widget.ValidationPassword("a_td",{validateOn:["blur"], isRequired:false});
+    var password_b = new Spry.Widget.ValidationPassword("b_td",{validateOn:["blur"], isRequired:false});
+    var password_confirm = new Spry.Widget.ValidationConfirm("b_td", "a_td", {validateOn: ['blur'], isRequired:false});
+
     var email = new Spry.Widget.ValidationTextField("email_td", "email", {useCharacterMasking:true, validateOn:['change','blur']});    
     
     var timezone = new Spry.Widget.ValidationSelect('timezone_td',{validateOn:['blur','change'], invalidValue: ''});
