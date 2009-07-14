@@ -64,6 +64,7 @@ class English_Inflector
 		$_this =& English_Inflector::getInstance();
 
 		$corePluralRules = array(
+            '/([bcdfghjklmnpqrstvwxyz])o$/i' => '\1oes', // heroes, potatoes
             '/(s)tatus$/i' => '\1\2tatuses',
             '/(quiz)$/i' => '\1zes',
             '/^(ox)$/i' => '\1\2en', // ox
@@ -174,6 +175,9 @@ class English_Inflector
             'whiting',
             'wildebeest',
             'Yengeese',
+            'meat',
+            'fruit',
+            'cheese',
         );
 
 		$coreIrregularPlural = array(
@@ -353,6 +357,9 @@ class English_Inflector
             'whiting',
             'wildebeest',
             'Yengeese',
+            'meat',
+            'fruit',
+            'cheese',
         );
 
 		$coreIrregularSingular = array(
@@ -408,6 +415,29 @@ class English_Inflector
      **/
 	static public function pluralize($word) 
     {
+        $of_pos = stripos($word,' of ');
+        $phrase_post = '';
+        if($of_pos > 0)
+        {
+            $phrase_post = substr($word,$of_pos);
+            $word = substr($word,0,$of_pos);
+        }
+
+        // Pluralize $word. An iten name may be a phrase.
+        $last_word_pos = strrpos($word,' ');
+        if($last_word_pos === null)
+        {
+            // word remains untouched, phrase is empty.
+            $phase = '';
+            $phrase_post = '';
+        }
+        else
+        {
+            $phrase = substr($word,0,$last_word_pos).' ';
+            $word = trim(substr($word,$last_word_pos));
+        }
+        // print "Broken: '{$phrase}' '{$word}' '{$phrase_post}'<br />";
+
 		$_this =& English_Inflector::getInstance();
         
 		if(!isset($_this->pluralRules) || empty($_this->pluralRules)) 
@@ -417,7 +447,7 @@ class English_Inflector
 
 		if (isset($_this->pluralized[$word])) 
         {
-			return $_this->pluralized[$word];
+			return $phrase.$_this->pluralized[$word].$phrase_post;
 		}
 
 		extract($_this->pluralRules);
@@ -433,13 +463,13 @@ class English_Inflector
         {
 			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
             
-			return $_this->pluralized[$word];
+			return $phrase.$_this->pluralized[$word].$phrase_post;
 		}
 
 		if(preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) 
         {
 			$_this->pluralized[$word] = $word;
-			return $word;
+			return $phrase.$word.$phrase_post;
 		}
 
 		foreach($pluralRules as $rule => $replacement) 
@@ -447,13 +477,13 @@ class English_Inflector
 			if(preg_match($rule, $word)) 
             {
 				$_this->pluralized[$word] = preg_replace($rule, $replacement, $word);
-				return $_this->pluralized[$word];
+				return $phrase.$_this->pluralized[$word].$phrase_post;
 			}
 		} // end loop
         
 		$_this->pluralized[$word] = $word;
 
-		return $word;
+		return $phrase.$word.$phrase_post;
 	} // end pluralize
 
     /**
