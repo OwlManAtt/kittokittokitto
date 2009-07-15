@@ -1,6 +1,6 @@
 <?php
 /**
- * Begin adding an item.
+ * Manage recipe materials. 
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -22,7 +22,7 @@
  * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
- * @copyright Nicolas Evans, 2007
+ * @copyright Nicolas Evans, 2009
  * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @package Kitto_Kitto_Kitto
  * @subpackage Items 

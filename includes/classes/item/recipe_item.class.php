@@ -1,6 +1,6 @@
 <?php
 /**
- * Fooditem definition. 
+ * Recipe item definition. 
  *
  * This file is part of 'Kitto_Kitto_Kitto'.
  *
@@ -22,7 +22,7 @@
  * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @author Nicholas 'Owl' Evans <owlmanatt@gmail.com>
- * @copyright Nicolas Evans, 2007
+ * @copyright Nicolas Evans, 2009
  * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @package Kitto_Kitto_Kitto
  * @subpackage Items
@@ -35,7 +35,7 @@
  * @uses ActiveTable
  * @package Kitto_Kitto_Kitto
  * @subpackage Items 
- * @copyright 2007 Nicholas Evans
+ * @copyright 2009 Nicholas Evans
  * @author Nick 'Owl' Evans <owlmanatt@gmail> 
  * @license http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  **/
