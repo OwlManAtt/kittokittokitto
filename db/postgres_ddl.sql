@@ -147,11 +147,39 @@ CREATE TABLE item_class (
     relative_image_dir character varying(50) NOT NULL,
     verb character varying(30) NOT NULL,
     one_per_use character(1) DEFAULT 'N'::bpchar NOT NULL,
-    CONSTRAINT item_class_one_per_use_check CHECK ((one_per_use = ANY (ARRAY['N'::bpchar, 'Y'::bpchar])))
+    normal_inventory_display character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    CONSTRAINT item_class_one_per_use_check CHECK ((one_per_use = ANY (ARRAY['N'::bpchar, 'Y'::bpchar]))),
+    CONSTRAINT normal_inventory_display CHECK ((normal_inventory_display = ANY (ARRAY['Y'::bpchar, 'N'::bpchar])))
 );
 
 
 ALTER TABLE public.item_class OWNER TO kitto;
+
+--
+-- Name: item_recipe_material; Type: TABLE; Schema: public; Owner: kitto; Tablespace: 
+--
+
+CREATE TABLE item_recipe_material (
+    item_recipe_material_id integer NOT NULL,
+    recipe_item_type_id integer NOT NULL,
+    material_item_type_id integer NOT NULL,
+    material_quantity integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public.item_recipe_material OWNER TO kitto;
+
+--
+-- Name: item_recipe_type; Type: TABLE; Schema: public; Owner: kitto; Tablespace: 
+--
+
+CREATE TABLE item_recipe_type (
+    item_recipe_type_id integer NOT NULL,
+    recipe_type_description character varying(20) NOT NULL
+);
+
+
+ALTER TABLE public.item_recipe_type OWNER TO kitto;
 
 --
 -- Name: item_type; Type: TABLE; Schema: public; Owner: kitto; Tablespace: 
@@ -165,7 +193,14 @@ CREATE TABLE item_type (
     happiness_bonus integer NOT NULL,
     hunger_bonus integer NOT NULL,
     pet_specie_color_id integer NOT NULL,
-    item_image character varying(200) NOT NULL
+    item_image character varying(200) NOT NULL,
+    item_recipe_type_id integer DEFAULT 0 NOT NULL,
+    recipe_created_item_type_id integer DEFAULT 0 NOT NULL,
+    recipe_batch_quantity integer DEFAULT 0 NOT NULL,
+    unique_item character(1) DEFAULT 'N'::bpchar NOT NULL,
+    transferable_item character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    CONSTRAINT transferable_item CHECK ((transferable_item = ANY (ARRAY['Y'::bpchar, 'N'::bpchar]))),
+    CONSTRAINT unique_item CHECK ((unique_item = ANY (ARRAY['Y'::bpchar, 'N'::bpchar])))
 );
 
 
@@ -180,6 +215,7 @@ CREATE TABLE jump_page (
     page_title character varying(50) DEFAULT ''::character varying NOT NULL,
     page_html_title character varying(255) DEFAULT ''::character varying NOT NULL,
     layout_type character varying(5) DEFAULT 'deep'::bpchar NOT NULL,
+    show_layout character(1) DEFAULT 'Y'::bpchar NOT NULL,
     page_slug character varying(25) DEFAULT ''::character varying NOT NULL,
     access_level character varying(10) DEFAULT 'user'::bpchar NOT NULL,
     restricted_permission_api_name character varying(35) NOT NULL,
@@ -189,7 +225,8 @@ CREATE TABLE jump_page (
     CONSTRAINT jump_page_access_level_check CHECK (((access_level)::bpchar = ANY (ARRAY['restricted'::bpchar, 'user'::bpchar, 'public'::bpchar]))),
     CONSTRAINT jump_page_active_check CHECK ((active = ANY (ARRAY['Y'::bpchar, 'N'::bpchar]))),
     CONSTRAINT jump_page_include_tinymce_check CHECK ((include_tinymce = ANY (ARRAY['N'::bpchar, 'Y'::bpchar]))),
-    CONSTRAINT jump_page_layout_type_check CHECK (((layout_type)::bpchar = ANY (ARRAY['basic'::bpchar, 'deep'::bpchar])))
+    CONSTRAINT jump_page_layout_type_check CHECK (((layout_type)::bpchar = ANY (ARRAY['basic'::bpchar, 'deep'::bpchar]))),
+    CONSTRAINT show_layout CHECK ((show_layout = ANY (ARRAY['Y'::bpchar, 'N'::bpchar])))
 );
 
 
@@ -649,6 +686,46 @@ ALTER SEQUENCE item_class_item_class_id_seq OWNED BY item_class.item_class_id;
 
 
 --
+-- Name: item_recipe_material_item_recipe_material_id_seq; Type: SEQUENCE; Schema: public; Owner: kitto
+--
+
+CREATE SEQUENCE item_recipe_material_item_recipe_material_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.item_recipe_material_item_recipe_material_id_seq OWNER TO kitto;
+
+--
+-- Name: item_recipe_material_item_recipe_material_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kitto
+--
+
+ALTER SEQUENCE item_recipe_material_item_recipe_material_id_seq OWNED BY item_recipe_material.item_recipe_material_id;
+
+
+--
+-- Name: item_recipe_type_item_recipe_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kitto
+--
+
+CREATE SEQUENCE item_recipe_type_item_recipe_type_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.item_recipe_type_item_recipe_type_id_seq OWNER TO kitto;
+
+--
+-- Name: item_recipe_type_item_recipe_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kitto
+--
+
+ALTER SEQUENCE item_recipe_type_item_recipe_type_id_seq OWNED BY item_recipe_type.item_recipe_type_id;
+
+
+--
 -- Name: item_type_item_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kitto
 --
 
@@ -1085,6 +1162,20 @@ ALTER TABLE item_class ALTER COLUMN item_class_id SET DEFAULT nextval('item_clas
 
 
 --
+-- Name: item_recipe_material_id; Type: DEFAULT; Schema: public; Owner: kitto
+--
+
+ALTER TABLE item_recipe_material ALTER COLUMN item_recipe_material_id SET DEFAULT nextval('item_recipe_material_item_recipe_material_id_seq'::regclass);
+
+
+--
+-- Name: item_recipe_type_id; Type: DEFAULT; Schema: public; Owner: kitto
+--
+
+ALTER TABLE item_recipe_type ALTER COLUMN item_recipe_type_id SET DEFAULT nextval('item_recipe_type_item_recipe_type_id_seq'::regclass);
+
+
+--
 -- Name: item_type_id; Type: DEFAULT; Schema: public; Owner: kitto
 --
 
@@ -1287,6 +1378,30 @@ ALTER TABLE ONLY datetime_format
 
 ALTER TABLE ONLY item_class
     ADD CONSTRAINT item_class_pkey PRIMARY KEY (item_class_id);
+
+
+--
+-- Name: item_recipe_material_pkey; Type: CONSTRAINT; Schema: public; Owner: kitto; Tablespace: 
+--
+
+ALTER TABLE ONLY item_recipe_material
+    ADD CONSTRAINT item_recipe_material_pkey PRIMARY KEY (item_recipe_material_id);
+
+
+--
+-- Name: item_recipe_material_unqiue; Type: CONSTRAINT; Schema: public; Owner: kitto; Tablespace: 
+--
+
+ALTER TABLE ONLY item_recipe_material
+    ADD CONSTRAINT item_recipe_material_unqiue UNIQUE (recipe_item_type_id, material_item_type_id);
+
+
+--
+-- Name: item_recipe_type_pkey; Type: CONSTRAINT; Schema: public; Owner: kitto; Tablespace: 
+--
+
+ALTER TABLE ONLY item_recipe_type
+    ADD CONSTRAINT item_recipe_type_pkey PRIMARY KEY (item_recipe_type_id);
 
 
 --
@@ -1524,10 +1639,31 @@ CREATE INDEX item_type__item_class_id ON item_type USING btree (item_class_id);
 
 
 --
+-- Name: item_type__item_name; Type: INDEX; Schema: public; Owner: kitto; Tablespace: 
+--
+
+CREATE INDEX item_type__item_name ON item_type USING btree (item_name);
+
+
+--
+-- Name: item_type__item_recipe_type_id; Type: INDEX; Schema: public; Owner: kitto; Tablespace: 
+--
+
+CREATE INDEX item_type__item_recipe_type_id ON item_type USING btree (item_recipe_type_id);
+
+
+--
 -- Name: item_type__pet_specie_color_id; Type: INDEX; Schema: public; Owner: kitto; Tablespace: 
 --
 
 CREATE INDEX item_type__pet_specie_color_id ON item_type USING btree (pet_specie_color_id);
+
+
+--
+-- Name: item_type__recipe_created_item_type_id; Type: INDEX; Schema: public; Owner: kitto; Tablespace: 
+--
+
+CREATE INDEX item_type__recipe_created_item_type_id ON item_type USING btree (recipe_created_item_type_id);
 
 
 --

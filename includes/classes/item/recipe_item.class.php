@@ -79,47 +79,67 @@ class Recipe_Item extends Item
     *
     * This will return how many batches the user can produce.
     * 
+    * @rdbms-specific
     * @return integer 
     **/
     public function canCraft()
     {
-       switch($this->db->phptype)
-       {
-           case 'mysqli':
-           case 'mysql':
-           {
-               $sql = '
-                   SELECT
-                       FLOOR(IFNULL(user_item.quantity,0) / item_recipe_material.material_quantity) AS batch_size
-                   FROM item_type
-                   INNER JOIN item_recipe_material ON (item_type.item_type_id = item_recipe_material.recipe_item_type_id)
-                   LEFT JOIN user_item ON (
-                       item_recipe_material.material_item_type_id = user_item.item_type_id 
-                       AND ? = user_item.user_id
-                   )
-                   WHERE item_type.item_type_id = ? 
-                   ORDER BY batch_size
-                   LIMIT 1
-               ';
+        switch($this->db->phptype)
+        {
+            case 'mysqli':
+            case 'mysql':
+            {
+                $sql = '
+                    SELECT
+                        FLOOR(IFNULL(user_item.quantity,0) / item_recipe_material.material_quantity) AS batch_size
+                    FROM item_type
+                    INNER JOIN item_recipe_material ON (item_type.item_type_id = item_recipe_material.recipe_item_type_id)
+                    LEFT JOIN user_item ON (
+                        item_recipe_material.material_item_type_id = user_item.item_type_id 
+                        AND ? = user_item.user_id
+                    )
+                    WHERE item_type.item_type_id = ? 
+                    ORDER BY batch_size
+                    LIMIT 1
+                ';
 
                break;
-           } // end mysql
+            } // end mysql
 
-           default:
-           {
+            case 'pgsql':
+            {
+                $sql = '
+                    SELECT
+                        FLOOR(COALESCE(user_item.quantity,0) / item_recipe_material.material_quantity) AS batch_size
+                    FROM item_type
+                    INNER JOIN item_recipe_material ON (item_type.item_type_id = item_recipe_material.recipe_item_type_id)
+                    LEFT JOIN user_item ON (
+                        item_recipe_material.material_item_type_id = user_item.item_type_id 
+                        AND ? = user_item.user_id
+                    )
+                    WHERE item_type.item_type_id = ? 
+                    ORDER BY batch_size
+                    LIMIT 1
+                ';
+
+                break;
+            } // end pgsql
+
+            default:
+            {
                throw new ArgumentError('RDBMS unsupported.');
 
                break;
-           } // end default
-       } // end db engine switch
+            } // end default
+        } // end db engine switch
 
-       $batch_size = $this->db->getOne($sql,array($this->getUserId(),$this->getItemTypeId()));
-       if(PEAR::isError($batch_size))
-       {
-           throw new SQLError($batch_size->getDebugInfo(),$batch_size->userinfo,10);
-       }
+        $batch_size = $this->db->getOne($sql,array($this->getUserId(),$this->getItemTypeId()));
+        if(PEAR::isError($batch_size))
+        {
+            throw new SQLError($batch_size->getDebugInfo(),$batch_size->userinfo,10);
+        }
 
-       return $batch_size;
+        return $batch_size;
     } // end canCraft 
 
     public function grabProduct()
