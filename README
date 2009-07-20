@@ -10,45 +10,13 @@
              |_|\_\_|\__|\__\___/ 
 =================================================
 
-Welcome to KittoKittoKitto, a Virtual Pet Site template app.
-
-Kitto's goals are simple:
-    
-    * Help new petgame developers get off the ground as quickly as possible.
-      Writing the whole register/login/boards/adopt pet thing over and over
-      is a pointless waste of time.
-
-      That said, it is not within the scope of Kitto to provide *everything*
-      you would see in a run-of-the-mill petgame. What is in this package is
-      every major feature a basic installation of Kitto is going to provide.
-      
-      There is no battle stadium or trading post. There are not even user
-      shops! The purpose of Kitto is to provide *the very basic* components.
-      It is my personal belief that providing *too much* functionaility will
-      just encourage dozens of sites using the Kitto code and *no*
-      custmizations to speak of will spring up.
-      
-      Your game should be unique - but that does not mean you should waste
-      time re-inventing the wheel. I will probably be publishing several
-      extensions to Kitto to add those functions, but they will be optional
-      (and, of course, Free) add-ons.  
-    
-    * Help educate brand-new and novice programmers by giving them a well-
-      designed application to hack away at. The code in Kitto will (hopefully)
-      service as an inspiration light of Best Practices and Brilliantly DRY
-      code to the next generation of pet-game developers.  
-    
-      I started programming because of petgames. Three years later, I work for 
-      an ISP doing web applications. I want that to happen to you, too - it's 
-      fun, it's good experience, it makes money. I built a career because of
-      what I learned, and I am all about sharing that experience with whoever
-      is willing. 
+Welcome to KittoKittoKitto, a completely free virtual pet game framework for you 
+to build upon.
 
 == Installation ==
-The Kitto wiki is gone, but you can find install directions in ModularGaming's
-wiki. This old revision of their install document is what you want:
-
-<http://modulargaming.com/projects/modulargaming/wiki/MgInstall?version=13>
+See the Kitto documentation for installation instructions:
+    
+    <http://kitto.yasashiisyndicate.org/docs/kitto/install.html>
 
 == Post-Installation ==
 My tips to you at this point:
@@ -57,15 +25,13 @@ My tips to you at this point:
       really isn't that much code to look at - most of the work is being done
       by ActiveTable automagically.
 
-    * __LEARN HOW TO USE ACTIVETABLE__. It's a brand-new library, and docs are
-      still forthcoming (although there's pretty good in-line documentation that
-      can be compiled into HTML with phpdocumentor), but ActiveTable is a 
-      *SERIOUS* timesaver. Without it, I would not have been able to write
-      Kitto in (literally) five days. 
+    * __LEARN HOW TO USE ACTIVETABLE__. Docs can be found on the Kitto website, 
+      and there's pretty good in-line documentation that can be compiled into 
+      HTML with phpdocumentor. ActiveTable is a *SERIOUS* timesaver. Without it, 
+      I would not have been able to write the first iteration of Kitto in 
+      (literally) five days. 
 
-      There's some documentation for the library at 
-      <http://elsa.godless-internets.org/aphp/index.php/ActiveTable>. It's not complete, 
-      but it's not exactly sparse, either. 
+      <http://kitto.yasashiisyndicate.org/documentation.html>
       
       Writing and debugging SQL is a bitch. It's error-prone. It's a timesink. 
       Why not have most of your SQL written for you by ActiveTable? ;-)
@@ -88,8 +54,7 @@ My tips to you at this point:
      over, at the very least!
 
 Nick 'Owl' Evans, 2007-09-22
+Last Updated on 2009-07-14.
 
 KittoKittoKitto has been brought to you by the Yasashii Syndicate. 
 <http://yasashiisyndicate.org>
-
-Yasashii yoake, guys!

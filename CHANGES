@@ -1,3 +1,18 @@
+== 1.6.0 (2009-07-20) ==
+* Added flags to control uniqueness/transferability of items.
+* Crafting system implemented.
+    * A user can purchase recipes. These recipes have a list of materials; a user can then turn some
+      raw materials in to another item entirely.
+    * Two new pieces of artwork have been added. Thanks to Tigress once again!
+* User_Item API refactored.
+* Updated database ER diagram
+* English inflections fixed up a bit.
+* Updated library submodule versions. We're now using ActiveTable 2.5.0 and Smarty 2.6.26.
+* Updated HTML Purifier to 4.0.
+* Updated TinyMCE and Spry.
+    * Preferences page uses the (new) password/confirmation validations in Spry now.
+    * A TinyMCE / Spry conflict was observed and repaired (in the TinyMCE code). 
+
 == 1.5.0 (2009-07-05) ==
 * Bugfix in moderation panel.
 * Fixed a typo in the moderation panel.

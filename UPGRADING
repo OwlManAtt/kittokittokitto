@@ -1,3 +1,50 @@
+== 1.5.0 to 1.6.0 ==
+Apply the patches in patch/ from the root of your Kitto install.
+
+Replace resource/tinymce with the folder from this version.
+Replace resource/script with the folder from this version.
+Replace external_lib/ with the folder from this version.
+
+Run the following SQL to update your schema (MySQL):
+
+    CREATE TABLE `item_recipe_material` (
+      `item_recipe_material_id` int(11) NOT NULL auto_increment,
+      `recipe_item_type_id` int(11) NOT NULL,
+      `material_item_type_id` int(11) NOT NULL,
+      `material_quantity` int(11) NOT NULL default '1',
+      PRIMARY KEY  (`item_recipe_material_id`),
+      UNIQUE KEY `recipe_item_type_id` (`recipe_item_type_id`,`material_item_type_id`)
+    ) ENGINE=InnoDB;
+
+    CREATE TABLE `item_recipe_type` (
+      `item_recipe_type_id` int(11) NOT NULL auto_increment,
+      `recipe_type_description` varchar(20) NOT NULL,
+      PRIMARY KEY  (`item_recipe_type_id`)
+    ) ENGINE=InnoDB;
+
+    ALTER TABLE `item_class` ADD COLUMN `normal_inventory_display` enum('Y','N') NOT NULL;
+    ALTER TABLE `jump_page` ADD COLUMN `show_layout` enum('Y','N') NOT NULL default 'Y' AFTER `layout_type`;
+
+    ALTER TABLE `item_type` 
+        ADD COLUMN `item_recipe_type_id` int(11) NOT NULL,
+        ADD COLUMN `recipe_created_item_type_id` int(11) NOT NULL,
+        ADD COLUMN `recipe_batch_quantity` int(11) NOT NULL,
+        ADD COLUMN `unique_item` enum('N','Y') NOT NULL,
+        ADD COLUMN `transferable_item` enum('Y','N') NOT NULL;
+
+    ALTER TABLE `item_type`
+        ADD INDEX (`item_name`),
+        ADD INDEX (`item_recipe_type_id`,`recipe_created_item_type_id`);
+
+    INSERT INTO jump_page (`page_title,`page_html_title`,`layout_type`,`show_layout`,`page_slug`,`access_level`,`restricted_permission_api_name`,`php_script`,`include_tinymce`,`active`) VALUES 
+    ('AJAX Item Search Callback','','deep','N','item-search-ajax','user','','items/ajax_widget_search.php','N','Y'),
+    ('Manage Recipe Materials','Manage Recipe Materials','deep','Y','admin-recipe','restricted','manage_items','admin/items/recipe_materials.php','N','Y'),
+    ('Add Recipe Materials','Add Recipe Materials','deep','Y','admin-recipe-add','restricted','manage_items','admin/items/recipe_add_material.php','N','Y'),
+    ('Crafting','Crafting','deep','Y','crafting','user','','crafting/list.php','N','Y'),
+    ('Crafting','Crafting','deep','Y','craft','user','','crafting/recipe.php','N','Y');
+
+    INSERT INTO `item_class` (`item_class_id`, `php_class`, `class_descr`, `relative_image_dir`, `verb`, `one_per_use`, `normal_inventory_display`) VALUES (4,'Recipe_Item','Recipe','recipe','creates','N','N');
+
 == 1.4.0 to 1.5.0 ==
 Apply the patches in patch/ from the root of your Kitto install.
 
