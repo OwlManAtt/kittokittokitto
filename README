@@ -1,4 +1,13 @@
- _  ___ _   _          _  ___ _   _        
+|> Kitto has not been updated in a long time.
+|> 
+|> It may not work well on PHP 7.x, and you should definitely update Smarty and HTMLPurifier.
+|>
+|> Instead of doing these updates, we're working on a whole new version of Kitto:
+|>
+|> https://kitto2.yshi.org/
+
+=================================================
+_  ___ _   _          _  ___ _   _        
 | |/ (_) |_| |_ ___   | |/ (_) |_| |_ ___  
 | ' /| | __| __/ _ \  | ' /| | __| __/ _ \ 
 | . \| | |_| || (_) | | . \| | |_| || (_) |
